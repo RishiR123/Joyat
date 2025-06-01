@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+python-multipart
+sqlalchemy
+pydantic
+passlib[bcrypt]
+python-jose[cryptography]
+fastapi
+uvicorn[standard]
+python-multipart
+firebase-admin
+python-dotenv
+pydantic[email]
+jinja2
