@@ -1,0 +1,79 @@
+{
+    "students": [],
+    "admins": [
+        {
+            "username": "admin",
+            "password": "admin123"
+        }
+    ],
+    "courses": [
+        {
+            "id": "aero",
+            "name": "Aeronautical Engineering",
+            "faculty": "Engineering & Technology",
+            "type": "btech"
+        },
+        {
+            "id": "civil",
+            "name": "Civil Engineering",
+            "faculty": "Engineering & Technology",
+            "type": "btech"
+        },
+        {
+            "id": "ece",
+            "name": "Electronics and Communication Engineering",
+            "faculty": "Engineering & Technology",
+            "type": "btech"
+        }
+    ],
+    "exam_structures": {
+        "btech": {
+            "Mathematics": 10,
+            "Physics": 10,
+            "Chemistry": 10,
+            "Computer": 10,
+            "English": 10
+        },
+        "bsc": {
+            "Botany": 10,
+            "Zoology": 10,
+            "Physics": 10,
+            "Chemistry": 10,
+            "English": 10
+        },
+        "ba": {
+            "Mathematics": 10,
+            "Aptitude": 10,
+            "Reasoning": 10,
+            "English": 10,
+            "General Knowledge": 10
+        },
+        "bcom": {
+            "Mathematics": 10,
+            "Aptitude": 10,
+            "Reasoning": 10,
+            "English": 10,
+            "General Knowledge": 10
+        },
+        "default": {
+            "Mathematics": 10,
+            "Aptitude": 10,
+            "Reasoning": 10,
+            "English": 10,
+            "General Knowledge": 10
+        }
+    },
+    "questions": {
+        "Mathematics": [],
+        "Physics": [],
+        "Chemistry": [],
+        "English": [],
+        "Computer": [],
+        "Botany": [],
+        "Zoology": [],
+        "Aptitude": [],
+        "Reasoning": [],
+        "General Knowledge": []
+    },
+    "results": []
+}
