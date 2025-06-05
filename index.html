@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joy University Examination Hub</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-red: #dc2626;
+            --dark-red: #991b1b;
+            --light-red: #fee2e2;
+            --accent-red: #ef4444;
+            --pure-white: #ffffff;
+            --off-white: #fafafa;
+            --light-gray: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --pure-black: #000000;
+            --dark-black: #0f172a;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--dark-black) 0%, var(--gray-800) 50%, var(--dark-black) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-700);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(220, 38, 38, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            background: var(--pure-white);
+            border-radius: 32px;
+            box-shadow: var(--shadow-2xl);
+            overflow: hidden;
+            width: 95%;
+            max-width: 1500px;
+            min-height: 80vh;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
+            color: var(--pure-white);
+            padding: 4rem 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, rgba(255,255,255,0.05) 0%, transparent 30%),
+                radial-gradient(circle at 70% 30%, rgba(255,255,255,0.1) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--pure-white), transparent);
+            opacity: 0.3;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo-section {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    }
+
+        .logo-img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background: #fff;
+    padding: 5px;
+    }
+
+        .logo-text h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+    margin: 0;
+        }
+
+        .logo-text h3 {
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: #eee;
+    margin: 0;
+        }
+        .header-text {
+            flex: 1;
+        }
+
+        .header h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, var(--pure-white) 0%, rgba(255,255,255,0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header .subtitle {
+            font-size: 1.75rem;
+            opacity: 0.95;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.025em;
+        }
+
+        .powered-by {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .powered-by .company {
+            font-weight: 700;
+            color: var(--pure-white);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .main-content {
+            padding: 4rem 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--light-gray);
+        }
+
+        .login-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-top: 2rem;
+        }
+
+        .login-card {
+            background: var(--pure-white);
+            border: 1px solid var(--gray-200);
+            border-radius: 24px;
+            padding: 3rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.03), transparent);
+            transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .login-card:hover {
+            transform: translateY(-12px);
+            box-shadow: var(--shadow-2xl);
+            border-color: var(--primary-red);
+        }
+
+        .login-card:hover::before {
+            left: 100%;
+        }
+
+        .login-card h3 {
+            color: var(--gray-800);
+            margin-bottom: 2.5rem;
+            font-size: 2rem;
+            font-weight: 800;
+            text-align: center;
+            position: relative;
+            letter-spacing: -0.01em;
+        }
+
+        .admin-card h3 {
+            color: var(--primary-red);
+        }
+
+        .admin-card h3::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-red), var(--accent-red));
+            border-radius: 2px;
+        }
+
+        .student-card h3::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--gray-700), var(--gray-800));
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.75rem;
+            color: var(--gray-700);
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.01em;
+        }
+
+        input[type="text"], input[type="password"], input[type="number"], select {
+            width: 100%;
+            padding: 1.25rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--pure-white);
+            font-weight: 500;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .input-error {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1) !important;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .validation-info {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            margin-top: 0.25rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1.25rem;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.025em;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .btn:active::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-admin {
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            color: var(--pure-white);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-admin:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+            background: linear-gradient(135deg, var(--accent-red), var(--primary-red));
+        }
+
+        .btn-student {
+            background: linear-gradient(135deg, var(--gray-800), var(--dark-black));
+            color: var(--pure-white);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-student:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+            background: linear-gradient(135deg, var(--gray-700), var(--gray-800));
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .dashboard {
+            padding: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--light-gray);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding: 2rem 2.5rem;
+            background: var(--pure-white);
+            border-radius: 20px;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-md);
+        }
+
+        .user-info {
+            color: var(--primary-red);
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: -0.01em;
+        }
+
+        .logout-btn {
+            background: var(--gray-600);
+            color: var(--pure-white);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.95rem;
+        }
+
+        .logout-btn:hover {
+            background: var(--gray-700);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 0;
+            margin-bottom: 3rem;
+            background: var(--pure-white);
+            padding: 0.75rem;
+            border-radius: 20px;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-md);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1.25rem 2rem;
+            border: none;
+            background: transparent;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            color: var(--gray-600);
+            font-size: 1rem;
+            letter-spacing: 0.01em;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary-red), var(--accent-red));
+            color: var(--pure-white);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn:not(.active):hover {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .exam-form {
+            background: var(--pure-white);
+            padding: 3.5rem;
+            border-radius: 24px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .exam-form h3 {
+            color: var(--gray-800);
+            margin-bottom: 2.5rem;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .question-item {
+            background: var(--light-gray);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--gray-200);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .question-item:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-red);
+        }
+
+        .question-item input, .question-item textarea, .question-item select {
+            width: 100%;
+            margin: 0.75rem 0;
+            padding: 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: var(--pure-white);
+        }
+
+        .question-item input:focus, .question-item textarea:focus, .question-item select:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .exam-list, .results-list {
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        }
+
+        .exam-card, .result-card {
+            background: var(--pure-white);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .exam-card::before, .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-red), var(--accent-red));
+        }
+
+        .exam-card:hover, .result-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-red);
+        }
+
+        .exam-code {
+            background: linear-gradient(135deg, var(--primary-red), var(--accent-red));
+            color: var(--pure-white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-top: 1.5rem;
+            letter-spacing: 0.05em;
+            box-shadow: var(--shadow-md);
+        }
+
+        
+        .delete-btn {
+    background: linear-gradient(135deg, #dc2626, #991b1b);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-left: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .delete-btn:hover {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        .delete-btn:active {
+    transform: translateY(0);
+        }
+
+        .exam-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    gap: 0.75rem;
+        }
+
+
+
+        .student-exam {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .question {
+            background: var(--pure-white);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border-radius: 20px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .question:hover {
+            border-color: var(--primary-red);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .question h4 {
+            margin-bottom: 2rem;
+            color: var(--gray-800);
+            font-size: 1.3rem;
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid var(--gray-200);
+            background: var(--pure-white);
+        }
+
+        .option:hover {
+            background: var(--light-red);
+            border-color: var(--primary-red);
+            transform: translateX(4px);
+        }
+
+        .option input[type="radio"]:checked + span {
+            font-weight: 700;
+            color: var(--primary-red);
+        }
+
+        .submit-exam-btn {
+            background: linear-gradient(135deg, var(--gray-800), var(--dark-black));
+            color: var(--pure-white);
+            padding: 1.5rem 2.5rem;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 3rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.025em;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .submit-exam-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-xl);
+            background: linear-gradient(135deg, var(--gray-700), var(--gray-800));
+        }
+
+        .timer-display {
+            background: linear-gradient(135deg, var(--primary-red), var(--accent-red));
+            color: var(--pure-white);
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-lg);
+            letter-spacing: 0.05em;
+        }
+
+        .add-question-btn {
+            background: var(--gray-600);
+            color: var(--pure-white);
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            margin: 1rem 0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .add-question-btn:hover {
+            background: var(--gray-700);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .remove-question-btn {
+            background: var(--primary-red);
+            color: var(--pure-white);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 1rem;
+        }
+
+        .remove-question-btn:hover {
+            background: var(--dark-red);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        @media (max-width: 1024px) {
+            .header h1 {
+                font-size: 3rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-section {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 3rem 2rem;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .login-section {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: stretch;
+            }
+            
+            .tab-buttons {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .exam-list, .results-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content, .dashboard {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content, .dashboard {
+                padding: 1.5rem;
+            }
+            
+            .header {
+                padding: 2rem 1.5rem;
+            }
+            
+            .login-card, .exam-form {
+                padding: 2rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+    <div class="header-content">
+        <div class="logo-section">
+            <img src="static/logo.png" alt="Joy University Logo" class="logo" />
+        </div>
+        <div class="header-text">
+            <h1>Joy University</h1>
+            <div class="subtitle">Examination Hub</div>
+            <div class="powered-by">
+                Powered by <span class="company">OrionAC</span><br>
+                <small>A student-led company from Joy University</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <!-- Login Section -->
+        <div id="loginSection" class="main-content">
+            <div class="login-section">
+                <!-- Admin Login -->
+                <div class="login-card admin-card">
+                    <h3>Administrator Portal</h3>
+                    <form id="adminLoginForm">
+                        <div class="form-group">
+                            <label for="adminUsername">Username</label>
+                            <input type="text" id="adminUsername" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPassword">Password</label>
+                            <input type="password" id="adminPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-admin">Access Admin Panel</button>
+                    </form>
+                </div>
+
+                <!-- Student Login -->
+                <div class="login-card student-card">
+                    <h3>Student Portal</h3>
+                    <form id="studentLoginForm">
+                        <div class="form-group">
+                            <label for="studentName">Full Name</label>
+                            <input type="text" id="studentName" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="studentId">Student ID</label>
+                            <input type="text" id="studentId" required placeholder="Enter your student ID">
+                            <div class="validation-info">Enter your student ID in any format</div>
+                            <div id="studentIdError" class="error-message hidden"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="school">School</label>
+                            <select id="school" required>
+                                <option value="">Select School</option>
+                                <option value="School of Engineering and Technology">School of Engineering and Technology</option>
+                                <option value="School of Design">School of Design</option>
+                                <option value="School of Computational Intelligence">School of Computational Intelligence</option>
+                                <option value="School of Arts & Natural Sciences">School of Arts & Natural Sciences</option>
+                                <option value="School of Agricultural Sciences">School of Agricultural Sciences</option>
+                                <option value="School of Law">School of Law</option>
+                                <option value="School of Life & Health Sciences">School of Life & Health Sciences</option>
+                                <option value="School of Nursing">School of Nursing</option>
+                                <option value="School of Pharmacy">School of Pharmacy</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="examCode">Examination Code</label>
+                        
+                            <input type="text" id="examCode" required placeholder="Enter exam code">
+                        </div>
+                        <button type="submit" class="btn btn-student">Enter Examination</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="adminDashboard" class="dashboard hidden">
+            <div class="dashboard-header">
+                <div class="user-info">Administrator Dashboard</div>
+                <button class="logout-btn" onclick="logout()">Sign Out</button>
+            </div>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showTab('create')">Create Examination</button>
+                <button class="tab-btn" onclick="showTab('manage')">Manage Examinations</button>
+                <button class="tab-btn" onclick="showTab('results')">View Results</button>
+            </div>
+
+            <!-- Create Exam Tab -->
+            <div id="createTab" class="tab-content">
+                <div class="exam-form">
+                    <h3>Create New Examination</h3>
+                    <form id="createExamForm">
+                        <div class="form-group">
+                            <label for="examTitle">Examination Title</label>
+                            <input type="text" id="examTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="examDuration">Duration (minutes)</label>
+                            <input type="number" id="examDuration" required min="1">
+                        </div>
+                        
+                        <div id="questionsContainer">
+                            <h4 style="margin-bottom: 1rem; color: #1f2937; font-weight: 600;">Questions</h4>
+                            <div class="question-item">
+                                <input type="text" placeholder="Enter question text" name="question" required>
+                                <input type="text" placeholder="Option A" name="optionA" required>
+                                <input type="text" placeholder="Option B" name="optionB" required>
+                                <input type="text" placeholder="Option C" name="optionC" required>
+                                <input type="text" placeholder="Option D" name="optionD" required>
+                                <select name="correct" required>
+                                    <option value="">Select Correct Answer</option>
+                                    <option value="A">Option A</option>
+                                    <option value="B">Option B</option>
+                                    <option value="C">Option C</option>
+                                    <option value="D">Option D</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <button type="button" onclick="addQuestion()" class="add-question-btn">Add Another Question</button>
+                        <button type="submit" class="btn btn-admin">Create Examination</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Manage Exams Tab -->
+            <div id="manageTab" class="tab-content hidden">
+                <h3 style="margin-bottom: 2rem; color: #1f2937; font-weight: 700;">Your Examinations</h3>
+                <div id="examsList" class="exam-list"></div>
+            </div>
+
+            <!-- View Results Tab -->
+            <div id="resultsTab" class="tab-content hidden">
+                <h3 style="margin-bottom: 2rem; color: #1f2937; font-weight: 700;">Examination Results</h3>
+                <div id="resultsList" class="results-list"></div>
+            </div>
+        </div>
+
+        <!-- Student Exam -->
+        <div id="studentExam" class="dashboard hidden">
+            <div class="dashboard-header">
+                <div class="user-info">👨‍🎓 Student: <span id="studentNameDisplay"></span></div>
+                <div class="timer-display">⏰ Time Left: <span id="timer">00:00</span></div>
+                <button class="logout-btn" onclick="logout()">🚪 Exit Exam</button>
+            </div>
+
+            <div class="student-exam">
+                <h3 id="examTitleDisplay"></h3>
+                <form id="examForm">
+                    <div id="questionsDisplay"></div>
+                    <button type="submit" class="submit-exam-btn">✅ Submit Examination</button>
+                </form>
+            </div>
+        </div>
+    </div>
+     
+    <script>
+        let currentExam = null;
+        let timer = null;
+
+        // Add loading state management
+        function setLoading(element, isLoading) {
+            if (isLoading) {
+                element.classList.add('loading');
+            } else {
+                element.classList.remove('loading');
+            }
+        }
+
+        // Login handlers
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const submitBtn = form.querySelector('.btn');
+            setLoading(form, true);
+            
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            try {
+                const response = await fetch('/admin/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, password})
+                });
+                
+                if (response.ok) {
+                    showAdminDashboard();
+                    loadExams();
+                    loadResults();
+                } else {
+                    alert('❌ Invalid admin credentials. Please try again.');
+                }
+            } catch (error) {
+                alert('🔌 Connection error. Please check your network and try again.');
+            } finally {
+                setLoading(form, false);
+            }
+        });
+
+        // Replace the existing student login form handler with this fixed version
+
+// Replace the existing student login form handler with this corrected version
+        document.getElementById('studentLoginForm').addEventListener('submit', async (e) => {
+           e.preventDefault();
+           const form = e.target;
+           setLoading(form, true);
+    
+    // Collect all form data with proper validation
+           const name = document.getElementById('studentName').value.trim();
+           const studentId = document.getElementById('studentId').value.trim();
+           const school = document.getElementById('school').value;
+           const examCode = document.getElementById('examCode').value.trim().toUpperCase();
+    
+    // Clear any previous error messages
+           document.getElementById('studentIdError').classList.add('hidden');
+           document.getElementById('studentId').classList.remove('input-error');
+    
+    // Validate student ID format (should contain only letters and numbers)
+          const studentIdPattern = /^[A-Za-z0-9]+$/;
+          if (!studentIdPattern.test(studentId)) {
+           document.getElementById('studentIdError').textContent = 'Student ID should contain only letters and numbers';
+           document.getElementById('studentIdError').classList.remove('hidden');
+           document.getElementById('studentId').classList.add('input-error');
+           setLoading(form, false);
+           return;
+          }
+    
+    // Validate all required fields
+          if (!name || !studentId || !school || !examCode) {
+           alert('❌ Please fill in all required fields.');
+           setLoading(form, false);
+           return;
+          }
+    
+    // Validate name (should contain only letters and spaces)
+          const namePattern = /^[A-Za-z\s]+$/;
+          if (!namePattern.test(name)) {
+           alert('❌ Please enter a valid full name (letters and spaces only).');
+           setLoading(form, false);
+           return;
+          }
+    
+          try {
+           const response = await fetch('/student/join', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                studentId: studentId,
+                school: school,
+                examCode: examCode
+            })
+          });
+        
+          const responseData = await response.json();
+        
+          if (response.ok) {
+            currentExam = responseData;
+            showStudentExam(name, responseData);
+        } else {
+            // Handle different error types
+            let errorMessage = '❌ ';
+            switch (response.status) {
+                case 400:
+                    errorMessage += responseData.message || 'Invalid request data. Please check all fields and try again.';
+                    break;
+                case 404:
+                    errorMessage += 'Exam code not found. Please verify the code and try again.';
+                    break;
+                case 409:
+                    errorMessage += 'You have already taken this exam.';
+                    break;
+                default:
+                    errorMessage += responseData.message || 'An error occurred. Please try again.';
+            }
+            alert(errorMessage);
+          }
+      } catch (error) {
+         console.error('Network error:', error);
+         alert('🔌 Connection error. Please check your network and try again.');
+       }finally {
+         setLoading(form, false);
+      }
+    });
+
+        function addQuestion() {
+            const container = document.getElementById('questionsContainer');
+            const questionCount = container.querySelectorAll('.question-item').length + 1;
+            
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-item';
+            questionDiv.style.animation = 'slideInUp 0.5s ease-out';
+            questionDiv.innerHTML = `
+                <input type="text" placeholder="Enter question ${questionCount} here..." name="question" required>
+                <input type="text" placeholder="Option A" name="optionA" required>
+                <input type="text" placeholder="Option B" name="optionB" required>
+                <input type="text" placeholder="Option C" name="optionC" required>
+                <input type="text" placeholder="Option D" name="optionD" required>
+                <select name="correct" required>
+                    <option value="">Select Correct Answer</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                </select>
+                <button type="button" onclick="removeQuestion(this)" style="background: linear-gradient(135deg, #f56565, #e53e3e); color: white; padding: 0.8rem 1.2rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 1rem; transition: all 0.3s ease;">🗑️ Remove Question</button>
+            `;
+            container.appendChild(questionDiv);
+        }
+
+        function removeQuestion(button) {
+            const questionItem = button.parentElement;
+            questionItem.style.animation = 'slideOut 0.3s ease-out forwards';
+            setTimeout(() => {
+                questionItem.remove();
+                updateQuestionNumbers();
+            }, 300);
+        }
+
+        function updateQuestionNumbers() {
+            const questionItems = document.querySelectorAll('.question-item');
+            questionItems.forEach((item, index) => {
+                const questionInput = item.querySelector('input[name="question"]');
+                if (questionInput.placeholder.includes('question')) {
+                    questionInput.placeholder = `Enter question ${index + 1} here...`;
+                }
+            });
+        }
+
+        function resetQuestionsContainer() {
+            document.getElementById('questionsContainer').innerHTML = `
+                <h4>📝 Questions</h4>
+                <div class="question-item">
+                    <input type="text" placeholder="Enter your question here..." name="question" required>
+                    <input type="text" placeholder="Option A" name="optionA" required>
+                    <input type="text" placeholder="Option B" name="optionB" required>
+                    <input type="text" placeholder="Option C" name="optionC" required>
+                    <input type="text" placeholder="Option D" name="optionD" required>
+                    <select name="correct" required>
+                        <option value="">Select Correct Answer</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                    </select>
+                </div>
+            `;
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.remove('hidden');
+        }
+
+        function showStudentExam(name, exam) {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('studentExam').classList.remove('hidden');
+            document.getElementById('studentNameDisplay').textContent = name;
+            document.getElementById('examTitleDisplay').textContent = `📝 ${exam.title}`;
+            
+            const questionsDiv = document.getElementById('questionsDisplay');
+            questionsDiv.innerHTML = '';
+            
+            exam.questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.style.animationDelay = `${index * 0.1}s`;
+                questionDiv.style.animation = 'slideInUp 0.5s ease-out forwards';
+                questionDiv.innerHTML = `
+                    <h4>Question ${index + 1}: ${q.question}</h4>
+                    <div class="options">
+                        <label class="option">
+                            <input type="radio" name="question_${index}" value="A" required>
+                            <span>A) ${q.options.A}</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="question_${index}" value="B" required>
+                            <span>B) ${q.options.B}</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="question_${index}" value="C" required>
+                            <span>C) ${q.options.C}</span>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="question_${index}" value="D" required>
+                            <span>D) ${q.options.D}</span>
+                        </label>
+                    </div>
+                `;
+                questionsDiv.appendChild(questionDiv);
+            });
+            
+            startTimer(exam.duration);
+        }
+
+        function startTimer(duration) {
+            let timeLeft = duration * 60;
+            const timerDisplay = document.getElementById('timer');
+            
+            timer = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Change timer color based on remaining time
+                const timerContainer = timerDisplay.parentElement;
+                if (timeLeft <= 300) { // 5 minutes
+                    timerContainer.style.background = 'linear-gradient(135deg, #f56565, #e53e3e)';
+                    timerContainer.style.animation = 'pulse 1s infinite';
+                } else if (timeLeft <= 600) { // 10 minutes
+                    timerContainer.style.background = 'linear-gradient(135deg, #ed8936, #dd6b20)';
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    alert('⏰ Time is up! Your exam is being submitted automatically.');
+                    document.getElementById('examForm').dispatchEvent(new Event('submit'));
+                }
+                timeLeft--;
+            }, 1000);
+        }
+        // Add this exam form submission handler right after the startTimer function
+document.getElementById('examForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (timer) {
+        clearInterval(timer);
+    }
+    
+    const form = e.target;
+    const submitBtn = form.querySelector('.submit-exam-btn');
+    
+    // Disable submit button to prevent double submission
+    submitBtn.disabled = true;
+    submitBtn.textContent = '⏳ Submitting...';
+    
+    try {
+        // Collect answers
+        const answers = {};
+        const formData = new FormData(form);
+        
+        for (let [key, value] of formData.entries()) {
+            answers[key] = value;
+        }
+        
+        // Get student data from the form
+        const studentName = document.getElementById('studentNameDisplay').textContent;
+        const studentId = document.getElementById('studentId').value;
+        const school = document.getElementById('school').value;
+        
+        const submissionData = {
+            examCode: currentExam.code,
+            studentName: studentName,
+            studentId: studentId,
+            school: school,
+            answers: answers
+        };
+        
+        const response = await fetch('/student/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(submissionData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            alert(`🎉 Exam submitted successfully!\n\nYour Score: ${result.score}/${result.total}\nPercentage: ${Math.round((result.score/result.total)*100)}%\n\nThank you for taking the exam!`);
+            logout(); // Return to login screen
+        } else {
+            alert('❌ Error submitting exam: ' + (result.message || 'Unknown error'));
+            // Re-enable submit button if there was an error
+            submitBtn.disabled = false;
+            submitBtn.textContent = '✅ Submit Examination';
+        }
+        
+    } catch (error) {
+        console.error('Submission error:', error);
+        alert('🔌 Network error. Please check your connection and try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '✅ Submit Examination';
+    }
+   });
+        function showTab(tabName) {
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            // Show selected tab content
+            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+            
+            // Load data for specific tabs
+            if (tabName === 'manage') {
+                loadExams();
+            } else if (tabName === 'results') {
+                loadResults();
+            }
+        }
+
+        function logout() {
+            if (timer) {
+                clearInterval(timer);
+            }
+            
+            // Show login section
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('studentExam').classList.add('hidden');
+            
+            // Reset forms
+            document.getElementById('adminLoginForm').reset();
+            document.getElementById('studentLoginForm').reset();
+            
+            // Reset current exam
+            currentExam = null;
+            
+            // Reset timer display
+            const timerContainer = document.querySelector('.timer-display');
+            if (timerContainer) {
+                timerContainer.style.background = '';
+                timerContainer.style.animation = '';
+            }
+        }
+        
+        async function loadExams() {
+            try {
+                const response = await fetch('/admin/exams');
+                const exams = await response.json();
+                
+                const examsList = document.getElementById('examsList');
+                
+                if (exams.length === 0) {
+                    examsList.innerHTML = `
+                        <div style="text-align: center; padding: 3rem; color: #718096;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+                            <h3>No Exams Created Yet</h3>
+                            <p>Create your first exam using the "Create Exam" tab.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                examsList.innerHTML = exams.map((exam, index) => `
+                    <div class="exam-card">
+                    <h4>${exam.title}</h4>
+                    <p><strong>Duration:</strong> ${exam.duration} minutes</p>
+                    <p><strong>Questions:</strong> ${exam.questions.length}</p>
+                    <p><strong>Created:</strong> ${new Date(exam.created).toLocaleDateString()}</p>
+                    <p><strong>Status:</strong> ${exam.active ? 'Active' : 'Inactive'}</p>
+                    <div class="exam-code">${exam.code}</div>
+    
+                    <!-- Add this actions div -->
+                   <div class="exam-actions">
+                   
+                    <button class="delete-btn" onclick="deleteExam('${exam.code}')">
+                     Delete
+                   </button>
+                  </div>
+                </div>
+
+                `).join('');
+                
+                // Trigger animations
+                setTimeout(() => {
+                    document.querySelectorAll('.exam-card').forEach(card => {
+                        card.style.opacity = '1';
+                    });
+                }, 100);
+            } catch (error) {
+                console.error('Error loading exams:', error);
+                document.getElementById('examsList').innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #f56565;">
+                        <p>❌ Error loading exams. Please refresh and try again.</p>
+                    </div>
+                `;
+            }
+        }
+        function deleteExam(examCode) {
+        const confirmDelete = confirm(`Are you sure you want to delete exam "${examCode}"? This action cannot be undone.`);
+        if (confirmDelete) {
+            fetch(`/admin/delete-exam/${examCode}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    loadExams(); // Refresh list
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to delete exam');
+            });
+        }
+    }
+
+        // Replace your existing loadResults() function with this enhanced version
+async function loadResults() {
+    try {
+        const response = await fetch('/admin/results');
+        const results = await response.json();
+        
+        const resultsList = document.getElementById('resultsList');
+        
+        if (results.length === 0) {
+            resultsList.innerHTML = `
+                <div style="text-align: center; padding: 3rem; color: #718096;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                    <h3>No Results Available</h3>
+                    <p>Results will appear here once students complete their exams.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        resultsList.innerHTML = results.map((result, index) => {
+            const percentage = Math.round((result.score / result.total) * 100);
+            let gradeColor = '#f56565'; // Red for low scores
+            let gradeEmoji = '📚';
+            
+            if (percentage >= 80) {
+                gradeColor = '#48bb78'; // Green for high scores
+                gradeEmoji = '🎉';
+            } else if (percentage >= 60) {
+                gradeColor = '#ed8936'; // Orange for medium scores
+                gradeEmoji = '👍';
+            }
+            
+            return `
+                <div class="result-card" style="animation: slideInUp 0.5s ease-out ${index * 0.1}s forwards; opacity: 0;">
+                    <h4>📝 ${result.examTitle}</h4>
+                    <div style="margin: 1rem 0; padding: 1rem; background: #f8fafc; border-radius: 12px; border-left: 4px solid var(--primary-red);">
+                        <p><strong>👨‍🎓 Student Name:</strong> ${result.studentName}</p>
+                        <p><strong>🆔 Student ID:</strong> ${result.studentId || 'N/A'}</p>
+                        <p><strong>🏫 School:</strong> ${result.school || 'N/A'}</p>
+                    </div>
+                    <p><strong>📊 Score:</strong> 
+                        <span style="color: ${gradeColor}; font-weight: 700;">
+                            ${gradeEmoji} ${result.score}/${result.total} (${percentage}%)
+                        </span>
+                    </p>
+                    <p><strong>📅 Submitted:</strong> ${new Date(result.submitted).toLocaleDateString('en-IN', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}</p>
+                    <div style="margin-top: 1rem; padding: 0.75rem; background: ${gradeColor}20; border-radius: 12px; text-align: center; border: 1px solid ${gradeColor}40;">
+                        <strong style="color: ${gradeColor}; font-size: 1.1rem;">
+                            ${percentage >= 80 ? '🌟 Excellent Performance!' : 
+                              percentage >= 60 ? '👏 Good Performance!' : '📖 Needs Improvement'}
+                        </strong>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        // Trigger animations
+        setTimeout(() => {
+            document.querySelectorAll('.result-card').forEach(card => {
+                card.style.opacity = '1';
+            });
+        }, 100);
+    } catch (error) {
+        console.error('Error loading results:', error);
+        document.getElementById('resultsList').innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: #f56565;">
+                <p>❌ Error loading results. Please refresh and try again.</p>
+            </div>
+        `;
+    }
+}
+        
+        // Add CSS animation for slide out
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(-100%);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add some interactive enhancements
+            console.log('🎓 Joy University Examination Hub - Powered by OrionAC');
+            console.log('🚀 System initialized successfully');
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Ctrl/Cmd + Enter to submit forms
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    const activeForm = document.querySelector('form:not(.hidden) .btn:not([disabled])');
+                    if (activeForm) {
+                        activeForm.click();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
