@@ -10,9 +10,9 @@ import re
 app = Flask(__name__)
 
 # File paths for persistent storage
-DATA_DIR = 'exam_data'
-EXAMS_FILE = os.path.join(DATA_DIR, 'exams.json')
-RESULTS_FILE = os.path.join(DATA_DIR, 'results.json')
+DATA_DIR = "exam_data"
+EXAMS_FILE = os.path.join(DATA_DIR, "exams.json")
+RESULTS_FILE = os.path.join(DATA_DIR, "results.json")
 
 # Default admin credentials
 ADMIN_USERNAME = "admin"
@@ -23,2525 +23,4960 @@ file_lock = threading.Lock()
 
 # School options
 SCHOOLS = [
-    "School of Engineering and Technology","School of Design","School of Computational Intelligence","School of Arts & Natural Sciences","School of Agricultural Sciences","School of Law","School of Life & Health Sciences","School of Nursing","School of Pharmacy"
-    
+    "School of Entrepreneurship and Management",
+    "School of Engineering and Technology",
+    "School of Design",
+    "School of Computational Intelligence",
+    "School of Arts & Natural Sciences",
+    "School of Agricultural Sciences",
+    "School of Law",
+    "School of Life & Health Sciences",
+    "School of Nursing",
+    "School of Pharmacy",
 ]
+
 
 def ensure_data_directory():
     """Ensure the data directory exists"""
     if not os.path.exists(DATA_DIR):
         os.makedirs(DATA_DIR)
 
+
 def load_exams():
     """Load exams from disk"""
     ensure_data_directory()
     try:
         if os.path.exists(EXAMS_FILE):
-            with open(EXAMS_FILE, 'r', encoding='utf-8') as f:
+            with open(EXAMS_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
         return {}
     except (json.JSONDecodeError, IOError) as e:
         print(f"Error loading exams: {e}")
         return {}
 
+
 def save_exams(exams):
     """Save exams to disk"""
     ensure_data_directory()
     try:
         with file_lock:
-            with open(EXAMS_FILE, 'w', encoding='utf-8') as f:
+            with open(EXAMS_FILE, "w", encoding="utf-8") as f:
                 json.dump(exams, f, indent=2, ensure_ascii=False)
         return True
     except IOError as e:
         print(f"Error saving exams: {e}")
         return False
 
+
 def load_results():
     """Load results from disk"""
     ensure_data_directory()
     try:
         if os.path.exists(RESULTS_FILE):
-            with open(RESULTS_FILE, 'r', encoding='utf-8') as f:
+            with open(RESULTS_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
         return []
     except (json.JSONDecodeError, IOError) as e:
         print(f"Error loading results: {e}")
         return []
 
+
 def save_results(results):
     """Save results to disk"""
     ensure_data_directory()
     try:
         with file_lock:
-            with open(RESULTS_FILE, 'w', encoding='utf-8') as f:
+            with open(RESULTS_FILE, "w", encoding="utf-8") as f:
                 json.dump(results, f, indent=2, ensure_ascii=False)
         return True
     except IOError as e:
         print(f"Error saving results: {e}")
         return False
 
+
 def generate_exam_code():
     """Generate a random 6-character exam code"""
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    return "".join(random.choices(string.ascii_uppercase + string.digits, k=6))
 
-@app.route('/')
+
+@app.route("/")
 def index():
     """Serve the main HTML page"""
-    return send_from_directory('.', 'index.html')
+    return send_from_directory(".", "index.html")
 
-@app.route('/admin/login', methods=['POST'])
+
+@app.route("/admin/login", methods=["POST"])
 def admin_login():
     """Handle admin login"""
     data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    
+    username = data.get("username")
+    password = data.get("password")
+
     if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
         return jsonify({"success": True, "message": "Login successful"})
     else:
         return jsonify({"success": False, "message": "Invalid credentials"}), 401
 
-@app.route('/admin/create-exam', methods=['POST'])
+
+@app.route("/admin/create-exam", methods=["POST"])
 def create_exam():
     """Create a new exam"""
     data = request.get_json()
-    
+
     # Load current exams
     exams = load_exams()
-    
+
     # Generate unique exam code
     exam_code = generate_exam_code()
     while exam_code in exams:
         exam_code = generate_exam_code()
-    
+
     # Create exam object
     exam = {
-        'code': exam_code,
-        'title': data.get('title'),
-        'duration': data.get('duration'),
-        'questions': data.get('questions'),
-        'created': datetime.now().isoformat(),
-        'active': True
+        "code": exam_code,
+        "title": data.get("title"),
+        "duration": data.get("duration"),
+        "questions": data.get("questions"),
+        "created": datetime.now().isoformat(),
+        "active": True,
     }
-    
+
     # Validate exam data
-    if not exam['title'] or not exam['questions'] or len(exam['questions']) == 0:
+    if not exam["title"] or not exam["questions"] or len(exam["questions"]) == 0:
         return jsonify({"success": False, "message": "Invalid exam data"}), 400
-    
+
     # Validate questions
-    for i, question in enumerate(exam['questions']):
-        if not all(key in question for key in ['question', 'options', 'correct']):
-            return jsonify({"success": False, "message": f"Invalid question {i+1}"}), 400
-        
-        if not all(option in question['options'] for option in ['A', 'B', 'C', 'D']):
-            return jsonify({"success": False, "message": f"Invalid options for question {i+1}"}), 400
-        
-        if question['correct'] not in ['A', 'B', 'C', 'D']:
-            return jsonify({"success": False, "message": f"Invalid correct answer for question {i+1}"}), 400
-    
+    for i, question in enumerate(exam["questions"]):
+        if not all(key in question for key in ["question", "options", "correct"]):
+            return (
+                jsonify({"success": False, "message": f"Invalid question {i+1}"}),
+                400,
+            )
+
+        if not all(option in question["options"] for option in ["A", "B", "C", "D"]):
+            return (
+                jsonify(
+                    {"success": False, "message": f"Invalid options for question {i+1}"}
+                ),
+                400,
+            )
+
+        if question["correct"] not in ["A", "B", "C", "D"]:
+            return (
+                jsonify(
+                    {
+                        "success": False,
+                        "message": f"Invalid correct answer for question {i+1}",
+                    }
+                ),
+                400,
+            )
+
     # Store exam
     exams[exam_code] = exam
-    
+
     # Save to disk
     if not save_exams(exams):
         return jsonify({"success": False, "message": "Failed to save exam"}), 500
-    
-    return jsonify({
-        "success": True, 
-        "message": "Exam created successfully",
-        "examCode": exam_code
-    })
 
-@app.route('/admin/exams', methods=['GET'])
+    return jsonify(
+        {"success": True, "message": "Exam created successfully", "examCode": exam_code}
+    )
+
+
+@app.route("/admin/exams", methods=["GET"])
 def get_exams():
     """Get all exams for admin"""
     exams = load_exams()
     exam_list = []
-    
+
     for code, exam in exams.items():
         exam_info = {
-            'code': code,
-            'title': exam['title'],
-            'duration': exam['duration'],
-            'questions': exam['questions'],
-            'created': exam['created'],
-            'active': exam['active']
+            "code": code,
+            "title": exam["title"],
+            "duration": exam["duration"],
+            "questions": exam["questions"],
+            "created": exam["created"],
+            "active": exam["active"],
         }
         exam_list.append(exam_info)
-    
+
     # Sort by creation date (newest first)
-    exam_list.sort(key=lambda x: x['created'], reverse=True)
+    exam_list.sort(key=lambda x: x["created"], reverse=True)
     return jsonify(exam_list)
 
-@app.route('/admin/results', methods=['GET'])
+
+@app.route("/admin/results", methods=["GET"])
 def get_results():
     """Get all exam results for admin"""
     results = load_results()
     # Sort results by submission date (newest first)
-    sorted_results = sorted(results, key=lambda x: x['submitted'], reverse=True)
+    sorted_results = sorted(results, key=lambda x: x["submitted"], reverse=True)
     return jsonify(sorted_results)
 
-@app.route('/api/schools', methods=['GET'])
+
+@app.route("/api/schools", methods=["GET"])
 def get_schools():
     """Get list of available schools"""
     return jsonify(SCHOOLS)
 
-@app.route('/student/join', methods=['POST'])
+
+@app.route("/student/join", methods=["POST"])
 def student_join():
     """Allow student to join an exam using exam code or 'BIOJOY' for random selection"""
     data = request.get_json()
-    exam_code = data.get('examCode', '').upper()
-    student_name = data.get('name', '').strip()
-    student_id = data.get('studentId', '').strip()
-    school = data.get('school', '').strip()
+    exam_code = data.get("examCode", "").upper()
+    student_name = data.get("name", "").strip()
+    student_id = data.get("studentId", "").strip()
+    school = data.get("school", "").strip()
 
     # Validate required fields
     if not exam_code or not student_name or not student_id or not school:
         return jsonify({"success": False, "message": "All fields are required"}), 400
-    
+
     # Validate school selection
     if school not in SCHOOLS or school == "Select School":
-        return jsonify({"success": False, "message": "Please select a valid school"}), 400
-    
+        return (
+            jsonify({"success": False, "message": "Please select a valid school"}),
+            400,
+        )
+
     # Validate student ID format (should be numeric and reasonable length)
-    
-    if not re.match(r'^[A-Za-z0-9-_]+$', student_id):
-      return jsonify({"success": False, "message": "Student ID should contain only letters, numbers, hyphens, or underscores"}), 400
+
+    if not re.match(r"^[A-Za-z0-9-_]+$", student_id):
+        return (
+            jsonify(
+                {
+                    "success": False,
+                    "message": "Student ID should contain only letters, numbers, hyphens, or underscores",
+                }
+            ),
+            400,
+        )
 
     # Load exams from disk
     exams = load_exams()
 
     # Special logic for 'BIOJOY'
-    if exam_code == 'BIOJOY':
-        possible_codes = ["BIO003", "BIO002", "BIO001"]
-        active_codes = [code for code in possible_codes if code in exams and exams[code]['active']]
+    if exam_code == "BIOJOY":
+        possible_codes = ["BIO005", "BIO004", "BIO003", "BIO002", "BIO001"]
+        active_codes = [
+            code for code in possible_codes if code in exams and exams[code]["active"]
+        ]
         if not active_codes:
-            return jsonify({"success": False, "message": "No active biology exams available"}), 400
+            return (
+                jsonify(
+                    {"success": False, "message": "No active biology exams available"}
+                ),
+                400,
+            )
+        exam_code = random.choice(active_codes)
+        
+    if exam_code == "COMJOY":
+        possible_codes = ["COM005", "COM004", "COM003", "COM002", "COM001"]
+        active_codes = [
+            code for code in possible_codes if code in exams and exams[code]["active"]
+        ]
+        if not active_codes:
+            return (
+                jsonify(
+                    {"success": False, "message": "No active computer exams available"}
+                ),
+                400,
+            )
         exam_code = random.choice(active_codes)
 
     if exam_code not in exams:
         return jsonify({"success": False, "message": "Invalid exam code"}), 404
 
     exam = exams[exam_code]
-    if not exam['active']:
+    if not exam["active"]:
         return jsonify({"success": False, "message": "Exam is not active"}), 400
 
     # Check if student has already taken this exam
     results = load_results()
-    existing_result = next((r for r in results if r['examCode'] == exam_code and r['studentId'] == student_id), None)
+    existing_result = next(
+        (
+            r
+            for r in results
+            if r["examCode"] == exam_code and r["studentId"] == student_id
+        ),
+        None,
+    )
     if existing_result:
-        return jsonify({"success": False, "message": "You have already taken this exam"}), 400
+        return (
+            jsonify({"success": False, "message": "You have already taken this exam"}),
+            400,
+        )
 
     # Return exam data without correct answers
     exam_data = {
-        'code': exam_code,
-        'title': exam['title'],
-        'duration': exam['duration'],
-        'questions': []
+        "code": exam_code,
+        "title": exam["title"],
+        "duration": exam["duration"],
+        "questions": [],
     }
 
-    for question in exam['questions']:
+    for question in exam["questions"]:
         student_question = {
-            'question': question['question'],
-            'options': question['options']
+            "question": question["question"],
+            "options": question["options"],
         }
-        exam_data['questions'].append(student_question)
+        exam_data["questions"].append(student_question)
 
     return jsonify(exam_data)
 
-@app.route('/student/submit', methods=['POST'])
+
+@app.route("/student/submit", methods=["POST"])
 def submit_exam():
     """Handle exam submission by student"""
     data = request.get_json()
-    exam_code = data.get('examCode', '').upper()
-    student_name = data.get('studentName', '').strip()
-    student_id = data.get('studentId', '').strip()
-    school = data.get('school', '').strip()
-    answers = data.get('answers', {})
-    
+    exam_code = data.get("examCode", "").upper()
+    student_name = data.get("studentName", "").strip()
+    student_id = data.get("studentId", "").strip()
+    school = data.get("school", "").strip()
+    answers = data.get("answers", {})
+
     if not all([exam_code, student_name, student_id, school, answers]):
         return jsonify({"success": False, "message": "Missing required data"}), 400
-    
+
     # Load exams from disk
     exams = load_exams()
-    
+
     if exam_code not in exams:
         return jsonify({"success": False, "message": "Invalid exam code"}), 404
-    
+
     exam = exams[exam_code]
-    
+
     # Calculate score
     score = 0
-    total_questions = len(exam['questions'])
-    
-    for i, question in enumerate(exam['questions']):
-        student_answer = answers.get(f'question_{i}')
-        if student_answer == question['correct']:
+    total_questions = len(exam["questions"])
+
+    for i, question in enumerate(exam["questions"]):
+        student_answer = answers.get(f"question_{i}")
+        if student_answer == question["correct"]:
             score += 1
-    
+
     # Create result object with additional student information
     result = {
-        'examCode': exam_code,
-        'examTitle': exam['title'],
-        'studentName': student_name,
-        'studentId': student_id,
-        'school': school,
-        'score': score,
-        'total': total_questions,
-        'percentage': round((score / total_questions) * 100, 2),
-        'answers': answers,
-        'submitted': datetime.now().isoformat()
+        "examCode": exam_code,
+        "examTitle": exam["title"],
+        "studentName": student_name,
+        "studentId": student_id,
+        "school": school,
+        "score": score,
+        "total": total_questions,
+        "percentage": round((score / total_questions) * 100, 2),
+        "answers": answers,
+        "submitted": datetime.now().isoformat(),
     }
-    
+
     # Load current results and add new one
     results = load_results()
     results.append(result)
-    
+
     # Save results to disk
     if not save_results(results):
         return jsonify({"success": False, "message": "Failed to save result"}), 500
-    
-    return jsonify({
-        "success": True,
-        "message": "Exam submitted successfully",
-        "score": score,
-        "total": total_questions,
-        "percentage": result['percentage']
-    })
 
-@app.route('/admin/delete-exam/<exam_code>', methods=['DELETE'])
+    return jsonify(
+        {
+            "success": True,
+            "message": "Exam submitted successfully",
+            "score": score,
+            "total": total_questions,
+            "percentage": result["percentage"],
+        }
+    )
+
+
+@app.route("/admin/delete-exam/<exam_code>", methods=["DELETE"])
 def delete_exam(exam_code):
     """Delete an exam (admin only)"""
     exam_code = exam_code.upper()
-    
+
     # Load exams from disk
     exams = load_exams()
-    
+
     if exam_code not in exams:
         return jsonify({"success": False, "message": "Exam not found"}), 404
-    
+
     # Delete exam
     del exams[exam_code]
-    
+
     # Save updated exams
     if not save_exams(exams):
         return jsonify({"success": False, "message": "Failed to delete exam"}), 500
-    
+
     return jsonify({"success": True, "message": "Exam deleted successfully"})
 
-@app.route('/admin/toggle-exam/<exam_code>', methods=['POST'])
+
+@app.route("/admin/toggle-exam/<exam_code>", methods=["POST"])
 def toggle_exam(exam_code):
     """Toggle exam active status (admin only)"""
     exam_code = exam_code.upper()
-    
+
     # Load exams from disk
     exams = load_exams()
-    
+
     if exam_code not in exams:
         return jsonify({"success": False, "message": "Exam not found"}), 404
-    
+
     # Toggle active status
-    exams[exam_code]['active'] = not exams[exam_code]['active']
-    status = "activated" if exams[exam_code]['active'] else "deactivated"
-    
+    exams[exam_code]["active"] = not exams[exam_code]["active"]
+    status = "activated" if exams[exam_code]["active"] else "deactivated"
+
     # Save updated exams
     if not save_exams(exams):
-        return jsonify({"success": False, "message": "Failed to update exam status"}), 500
-    
-    return jsonify({
-        "success": True, 
-        "message": f"Exam {status} successfully",
-        "active": exams[exam_code]['active']
-    })
+        return (
+            jsonify({"success": False, "message": "Failed to update exam status"}),
+            500,
+        )
 
-@app.route('/admin/exam-details/<exam_code>', methods=['GET'])
+    return jsonify(
+        {
+            "success": True,
+            "message": f"Exam {status} successfully",
+            "active": exams[exam_code]["active"],
+        }
+    )
+
+
+@app.route("/admin/exam-details/<exam_code>", methods=["GET"])
 def get_exam_details(exam_code):
     """Get detailed exam information including results (admin only)"""
     exam_code = exam_code.upper()
-    
+
     # Load data from disk
     exams = load_exams()
     results = load_results()
-    
+
     if exam_code not in exams:
         return jsonify({"success": False, "message": "Exam not found"}), 404
-    
+
     exam = exams[exam_code]
-    
+
     # Get results for this exam
-    exam_results = [r for r in results if r['examCode'] == exam_code]
-    
+    exam_results = [r for r in results if r["examCode"] == exam_code]
+
     # Calculate statistics
     if exam_results:
-        scores = [r['score'] for r in exam_results]
+        scores = [r["score"] for r in exam_results]
         avg_score = sum(scores) / len(scores)
         max_score = max(scores)
         min_score = min(scores)
-        pass_rate = len([s for s in scores if s >= len(exam['questions']) * 0.6]) / len(scores) * 100
-        
+        pass_rate = (
+            len([s for s in scores if s >= len(exam["questions"]) * 0.6])
+            / len(scores)
+            * 100
+        )
+
         # School-wise statistics
         school_stats = {}
         for result in exam_results:
-            school = result.get('school', 'Unknown')
+            school = result.get("school", "Unknown")
             if school not in school_stats:
-                school_stats[school] = {'count': 0, 'total_score': 0}
-            school_stats[school]['count'] += 1
-            school_stats[school]['total_score'] += result['score']
-        
+                school_stats[school] = {"count": 0, "total_score": 0}
+            school_stats[school]["count"] += 1
+            school_stats[school]["total_score"] += result["score"]
+
         for school in school_stats:
-            school_stats[school]['avg_score'] = round(school_stats[school]['total_score'] / school_stats[school]['count'], 2)
+            school_stats[school]["avg_score"] = round(
+                school_stats[school]["total_score"] / school_stats[school]["count"], 2
+            )
     else:
         avg_score = 0
         max_score = 0
         min_score = 0
         pass_rate = 0
         school_stats = {}
-    
-    return jsonify({
-        "exam": exam,
-        "results": exam_results,
-        "statistics": {
-            "totalAttempts": len(exam_results),
-            "averageScore": round(avg_score, 2),
-            "maxScore": max_score,
-            "minScore": min_score,
-            "passRate": round(pass_rate, 2),
-            "schoolStats": school_stats
-        }
-    })
 
-@app.route('/admin/backup', methods=['GET'])
+    return jsonify(
+        {
+            "exam": exam,
+            "results": exam_results,
+            "statistics": {
+                "totalAttempts": len(exam_results),
+                "averageScore": round(avg_score, 2),
+                "maxScore": max_score,
+                "minScore": min_score,
+                "passRate": round(pass_rate, 2),
+                "schoolStats": school_stats,
+            },
+        }
+    )
+
+
+@app.route("/admin/backup", methods=["GET"])
 def backup_data():
     """Create a backup of all data"""
     try:
         exams = load_exams()
         results = load_results()
-        
+
         backup_data = {
-            'exams': exams,
-            'results': results,
-            'backup_date': datetime.now().isoformat(),
-            'schools': SCHOOLS
+            "exams": exams,
+            "results": results,
+            "backup_date": datetime.now().isoformat(),
+            "schools": SCHOOLS,
         }
-        
+
         backup_filename = f"backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
         backup_path = os.path.join(DATA_DIR, backup_filename)
-        
-        with open(backup_path, 'w', encoding='utf-8') as f:
+
+        with open(backup_path, "w", encoding="utf-8") as f:
             json.dump(backup_data, f, indent=2, ensure_ascii=False)
-        
-        return jsonify({
-            "success": True,
-            "message": "Backup created successfully",
-            "filename": backup_filename
-        })
+
+        return jsonify(
+            {
+                "success": True,
+                "message": "Backup created successfully",
+                "filename": backup_filename,
+            }
+        )
     except Exception as e:
         return jsonify({"success": False, "message": f"Backup failed: {str(e)}"}), 500
 
-@app.route('/admin/restore', methods=['POST'])
+
+@app.route("/admin/restore", methods=["POST"])
 def restore_data():
     """Restore data from backup"""
     try:
         data = request.get_json()
-        backup_filename = data.get('filename')
-        
+        backup_filename = data.get("filename")
+
         if not backup_filename:
-            return jsonify({"success": False, "message": "Backup filename required"}), 400
-        
+            return (
+                jsonify({"success": False, "message": "Backup filename required"}),
+                400,
+            )
+
         backup_path = os.path.join(DATA_DIR, backup_filename)
-        
+
         if not os.path.exists(backup_path):
             return jsonify({"success": False, "message": "Backup file not found"}), 404
-        
-        with open(backup_path, 'r', encoding='utf-8') as f:
+
+        with open(backup_path, "r", encoding="utf-8") as f:
             backup_data = json.load(f)
-        
+
         # Validate backup data structure
-        if 'exams' not in backup_data or 'results' not in backup_data:
-            return jsonify({"success": False, "message": "Invalid backup file format"}), 400
-        
+        if "exams" not in backup_data or "results" not in backup_data:
+            return (
+                jsonify({"success": False, "message": "Invalid backup file format"}),
+                400,
+            )
+
         # Save restored data
-        if not save_exams(backup_data['exams']):
-            return jsonify({"success": False, "message": "Failed to restore exams"}), 500
-        
-        if not save_results(backup_data['results']):
-            return jsonify({"success": False, "message": "Failed to restore results"}), 500
-        
-        return jsonify({
-            "success": True,
-            "message": "Data restored successfully"
-        })
+        if not save_exams(backup_data["exams"]):
+            return (
+                jsonify({"success": False, "message": "Failed to restore exams"}),
+                500,
+            )
+
+        if not save_results(backup_data["results"]):
+            return (
+                jsonify({"success": False, "message": "Failed to restore results"}),
+                500,
+            )
+
+        return jsonify({"success": True, "message": "Data restored successfully"})
     except Exception as e:
         return jsonify({"success": False, "message": f"Restore failed: {str(e)}"}), 500
 
-@app.route('/health', methods=['GET'])
+
+@app.route("/health", methods=["GET"])
 def health_check():
     """Health check endpoint"""
     exams = load_exams()
     results = load_results()
-    
-    return jsonify({
-        "status": "healthy",
-        "timestamp": datetime.now().isoformat(),
-        "exams_count": len(exams),
-        "results_count": len(results),
-        "storage_type": "disk",
-        "data_directory": DATA_DIR,
-        "schools_count": len(SCHOOLS)
-    })
+
+    return jsonify(
+        {
+            "status": "healthy",
+            "timestamp": datetime.now().isoformat(),
+            "exams_count": len(exams),
+            "results_count": len(results),
+            "storage_type": "disk",
+            "data_directory": DATA_DIR,
+            "schools_count": len(SCHOOLS),
+        }
+    )
+
 
 @app.errorhandler(404)
 def not_found(error):
     """Handle 404 errors"""
     return jsonify({"success": False, "message": "Endpoint not found"}), 404
 
+
 @app.errorhandler(500)
 def internal_error(error):
     """Handle 500 errors"""
     return jsonify({"success": False, "message": "Internal server error"}), 500
 
+
 def initialize_sample_data():
     """Initialize sample data if no data exists"""
     exams = load_exams()
     # Add initialization code here if needed
-    
+
     # Only create sample data if no exams exist
     if not exams:
         print("No existing data found. Creating sample exams...")
-        
+
         # Sample exam 1
         sample_exam_code = generate_exam_code()
     sample_exam_1 = {
-        'code': "BIO001",
-        'title': 'Bio-Science Entrance Exam 1',
-        'duration': 50,
-        'questions': [
-    {
-      "question": "What is the primary function of xylem?",
-      "options": {
-        "A": "Transport of water",
-        "B": "Photosynthesis",
-        "C": "Food storage",
-        "D": "Reproduction"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "Which pigment is responsible for photosynthesis?",
-      "options": {
-        "A": "Chlorophyll",
-        "B": "Carotene",
-        "C": "Xanthophyll",
-        "D": "Anthocyanin"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "Which part of the plant conducts photosynthesis?",
-      "options": {
-        "A": "Root",
-        "B": "Stem",
-        "C": "Leaf",
-        "D": "Flower"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which of the following is a modified stem?",
-      "options": {
-        "A": "Carrot",
-        "B": "Potato",
-        "C": "Radish",
-        "D": "Beetroot"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "The process of conversion of nitrogen into usable form is:",
-      "options": {
-        "A": "Photosynthesis",
-        "B": "Nitrification",
-        "C": "Fixation",
-        "D": "Fermentation"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which is not a part of the flower?",
-      "options": {
-        "A": "Petal",
-        "B": "Sepal",
-        "C": "Node",
-        "D": "Stigma"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which gas is released during photosynthesis?",
-      "options": {
-        "A": "Carbon dioxide",
-        "B": "Oxygen",
-        "C": "Nitrogen",
-        "D": "Hydrogen"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "The female reproductive part of a flower is:",
-      "options": {
-        "A": "Stamen",
-        "B": "Pistil",
-        "C": "Petal",
-        "D": "Sepal"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which part of the leaf helps in gas exchange?",
-      "options": {
-        "A": "Vein",
-        "B": "Petiole",
-        "C": "Stomata",
-        "D": "Midrib"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "The study of plants is called:",
-      "options": {
-        "A": "Zoology",
-        "B": "Botany",
-        "C": "Geology",
-        "D": "Anatomy"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which organ is responsible for blood purification?",
-      "options": {
-        "A": "Heart",
-        "B": "Lungs",
-        "C": "Kidney",
-        "D": "Liver"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "The basic unit of life is:",
-      "options": {
-        "A": "Tissue",
-        "B": "Cell",
-        "C": "Organ",
-        "D": "Nucleus"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which of these is a vertebrate?",
-      "options": {
-        "A": "Earthworm",
-        "B": "Ant",
-        "C": "Frog",
-        "D": "Snail"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "What type of blood cells fight infections?",
-      "options": {
-        "A": "RBC",
-        "B": "Platelets",
-        "C": "Plasma",
-        "D": "WBC"
-      },
-      "correct": "D"
-    },
-    {
-      "question": "Which of these animals is cold-blooded?",
-      "options": {
-        "A": "Dog",
-        "B": "Frog",
-        "C": "Cat",
-        "D": "Cow"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which part of the brain controls breathing?",
-      "options": {
-        "A": "Cerebrum",
-        "B": "Cerebellum",
-        "C": "Medulla",
-        "D": "Pons"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "What is the function of hemoglobin?",
-      "options": {
-        "A": "Digest fats",
-        "B": "Carry oxygen",
-        "C": "Store energy",
-        "D": "Transmit signals"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which animal is known as the ship of the desert?",
-      "options": {
-        "A": "Elephant",
-        "B": "Horse",
-        "C": "Camel",
-        "D": "Donkey"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "The powerhouse of the cell is:",
-      "options": {
-        "A": "Ribosome",
-        "B": "Nucleus",
-        "C": "Mitochondria",
-        "D": "Golgi body"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which system controls body actions?",
-      "options": {
-        "A": "Circulatory",
-        "B": "Digestive",
-        "C": "Nervous",
-        "D": "Respiratory"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "What is the SI unit of force?",
-      "options": {
-        "A": "Pascal",
-        "B": "Newton",
-        "C": "Joule",
-        "D": "Watt"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Light travels fastest in:",
-      "options": {
-        "A": "Water",
-        "B": "Air",
-        "C": "Glass",
-        "D": "Vacuum"
-      },
-      "correct": "D"
-    },
-    {
-      "question": "Which law explains action and reaction?",
-      "options": {
-        "A": "First law",
-        "B": "Second law",
-        "C": "Third law",
-        "D": "Law of inertia"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Current is measured using a:",
-      "options": {
-        "A": "Voltmeter",
-        "B": "Ammeter",
-        "C": "Thermometer",
-        "D": "Galvanometer"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "The unit of electric power is:",
-      "options": {
-        "A": "Watt",
-        "B": "Volt",
-        "C": "Ohm",
-        "D": "Ampere"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "The force of attraction between two masses is called:",
-      "options": {
-        "A": "Friction",
-        "B": "Magnetism",
-        "C": "Gravitational force",
-        "D": "Electric force"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "What is used to measure temperature?",
-      "options": {
-        "A": "Barometer",
-        "B": "Hygrometer",
-        "C": "Thermometer",
-        "D": "Voltmeter"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "What type of lens is used in a magnifying glass?",
-      "options": {
-        "A": "Concave",
-        "B": "Convex",
-        "C": "Plano-concave",
-        "D": "Cylindrical"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which color has the highest wavelength?",
-      "options": {
-        "A": "Red",
-        "B": "Blue",
-        "C": "Green",
-        "D": "Violet"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "The energy stored in a stretched rubber band is:",
-      "options": {
-        "A": "Kinetic",
-        "B": "Thermal",
-        "C": "Potential",
-        "D": "Chemical"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "What is the chemical formula of water?",
-      "options": {
-        "A": "H2O",
-        "B": "CO2",
-        "C": "O2",
-        "D": "NaCl"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "Which gas turns lime water milky?",
-      "options": {
-        "A": "Oxygen",
-        "B": "Carbon dioxide",
-        "C": "Hydrogen",
-        "D": "Nitrogen"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Atomic number represents:",
-      "options": {
-        "A": "Protons",
-        "B": "Neutrons",
-        "C": "Electrons",
-        "D": "Mass number"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "The pH value of a neutral solution is:",
-      "options": {
-        "A": "7",
-        "B": "1",
-        "C": "14",
-        "D": "0"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "What is NaCl commonly known as?",
-      "options": {
-        "A": "Sugar",
-        "B": "Salt",
-        "C": "Soda",
-        "D": "Acid"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which acid is found in vinegar?",
-      "options": {
-        "A": "Citric acid",
-        "B": "Acetic acid",
-        "C": "Oxalic acid",
-        "D": "Formic acid"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which metal is liquid at room temperature?",
-      "options": {
-        "A": "Iron",
-        "B": "Mercury",
-        "C": "Sodium",
-        "D": "Zinc"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "The symbol 'O' stands for:",
-      "options": {
-        "A": "Osmium",
-        "B": "Oxygen",
-        "C": "Oxide",
-        "D": "Ozone"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which is a noble gas?",
-      "options": {
-        "A": "Oxygen",
-        "B": "Hydrogen",
-        "C": "Argon",
-        "D": "Nitrogen"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which part of the atom has a negative charge?",
-      "options": {
-        "A": "Proton",
-        "B": "Neutron",
-        "C": "Electron",
-        "D": "Nucleus"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Choose the correct synonym for 'Happy'.",
-      "options": {
-        "A": "Sad",
-        "B": "Joyful",
-        "C": "Angry",
-        "D": "Cry"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Fill in the blank: He ___ to school every day.",
-      "options": {
-        "A": "go",
-        "B": "goes",
-        "C": "gone",
-        "D": "going"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which is a noun?",
-      "options": {
-        "A": "Run",
-        "B": "Blue",
-        "C": "Happiness",
-        "D": "Quickly"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which is a verb?",
-      "options": {
-        "A": "Beautiful",
-        "B": "Sing",
-        "C": "Hard",
-        "D": "Happiness"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Choose the antonym of 'Fast'.",
-      "options": {
-        "A": "Slow",
-        "B": "Speed",
-        "C": "Rapid",
-        "D": "Swift"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "Choose the correctly punctuated sentence.",
-      "options": {
-        "A": "Lets eat, Grandma.",
-        "B": "Lets, eat Grandma.",
-        "C": "Let's eat Grandma.",
-        "D": "Let's eat, Grandma."
-      },
-      "correct": "D"
-    },
-    {
-      "question": "Identify the adjective: 'She wore a red dress.'",
-      "options": {
-        "A": "She",
-        "B": "Wore",
-        "C": "Red",
-        "D": "Dress"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which sentence is in past tense?",
-      "options": {
-        "A": "He runs fast.",
-        "B": "He will run fast.",
-        "C": "He ran fast.",
-        "D": "He is running fast."
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which word is a conjunction?",
-      "options": {
-        "A": "And",
-        "B": "Quickly",
-        "C": "Beautiful",
-        "D": "Apple"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "What is the plural of 'child'?",
-      "options": {
-        "A": "Childs",
-        "B": "Children",
-        "C": "Childes",
-        "D": "Childern"
-      },
-      "correct": "B"
+        "code": "BIO001",
+        "title": "Bio-Science Entrance Exam 1",
+        "duration": 50,
+        "questions": [
+            {
+                "question": "Which type of cell division reduces chromosome number by half?",
+                "options": {
+                    "A": "Mitosis",
+                    "B": "Meiosis",
+                    "C": "Binary fission",
+                    "D": "Budding",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The Calvin cycle occurs in which part of the chloroplast?",
+                "options": {
+                    "A": "Thylakoid membrane",
+                    "B": "Stroma",
+                    "C": "Grana",
+                    "D": "Outer membrane",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following is a sex-linked disorder?",
+                "options": {
+                    "A": "Sickle cell anemia",
+                    "B": "Thalassemia",
+                    "C": "Hemophilia",
+                    "D": "Phenylketonuria",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The enzyme that unwinds DNA during replication is:",
+                "options": {
+                    "A": "DNA polymerase",
+                    "B": "DNA ligase",
+                    "C": "Helicase",
+                    "D": "Primase",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which plant tissue is responsible for secondary growth?",
+                "options": {
+                    "A": "Apical meristem",
+                    "B": "Lateral meristem",
+                    "C": "Ground tissue",
+                    "D": "Dermal tissue",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The site of protein synthesis in a cell is:",
+                "options": {
+                    "A": "Nucleus",
+                    "B": "Mitochondria",
+                    "C": "Ribosome",
+                    "D": "Golgi apparatus",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which hormone regulates blood glucose levels?",
+                "options": {
+                    "A": "Thyroxine",
+                    "B": "Insulin",
+                    "C": "Adrenaline",
+                    "D": "Growth hormone",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The phospholipid bilayer is a component of:",
+                "options": {
+                    "A": "Cell wall",
+                    "B": "Cell membrane",
+                    "C": "Cytoplasm",
+                    "D": "Nuclear envelope only",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which process converts atmospheric nitrogen into ammonia?",
+                "options": {
+                    "A": "Nitrification",
+                    "B": "Denitrification",
+                    "C": "Nitrogen fixation",
+                    "D": "Ammonification",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The term 'biodiversity hotspot' refers to regions with:",
+                "options": {
+                    "A": "High temperature",
+                    "B": "High species richness and endemism",
+                    "C": "High altitude",
+                    "D": "High rainfall",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which quantum number determines the shape of an orbital?",
+                "options": {
+                    "A": "Principal quantum number (n)",
+                    "B": "Azimuthal quantum number (l)",
+                    "C": "Magnetic quantum number (m)",
+                    "D": "Spin quantum number (s)",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The hybridization of carbon in methane (CH4) is:",
+                "options": {"A": "sp", "B": "sp2", "C": "sp3", "D": "sp3d"},
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following exhibits hydrogen bonding?",
+                "options": {"A": "HCl", "B": "H2O", "C": "CH4", "D": "CO2"},
+                "correct": "B",
+            },
+            {
+                "question": "The IUPAC name of CH3-CH2-CHO is:",
+                "options": {
+                    "A": "Propanal",
+                    "B": "Propanone",
+                    "C": "Propanoic acid",
+                    "D": "Propanol",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which catalyst is used in the Haber process?",
+                "options": {
+                    "A": "Platinum",
+                    "B": "Iron",
+                    "C": "Nickel",
+                    "D": "Vanadium pentoxide",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The oxidation state of chromium in K2Cr2O7 is:",
+                "options": {"A": "+3", "B": "+6", "C": "+7", "D": "+2"},
+                "correct": "B",
+            },
+            {
+                "question": "Which type of isomerism is exhibited by [Co(NH3)4Cl2]+?",
+                "options": {
+                    "A": "Optical isomerism",
+                    "B": "Geometrical isomerism",
+                    "C": "Linkage isomerism",
+                    "D": "Coordination isomerism",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The rate of reaction is directly proportional to:",
+                "options": {
+                    "A": "Temperature only",
+                    "B": "Concentration of reactants",
+                    "C": "Pressure only",
+                    "D": "Volume of the container",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which reagent is used to distinguish between aldehydes and ketones?",
+                "options": {
+                    "A": "Fehling's reagent",
+                    "B": "Lucas reagent",
+                    "C": "Grignard reagent",
+                    "D": "Schiff's reagent",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The molecular geometry of SF6 is:",
+                "options": {
+                    "A": "Tetrahedral",
+                    "B": "Octahedral",
+                    "C": "Square planar",
+                    "D": "Trigonal bipyramidal",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The dimensional formula of angular momentum is:",
+                "options": {
+                    "A": "[ML2T-1]",
+                    "B": "[MLT-1]",
+                    "C": "[ML2T-2]",
+                    "D": "[MLT-2]",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The work function of a metal in photoelectric effect represents:",
+                "options": {
+                    "A": "Maximum kinetic energy of emitted electrons",
+                    "B": "Minimum energy required to remove an electron",
+                    "C": "Energy of incident photon",
+                    "D": "Total energy of the system",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "In a uniform magnetic field, a charged particle moves in:",
+                "options": {
+                    "A": "Straight line",
+                    "B": "Parabolic path",
+                    "C": "Circular path",
+                    "D": "Elliptical path",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The capacitance of a parallel plate capacitor is directly proportional to:",
+                "options": {
+                    "A": "Distance between plates",
+                    "B": "Area of plates",
+                    "C": "Voltage applied",
+                    "D": "Charge stored",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The phenomenon of interference of light proves its:",
+                "options": {
+                    "A": "Particle nature",
+                    "B": "Wave nature",
+                    "C": "Electromagnetic nature",
+                    "D": "Quantum nature",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The de Broglie wavelength is inversely proportional to:",
+                "options": {
+                    "A": "Mass",
+                    "B": "Velocity",
+                    "C": "Momentum",
+                    "D": "Energy",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "In a step-up transformer, the turns ratio is:",
+                "options": {
+                    "A": "Np > Ns",
+                    "B": "Np < Ns",
+                    "C": "Np = Ns",
+                    "D": "Independent of voltage",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The critical angle for total internal reflection depends on:",
+                "options": {
+                    "A": "Angle of incidence only",
+                    "B": "Wavelength of light only",
+                    "C": "Refractive indices of both media",
+                    "D": "Intensity of light",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The binding energy per nucleon is maximum for:",
+                "options": {
+                    "A": "Hydrogen",
+                    "B": "Iron",
+                    "C": "Uranium",
+                    "D": "Helium",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The escape velocity from Earth's surface is approximately:",
+                "options": {
+                    "A": "7.9 km/s",
+                    "B": "11.2 km/s",
+                    "C": "15.0 km/s",
+                    "D": "9.8 km/s",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct passive voice: 'She teaches English.'",
+                "options": {
+                    "A": "English is taught by her.",
+                    "B": "English was taught by her.",
+                    "C": "English has been taught by her.",
+                    "D": "English will be taught by her.",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Identify the figure of speech: 'The wind whispered through the trees.'",
+                "options": {
+                    "A": "Metaphor",
+                    "B": "Simile",
+                    "C": "Personification",
+                    "D": "Hyperbole",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correct indirect speech: He said, 'I am going home.'",
+                "options": {
+                    "A": "He said that he is going home.",
+                    "B": "He said that he was going home.",
+                    "C": "He said that he will go home.",
+                    "D": "He said that he goes home.",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The word 'bibliography' means:",
+                "options": {
+                    "A": "Study of books",
+                    "B": "List of books and sources",
+                    "C": "Writing books",
+                    "D": "Collection of books",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct collective noun for 'fish':",
+                "options": {"A": "Herd", "B": "Flock", "C": "School", "D": "Pack"},
+                "correct": "C",
+            },
+            {
+                "question": "Identify the type of sentence: 'What a beautiful day it is!'",
+                "options": {
+                    "A": "Interrogative",
+                    "B": "Imperative",
+                    "C": "Exclamatory",
+                    "D": "Declarative",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The prefix 'un-' in 'unfriendly' indicates:",
+                "options": {"A": "Before", "B": "Not", "C": "Again", "D": "Very"},
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct conjunction: 'Study hard ___ you will fail.'",
+                "options": {"A": "and", "B": "but", "C": "or", "D": "so"},
+                "correct": "C",
+            },
+            {
+                "question": "The literary device used in 'Life is a journey' is:",
+                "options": {
+                    "A": "Simile",
+                    "B": "Metaphor",
+                    "C": "Alliteration",
+                    "D": "Onomatopoeia",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Select the correct comparative form: 'This book is ___ than that one.'",
+                "options": {"A": "good", "B": "better", "C": "best", "D": "well"},
+                "correct": "B",
+            },
+            {
+                "question": "Which type of symmetry do cnidarians exhibit?",
+                "options": {
+                    "A": "Bilateral symmetry",
+                    "B": "Radial symmetry",
+                    "C": "Asymmetry",
+                    "D": "Spherical symmetry",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The excretory organ in insects is:",
+                "options": {
+                    "A": "Kidney",
+                    "B": "Malpighian tubules",
+                    "C": "Nephridia",
+                    "D": "Flame cells",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which class of vertebrates has a two-chambered heart?",
+                "options": {"A": "Mammals", "B": "Birds", "C": "Fish", "D": "Reptiles"},
+                "correct": "C",
+            },
+            {
+                "question": "The larval stage of a butterfly is called:",
+                "options": {
+                    "A": "Pupa",
+                    "B": "Caterpillar",
+                    "C": "Nymph",
+                    "D": "Tadpole",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which animal shows bioluminescence?",
+                "options": {
+                    "A": "Jellyfish",
+                    "B": "Octopus",
+                    "C": "Starfish",
+                    "D": "Sea cucumber",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The study of insects is called:",
+                "options": {
+                    "A": "Entomology",
+                    "B": "Ornithology",
+                    "C": "Herpetology",
+                    "D": "Ichthyology",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which phylum includes animals with jointed legs?",
+                "options": {
+                    "A": "Mollusca",
+                    "B": "Arthropoda",
+                    "C": "Annelida",
+                    "D": "Echinodermata",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The respiratory organ in spiders is:",
+                "options": {
+                    "A": "Gills",
+                    "B": "Lungs",
+                    "C": "Book lungs",
+                    "D": "Trachea",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which animal undergoes complete metamorphosis?",
+                "options": {
+                    "A": "Grasshopper",
+                    "B": "Dragonfly",
+                    "C": "Beetle",
+                    "D": "Cockroach",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The phenomenon of animals being active during twilight is called:",
+                "options": {
+                    "A": "Diurnal",
+                    "B": "Nocturnal",
+                    "C": "Crepuscular",
+                    "D": "Arrhythmic",
+                },
+                "correct": "C",
+            },
+        ],
+        "created": datetime.now().isoformat(),
+        "active": True,
     }
-  ],
-        'created': datetime.now().isoformat(),
-        'active': True
-    }
-    
+
     exams["BIO001"] = sample_exam_1
-    
+
     # Create second sample exam
     sample_exam_code_2 = generate_exam_code()
     sample_exam_2 = {
-        'code': "BIO002",
-        'title': 'Bio-Science Entrance Exam 2',
-        'duration': 50,
-        'questions':  [
-    {
-      "question": "Which plant hormone is responsible for cell elongation?",
-      "options": {
-        "A": "Cytokinin",
-        "B": "Auxin",
-        "C": "Gibberellin",
-        "D": "Ethylene"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Kranz anatomy is characteristic of which type of plants?",
-      "options": {
-        "A": "C3 plants",
-        "B": "CAM plants",
-        "C": "C4 plants",
-        "D": "Legumes"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which of the following is not part of the xylem tissue?",
-      "options": {
-        "A": "Tracheids",
-        "B": "Vessels",
-        "C": "Sieve tubes",
-        "D": "Xylem parenchyma"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "During photorespiration, the oxygenation of RuBP takes place in:",
-      "options": {
-        "A": "Chloroplast",
-        "B": "Peroxisome",
-        "C": "Mitochondria",
-        "D": "Cytosol"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "Which of the following is a C3 plant?",
-      "options": {
-        "A": "Maize",
-        "B": "Sugarcane",
-        "C": "Wheat",
-        "D": "Sorghum"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which enzyme is responsible for nitrogen fixation in root nodules?",
-      "options": {
-        "A": "Nitrate reductase",
-        "B": "Nitrogenase",
-        "C": "Nitrite reductase",
-        "D": "Aminase"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which pigment is present in red algae?",
-      "options": {
-        "A": "Chlorophyll a",
-        "B": "Chlorophyll b",
-        "C": "Phycoerythrin",
-        "D": "Phycocyanin"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Double fertilization is a characteristic feature of:",
-      "options": {
-        "A": "Gymnosperms",
-        "B": "Algae",
-        "C": "Bryophytes",
-        "D": "Angiosperms"
-      },
-      "correct": "D"
-    },
-    {
-      "question": "Casparian strip is found in:",
-      "options": {
-        "A": "Cortex",
-        "B": "Pericycle",
-        "C": "Endodermis",
-        "D": "Epidermis"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which element is essential for chlorophyll synthesis?",
-      "options": {
-        "A": "Iron",
-        "B": "Magnesium",
-        "C": "Potassium",
-        "D": "Calcium"
-      },
-      "correct": "B"
-    },
-
-    {
-      "question": "Which phylum includes animals with a notochord?",
-      "options": {
-        "A": "Arthropoda",
-        "B": "Chordata",
-        "C": "Mollusca",
-        "D": "Echinodermata"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which animal is an example of hermaphroditism?",
-      "options": {
-        "A": "Earthworm",
-        "B": "Frog",
-        "C": "Cockroach",
-        "D": "Starfish"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "Which blood cells are primarily involved in clotting?",
-      "options": {
-        "A": "Leukocytes",
-        "B": "Erythrocytes",
-        "C": "Platelets",
-        "D": "Macrophages"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which of these is a marsupial?",
-      "options": {
-        "A": "Kangaroo",
-        "B": "Elephant",
-        "C": "Tiger",
-        "D": "Horse"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "The heart of a frog has how many chambers?",
-      "options": {
-        "A": "2",
-        "B": "3",
-        "C": "4",
-        "D": "5"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which organ in humans produces insulin?",
-      "options": {
-        "A": "Liver",
-        "B": "Pancreas",
-        "C": "Kidney",
-        "D": "Thyroid"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Birds belong to which class?",
-      "options": {
-        "A": "Amphibia",
-        "B": "Mammalia",
-        "C": "Reptilia",
-        "D": "Aves"
-      },
-      "correct": "D"
-    },
-    {
-      "question": "Which structure is responsible for sound detection in humans?",
-      "options": {
-        "A": "Cochlea",
-        "B": "Retina",
-        "C": "Olfactory bulb",
-        "D": "Semicircular canals"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "Which is the largest gland in the human body?",
-      "options": {
-        "A": "Pancreas",
-        "B": "Liver",
-        "C": "Thyroid",
-        "D": "Adrenal"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "What is the function of hemoglobin?",
-      "options": {
-        "A": "Transport oxygen",
-        "B": "Transport carbon dioxide",
-        "C": "Fight infection",
-        "D": "Help in clotting"
-      },
-      "correct": "A"
-    },
-
-    {
-      "question": "Which force keeps planets in orbit around the sun?",
-      "options": {
-        "A": "Magnetic force",
-        "B": "Gravitational force",
-        "C": "Electrostatic force",
-        "D": "Nuclear force"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "What is the unit of electric current?",
-      "options": {
-        "A": "Volt",
-        "B": "Ohm",
-        "C": "Ampere",
-        "D": "Watt"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "The phenomenon of total internal reflection occurs in:",
-      "options": {
-        "A": "Convex lens",
-        "B": "Concave lens",
-        "C": "Optical fiber",
-        "D": "Prism"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which particle has no electric charge?",
-      "options": {
-        "A": "Proton",
-        "B": "Electron",
-        "C": "Neutron",
-        "D": "Positron"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "The SI unit of frequency is:",
-      "options": {
-        "A": "Hertz",
-        "B": "Joule",
-        "C": "Newton",
-        "D": "Tesla"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "Which law states that pressure applied to a confined fluid is transmitted equally in all directions?",
-      "options": {
-        "A": "Boyle's law",
-        "B": "Pascal's law",
-        "C": "Archimedes' principle",
-        "D": "Newton's second law"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "The speed of light in vacuum is approximately:",
-      "options": {
-        "A": "3 × 10^6 m/s",
-        "B": "3 × 10^8 m/s",
-        "C": "3 × 10^10 m/s",
-        "D": "3 × 10^12 m/s"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which gas is used in fluorescent tubes?",
-      "options": {
-        "A": "Neon",
-        "B": "Argon",
-        "C": "Helium",
-        "D": "Xenon"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which is a strong acid?",
-      "options": {
-        "A": "Acetic acid",
-        "B": "Sulfuric acid",
-        "C": "Formic acid",
-        "D": "Citric acid"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "What is the molecular formula of glucose?",
-      "options": {
-        "A": "C6H12O6",
-        "B": "C2H5OH",
-        "C": "CH4",
-        "D": "C12H22O11"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "Which gas is liberated when an acid reacts with a carbonate?",
-      "options": {
-        "A": "Oxygen",
-        "B": "Carbon dioxide",
-        "C": "Hydrogen",
-        "D": "Nitrogen"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which element is known as 'King of Chemicals'?",
-      "options": {
-        "A": "Sulfuric acid",
-        "B": "Hydrochloric acid",
-        "C": "Nitric acid",
-        "D": "Acetic acid"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "What is the pH of pure water?",
-      "options": {
-        "A": "7",
-        "B": "1",
-        "C": "14",
-        "D": "0"
-      },
-      "correct": "A"
-    },
-
-    {
-      "question": "Identify the correct sentence:",
-      "options": {
-        "A": "She don't like apples.",
-        "B": "He does not likes apples.",
-        "C": "They are going to the market.",
-        "D": "I has a new book."
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Choose the correct synonym of 'Abundant':",
-      "options": {
-        "A": "Scarce",
-        "B": "Plentiful",
-        "C": "Rare",
-        "D": "Sparse"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Select the correctly spelled word:",
-      "options": {
-        "A": "Accomodate",
-        "B": "Acommodate",
-        "C": "Accommodate",
-        "D": "Acomodate"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Choose the antonym of 'Benevolent':",
-      "options": {
-        "A": "Kind",
-        "B": "Cruel",
-        "C": "Generous",
-        "D": "Helpful"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Fill in the blank: She ___ to the store yesterday.",
-      "options": {
-        "A": "go",
-        "B": "goes",
-        "C": "went",
-        "D": "gone"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Identify the part of speech of the underlined word: 'She runs fast.'",
-      "options": {
-        "A": "Noun",
-        "B": "Verb",
-        "C": "Adjective",
-        "D": "Adverb"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Choose the correct preposition: He is interested ___ science.",
-      "options": {
-        "A": "at",
-        "B": "in",
-        "C": "on",
-        "D": "for"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Select the correctly punctuated sentence:",
-      "options": {
-        "A": "Lets eat, Grandma!",
-        "B": "Let's eat Grandma!",
-        "C": "Lets eat Grandma!",
-        "D": "Let's eat, Grandma!"
-      },
-      "correct": "D"
-    },
-    {
-      "question": "Choose the correct form: 'I have ___ my homework.'",
-      "options": {
-        "A": "do",
-        "B": "did",
-        "C": "done",
-        "D": "doing"
-      },
-      "correct": "C"
-    },
-    {
-    "question": "Which pigment helps in photosynthesis and gives plants their green color?",
-    "options": {
-      "A": "Carotenoid",
-      "B": "Chlorophyll",
-      "C": "Xanthophyll",
-      "D": "Anthocyanin"
-    },
-    "correct": "B"
-  },
-  {
-    "question": "Which part of the brain controls balance and coordination?",
-    "options": {
-      "A": "Cerebrum",
-      "B": "Medulla",
-      "C": "Cerebellum",
-      "D": "Hypothalamus"
-    },
-    "correct": "C"
-  },
-  {
-    "question": "What is the SI unit of force?",
-    "options": {
-      "A": "Newton",
-      "B": "Joule",
-      "C": "Pascal",
-      "D": "Watt"
-    },
-    "correct": "A"
-  },
-  {
-    "question": "Which of the following is a noble gas?",
-    "options": {
-      "A": "Oxygen",
-      "B": "Nitrogen",
-      "C": "Argon",
-      "D": "Hydrogen"
-    },
-    "correct": "C"
-  },
-  {
-    "question": "Identify the adverb in the sentence: 'She sings beautifully.'",
-    "options": {
-      "A": "She",
-      "B": "Sings",
-      "C": "Beautifully",
-      "D": "None"
-    },
-    "correct": "C"
-  },
-  {
-    "question": "The process of converting a solid directly into a gas is called:",
-    "options": {
-      "A": "Condensation",
-      "B": "Sublimation",
-      "C": "Evaporation",
-      "D": "Deposition"
-    },
-    "correct": "B"
-  },
-  {
-    "question": "Which element is most abundant in the Earth's crust?",
-    "options": {
-      "A": "Oxygen",
-      "B": "Silicon",
-      "C": "Aluminium",
-      "D": "Iron"
-    },
-    "correct": "A"
-  },
-  {
-    "question": "Choose the correct form of the verb: 'They ___ to the gym every day.'",
-    "options": {
-      "A": "go",
-      "B": "goes",
-      "C": "gone",
-      "D": "going"
-    },
-    "correct": "A"
-  }
-  ],
-        'created': datetime.now().isoformat(),
-        'active': True
+        "code": "BIO002",
+        "title": "Bio-Science Entrance Exam 2",
+        "duration": 50,
+        "questions": [
+            {
+                "question": "Which of the following is the site of light reaction in photosynthesis?",
+                "options": {
+                    "A": "Stroma",
+                    "B": "Thylakoid membrane",
+                    "C": "Mitochondrial matrix",
+                    "D": "Cytoplasm",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The lac operon is an example of:",
+                "options": {
+                    "A": "Positive regulation",
+                    "B": "Negative regulation",
+                    "C": "Both positive and negative regulation",
+                    "D": "Constitutive expression",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which vitamin is synthesized by bacteria in the human intestine?",
+                "options": {
+                    "A": "Vitamin C",
+                    "B": "Vitamin D",
+                    "C": "Vitamin K",
+                    "D": "Vitamin A",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The phenomenon of apoptosis is:",
+                "options": {
+                    "A": "Programmed cell death",
+                    "B": "Cell division",
+                    "C": "Cell differentiation",
+                    "D": "Cell migration",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following is not a stop codon?",
+                "options": {"A": "UAG", "B": "UAA", "C": "UGA", "D": "AUG"},
+                "correct": "D",
+            },
+            {
+                "question": "Mendel's law of independent assortment is applicable when genes are:",
+                "options": {
+                    "A": "Linked",
+                    "B": "Located on different chromosomes",
+                    "C": "Located on the same chromosome",
+                    "D": "Allelic",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which plant hormone promotes seed germination?",
+                "options": {
+                    "A": "Abscisic acid",
+                    "B": "Cytokinin",
+                    "C": "Gibberellin",
+                    "D": "Ethylene",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The process of translation occurs in:",
+                "options": {
+                    "A": "Nucleus",
+                    "B": "Ribosomes",
+                    "C": "Mitochondria",
+                    "D": "Golgi apparatus",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which enzyme is involved in DNA replication?",
+                "options": {
+                    "A": "RNA polymerase",
+                    "B": "DNA polymerase",
+                    "C": "Ligase",
+                    "D": "Both B and C",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "The Hardy-Weinberg principle assumes:",
+                "options": {
+                    "A": "Random mating",
+                    "B": "No mutations",
+                    "C": "No gene flow",
+                    "D": "All of the above",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "Which of the following exhibits tautomerism?",
+                "options": {
+                    "A": "Acetone",
+                    "B": "Acetaldehyde",
+                    "C": "Phenol",
+                    "D": "Both A and B",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "The hybridization of carbon in diamond is:",
+                "options": {"A": "sp", "B": "sp2", "C": "sp3", "D": "sp3d"},
+                "correct": "C",
+            },
+            {
+                "question": "Which reagent is used for the oxidation of primary alcohols to aldehydes?",
+                "options": {"A": "KMnO4", "B": "PCC", "C": "K2Cr2O7", "D": "H2SO4"},
+                "correct": "B",
+            },
+            {
+                "question": "The IUPAC name of CH3-CH(OH)-CH3 is:",
+                "options": {
+                    "A": "Propanol",
+                    "B": "2-Propanol",
+                    "C": "Isopropanol",
+                    "D": "Both B and C",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following is an electrophile?",
+                "options": {"A": "NH3", "B": "OH-", "C": "BF3", "D": "CN-"},
+                "correct": "C",
+            },
+            {
+                "question": "The Cannizzaro reaction occurs with:",
+                "options": {
+                    "A": "Aldehydes having α-hydrogen",
+                    "B": "Aldehydes having no α-hydrogen",
+                    "C": "Ketones",
+                    "D": "Alcohols",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following shows optical isomerism?",
+                "options": {
+                    "A": "CH3CH2CHClCH3",
+                    "B": "CH3CH2CH2CH3",
+                    "C": "CH3CHClCH2CH3",
+                    "D": "Both A and C",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "The reaction between benzene and chlorine in presence of FeCl3 is:",
+                "options": {
+                    "A": "Addition reaction",
+                    "B": "Substitution reaction",
+                    "C": "Elimination reaction",
+                    "D": "Condensation reaction",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which compound is formed when ethanoic acid reacts with ethanol?",
+                "options": {
+                    "A": "Ethyl acetate",
+                    "B": "Acetic anhydride",
+                    "C": "Ethyl formate",
+                    "D": "Diethyl ether",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The number of π electrons in benzene is:",
+                "options": {"A": "4", "B": "6", "C": "8", "D": "10"},
+                "correct": "B",
+            },
+            {
+                "question": "The unit of electric field intensity is:",
+                "options": {"A": "N/C", "B": "C/N", "C": "J/C", "D": "C/J"},
+                "correct": "A",
+            },
+            {
+                "question": "Young's double slit experiment demonstrates:",
+                "options": {
+                    "A": "Particle nature of light",
+                    "B": "Wave nature of light",
+                    "C": "Dual nature of light",
+                    "D": "Polarization of light",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The phenomenon of photoelectric effect supports:",
+                "options": {
+                    "A": "Wave theory of light",
+                    "B": "Particle theory of light",
+                    "C": "Both wave and particle theory",
+                    "D": "Neither wave nor particle theory",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The de Broglie wavelength is associated with:",
+                "options": {
+                    "A": "Only photons",
+                    "B": "Only electrons",
+                    "C": "All particles",
+                    "D": "Only charged particles",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "In a transformer, the ratio of secondary to primary voltage is equal to:",
+                "options": {
+                    "A": "Ratio of secondary to primary current",
+                    "B": "Ratio of primary to secondary turns",
+                    "C": "Ratio of secondary to primary turns",
+                    "D": "Square of turn ratio",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The magnetic field inside a solenoid is:",
+                "options": {
+                    "A": "Zero",
+                    "B": "Uniform",
+                    "C": "Non-uniform",
+                    "D": "Maximum at the center",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Lenz's law is related to:",
+                "options": {
+                    "A": "Conservation of energy",
+                    "B": "Conservation of momentum",
+                    "C": "Conservation of charge",
+                    "D": "Conservation of mass",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The work function of a metal is 2 eV. The threshold frequency is:",
+                "options": {
+                    "A": "4.8 × 10^14 Hz",
+                    "B": "8.3 × 10^14 Hz",
+                    "C": "2.4 × 10^14 Hz",
+                    "D": "1.6 × 10^14 Hz",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The angular momentum of an electron in the nth orbit is:",
+                "options": {"A": "nh/2π", "B": "nh/4π", "C": "2πnh", "D": "n²h/2π"},
+                "correct": "A",
+            },
+            {
+                "question": "The principle of superposition is applicable to:",
+                "options": {
+                    "A": "Longitudinal waves only",
+                    "B": "Transverse waves only",
+                    "C": "Both longitudinal and transverse waves",
+                    "D": "Sound waves only",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correct passive voice: 'The teacher teaches the students.'",
+                "options": {
+                    "A": "The students are taught by the teacher.",
+                    "B": "The students were taught by the teacher.",
+                    "C": "The students have been taught by the teacher.",
+                    "D": "The students will be taught by the teacher.",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Identify the figure of speech: 'The classroom was a zoo.'",
+                "options": {
+                    "A": "Simile",
+                    "B": "Metaphor",
+                    "C": "Personification",
+                    "D": "Hyperbole",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct article: '___ honest man is respected everywhere.'",
+                "options": {"A": "A", "B": "An", "C": "The", "D": "No article needed"},
+                "correct": "B",
+            },
+            {
+                "question": "Select the correct indirect speech: He said, 'I am going to Delhi.'",
+                "options": {
+                    "A": "He said that he was going to Delhi.",
+                    "B": "He said that he is going to Delhi.",
+                    "C": "He told that he was going to Delhi.",
+                    "D": "He said that I was going to Delhi.",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Choose the correct meaning of the idiom 'Break the ice':",
+                "options": {
+                    "A": "To start a conversation",
+                    "B": "To break something",
+                    "C": "To make ice",
+                    "D": "To freeze water",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Identify the type of sentence: 'What a beautiful day it is!'",
+                "options": {
+                    "A": "Declarative",
+                    "B": "Interrogative",
+                    "C": "Imperative",
+                    "D": "Exclamatory",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "Choose the antonym of 'Zenith':",
+                "options": {"A": "Peak", "B": "Summit", "C": "Nadir", "D": "Top"},
+                "correct": "C",
+            },
+            {
+                "question": "Select the correctly punctuated sentence:",
+                "options": {
+                    "A": "The man, who was walking down the street was tall.",
+                    "B": "The man who was walking down the street, was tall.",
+                    "C": "The man, who was walking down the street, was tall.",
+                    "D": "The man who was walking down the street was tall.",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correct comparative form: 'This book is ___ than that one.'",
+                "options": {
+                    "A": "more interesting",
+                    "B": "most interesting",
+                    "C": "interestinger",
+                    "D": "interest",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Identify the conjunction in: 'He studied hard, but he failed.'",
+                "options": {"A": "He", "B": "Hard", "C": "But", "D": "Failed"},
+                "correct": "C",
+            },
+            {
+                "question": "Which system is responsible for producing antibodies?",
+                "options": {
+                    "A": "Nervous system",
+                    "B": "Immune system",
+                    "C": "Endocrine system",
+                    "D": "Circulatory system",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The study of insects is called:",
+                "options": {
+                    "A": "Ornithology",
+                    "B": "Herpetology",
+                    "C": "Entomology",
+                    "D": "Ichthyology",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which hormone regulates calcium levels in blood?",
+                "options": {
+                    "A": "Insulin",
+                    "B": "Thyroxine",
+                    "C": "Parathormone",
+                    "D": "Adrenaline",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The excretory product of birds is:",
+                "options": {
+                    "A": "Ammonia",
+                    "B": "Urea",
+                    "C": "Uric acid",
+                    "D": "Creatinine",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which animal shows regeneration?",
+                "options": {"A": "Hydra", "B": "Elephant", "C": "Tiger", "D": "Eagle"},
+                "correct": "A",
+            },
+            {
+                "question": "The largest artery in the human body is:",
+                "options": {
+                    "A": "Pulmonary artery",
+                    "B": "Carotid artery",
+                    "C": "Aorta",
+                    "D": "Renal artery",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which phylum does Hydra belong to?",
+                "options": {
+                    "A": "Porifera",
+                    "B": "Cnidaria",
+                    "C": "Platyhelminthes",
+                    "D": "Nematoda",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The process of metamorphosis is complete in:",
+                "options": {
+                    "A": "Grasshopper",
+                    "B": "Cockroach",
+                    "C": "Butterfly",
+                    "D": "Dragonfly",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which vitamin deficiency causes scurvy?",
+                "options": {
+                    "A": "Vitamin A",
+                    "B": "Vitamin B",
+                    "C": "Vitamin C",
+                    "D": "Vitamin D",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The alimentary canal is longest in:",
+                "options": {
+                    "A": "Carnivores",
+                    "B": "Herbivores",
+                    "C": "Omnivores",
+                    "D": "All are equal",
+                },
+                "correct": "B",
+            },
+        ],
+        "created": datetime.now().isoformat(),
+        "active": True,
     }
-    
+
     exams["BIO002"] = sample_exam_2
     sample_exam_code_3 = generate_exam_code()
     sample_exam_3 = {
-        'code': "BIO003",
-        'title': 'Bio-Science Entrance Exam 3',
-        'duration': 50,
-        'questions':  [
-    {
-      "question": "What is the primary advantage of CAM photosynthesis in desert plants?",
-      "options": {
-        "A": "Higher oxygen production",
-        "B": "Water conservation during photosynthesis",
-        "C": "Faster growth rate",
-        "D": "Increased chlorophyll production"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which vitamin is synthesized in the green parts of plants?",
-      "options": {
-        "A": "Vitamin A",
-        "B": "Vitamin B12",
-        "C": "Vitamin C",
-        "D": "Vitamin D"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "In plants, phloem transports:",
-      "options": {
-        "A": "Water and minerals",
-        "B": "Sugars and organic nutrients",
-        "C": "Oxygen",
-        "D": "Carbon dioxide"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which hormone is responsible for seed dormancy in plants?",
-      "options": {
-        "A": "Gibberellin",
-        "B": "Cytokinin",
-        "C": "Abscisic acid",
-        "D": "Auxin"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "What structure in the plant cell is responsible for photosynthesis?",
-      "options": {
-        "A": "Mitochondria",
-        "B": "Chloroplast",
-        "C": "Ribosome",
-        "D": "Golgi apparatus"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which pigment is NOT directly involved in the light reaction of photosynthesis?",
-      "options": {
-        "A": "Chlorophyll a",
-        "B": "Chlorophyll b",
-        "C": "Carotenoids",
-        "D": "Xanthophyllase"
-      },
-      "correct": "D"
-    },
-    {
-      "question": "What is the main component of the plant cell wall?",
-      "options": {
-        "A": "Cellulose",
-        "B": "Chitin",
-        "C": "Peptidoglycan",
-        "D": "Lignin"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "Which part of a seed develops into the shoot system?",
-      "options": {
-        "A": "Radicle",
-        "B": "Plumule",
-        "C": "Endosperm",
-        "D": "Cotyledon"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "What is the function of root hairs in plants?",
-      "options": {
-        "A": "Photosynthesis",
-        "B": "Water absorption",
-        "C": "Reproduction",
-        "D": "Support"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which type of plant tissue provides mechanical support?",
-      "options": {
-        "A": "Parenchyma",
-        "B": "Collenchyma",
-        "C": "Sclerenchyma",
-        "D": "Xylem"
-      },
-      "correct": "C"
-    },
-
-    
-    {
-      "question": "What is the primary function of the notochord in chordates?",
-      "options": {
-        "A": "Digest food",
-        "B": "Provide skeletal support",
-        "C": "Filter blood",
-        "D": "Respiration"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which blood cells are primarily responsible for oxygen transport in humans?",
-      "options": {
-        "A": "White blood cells",
-        "B": "Platelets",
-        "C": "Red blood cells",
-        "D": "Lymphocytes"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "In vertebrates, which organ produces insulin?",
-      "options": {
-        "A": "Liver",
-        "B": "Pancreas",
-        "C": "Kidney",
-        "D": "Spleen"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which part of the nephron is responsible for ultrafiltration?",
-      "options": {
-        "A": "Proximal convoluted tubule",
-        "B": "Glomerulus",
-        "C": "Loop of Henle",
-        "D": "Distal convoluted tubule"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "What type of symmetry is found in starfish?",
-      "options": {
-        "A": "Bilateral",
-        "B": "Radial",
-        "C": "Asymmetry",
-        "D": "Spherical"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which hormone regulates molting in arthropods?",
-      "options": {
-        "A": "Ecdysone",
-        "B": "Testosterone",
-        "C": "Estrogen",
-        "D": "Adrenaline"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "The primary site of gas exchange in insects is:",
-      "options": {
-        "A": "Lungs",
-        "B": "Tracheae",
-        "C": "Gills",
-        "D": "Skin"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which nervous system division controls voluntary movements?",
-      "options": {
-        "A": "Autonomic nervous system",
-        "B": "Central nervous system",
-        "C": "Somatic nervous system",
-        "D": "Peripheral nervous system"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which part of the brain is responsible for regulating heartbeat and breathing?",
-      "options": {
-        "A": "Cerebrum",
-        "B": "Medulla oblongata",
-        "C": "Cerebellum",
-        "D": "Hypothalamus"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which class of animals are warm-blooded and have hair or fur?",
-      "options": {
-        "A": "Amphibia",
-        "B": "Reptilia",
-        "C": "Mammalia",
-        "D": "Aves"
-      },
-      "correct": "C"
-    },
-
-    
-    {
-      "question": "According to Heisenberg's uncertainty principle, which two properties cannot be simultaneously measured with arbitrary precision?",
-      "options": {
-        "A": "Position and energy",
-        "B": "Momentum and energy",
-        "C": "Position and momentum",
-        "D": "Time and velocity"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "What is the principle behind the working of a cyclotron?",
-      "options": {
-        "A": "Magnetic deflection of charged particles",
-        "B": "Acceleration of charged particles using a constant magnetic field and an alternating electric field",
-        "C": "Acceleration by gravitational field",
-        "D": "Reflection of particles by mirrors"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which of the following is a scalar quantity?",
-      "options": {
-        "A": "Velocity",
-        "B": "Displacement",
-        "C": "Force",
-        "D": "Energy"
-      },
-      "correct": "D"
-    },
-    {
-      "question": "What happens to the capacitance of a parallel plate capacitor if the distance between the plates is doubled?",
-      "options": {
-        "A": "It doubles",
-        "B": "It halves",
-        "C": "It remains the same",
-        "D": "It quadruples"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "In an ideal gas, which of the following remains constant during an isothermal process?",
-      "options": {
-        "A": "Pressure",
-        "B": "Volume",
-        "C": "Temperature",
-        "D": "Internal energy"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "What is the SI unit of magnetic flux?",
-      "options": {
-        "A": "Tesla",
-        "B": "Weber",
-        "C": "Gauss",
-        "D": "Ampere"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which phenomenon explains the bending of light when passing through a prism?",
-      "options": {
-        "A": "Reflection",
-        "B": "Diffraction",
-        "C": "Refraction",
-        "D": "Interference"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "The half-life of a radioactive substance is 5 hours. After 15 hours, what fraction of the substance remains?",
-      "options": {
-        "A": "1/2",
-        "B": "1/4",
-        "C": "1/8",
-        "D": "1/16"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which of the following quantities is a vector?",
-      "options": {
-        "A": "Work",
-        "B": "Speed",
-        "C": "Acceleration",
-        "D": "Temperature"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "What does the slope of a velocity-time graph represent?",
-      "options": {
-        "A": "Displacement",
-        "B": "Acceleration",
-        "C": "Velocity",
-        "D": "Jerk"
-      },
-      "correct": "B"
-    },
-
-    
-    {
-      "question": "What is the hybridization of sulfur in SF6?",
-      "options": {
-        "A": "sp3",
-        "B": "sp3d",
-        "C": "sp3d2",
-        "D": "sp2"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Le Chatelier's principle predicts that increasing pressure on a reaction favors:",
-      "options": {
-        "A": "Side with more gas molecules",
-        "B": "Side with fewer gas molecules",
-        "C": "No effect",
-        "D": "Endothermic reactions only"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which acid is found in vinegar?",
-      "options": {
-        "A": "Hydrochloric acid",
-        "B": "Acetic acid",
-        "C": "Sulfuric acid",
-        "D": "Citric acid"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which of the following is a strong oxidizing agent?",
-      "options": {
-        "A": "KMnO4 (in acidic medium)",
-        "B": "NaCl",
-        "C": "H2",
-        "D": "CO2"
-      },
-      "correct": "A"
-    },
-    {
-      "question": "What is the IUPAC name for CH3CH2OH?",
-      "options": {
-        "A": "Methanol",
-        "B": "Ethanol",
-        "C": "Ethane",
-        "D": "Methane"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "What type of bond is present in N2 molecule?",
-      "options": {
-        "A": "Single covalent bond",
-        "B": "Double covalent bond",
-        "C": "Triple covalent bond",
-        "D": "Ionic bond"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Which element has the highest electronegativity?",
-      "options": {
-        "A": "Oxygen",
-        "B": "Fluorine",
-        "C": "Nitrogen",
-        "D": "Chlorine"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which gas is evolved when an acid reacts with a carbonate?",
-      "options": {
-        "A": "Oxygen",
-        "B": "Carbon dioxide",
-        "C": "Hydrogen",
-        "D": "Nitrogen"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "What is the pH of a neutral solution at 25°C?",
-      "options": {
-        "A": "0",
-        "B": "7",
-        "C": "14",
-        "D": "1"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Which law relates volume and pressure of a gas at constant temperature?",
-      "options": {
-        "A": "Boyle's Law",
-        "B": "Charles's Law",
-        "C": "Gay-Lussac's Law",
-        "D": "Avogadro's Law"
-      },
-      "correct": "A"
-    },
-
-    
-    {
-      "question": "Identify the figure of speech: 'The wind whispered through the trees.'",
-      "options": {
-        "A": "Simile",
-        "B": "Metaphor",
-        "C": "Personification",
-        "D": "Alliteration"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "Choose the correct sentence:",
-      "options": {
-        "A": 'Neither of the boys are coming.',
-        "B": 'Neither of the boys is coming.',
-        "C": 'Neither of the boys were coming.',
-        "D": 'Neither of the boys have come.'
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Select the correct passive voice form: 'They will finish the project soon.'",
-      "options": {
-        "A": 'The project will be finished soon.',
-        "B": 'The project is finished soon.',
-        "C": 'The project has been finished soon.',
-        "D": 'The project was finishing soon.'
-      },
-      "correct": "A"
-    },
-    {
-      "question": "Which word is a synonym of 'Abundant'?",
-      "options": {
-        "A": "Scarce",
-        "B": "Plentiful",
-        "C": "Sparse",
-        "D": "Rare"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Choose the correctly punctuated sentence:",
-      "options": {
-        "A": "It's raining; let's stay inside.",
-        "B": "Its raining, let's stay inside.",
-        "C": "Its raining; let's stay inside.",
-        "D": "It's raining, let's stay inside."
-      },
-      "correct": "A"
-    },
-    {
-      "question": "Select the word that best completes the sentence: 'She has a very ___ attitude towards learning.'",
-      "options": {
-        "A": "apathetic",
-        "B": "enthusiastic",
-        "C": "indifferent",
-        "D": "negligent"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Choose the correct verb form: 'If I ___ you, I would apologize.'",
-      "options": {
-        "A": "was",
-        "B": "were",
-        "C": "am",
-        "D": "be"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Identify the error in the sentence: 'Each of the players have a unique skill.'",
-      "options": {
-        "A": "Each",
-        "B": "players",
-        "C": "have",
-        "D": "unique"
-      },
-      "correct": "C"
-    },
-    {
-      "question": "What is the meaning of the idiom 'Break the ice'?",
-      "options": {
-        "A": "To freeze something",
-        "B": "To start a conversation",
-        "C": "To cause trouble",
-        "D": "To end a relationship"
-      },
-      "correct": "B"
-    },
-    {
-      "question": "Choose the correct preposition: 'She is keen ___ music.'",
-      "options": {
-        "A": "on",
-        "B": "at",
-        "C": "in",
-        "D": "for"
-      },
-      "correct": "A"
+        "code": "BIO003",
+        "title": "Bio-Science Entrance Exam 3",
+        "duration": 50,
+        "questions": [
+            {
+                "question": "Which of the following is the correct sequence of electron transport chain in mitochondria?",
+                "options": {
+                    "A": "NADH → Complex II → Cytochrome c → Complex IV",
+                    "B": "NADH → Complex I → Complex III → Complex IV",
+                    "C": "FADH2 → Complex I → Complex II → Complex IV",
+                    "D": "NADH → Complex III → Complex I → Complex IV",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "In which phase of meiosis does crossing over occur?",
+                "options": {
+                    "A": "Prophase I",
+                    "B": "Metaphase I",
+                    "C": "Anaphase I",
+                    "D": "Prophase II",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which plant hormone is known as the stress hormone?",
+                "options": {
+                    "A": "Auxin",
+                    "B": "Cytokinin",
+                    "C": "Abscisic acid",
+                    "D": "Gibberellin",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The lac operon is an example of:",
+                "options": {
+                    "A": "Positive regulation",
+                    "B": "Negative regulation",
+                    "C": "Both positive and negative regulation",
+                    "D": "Constitutive expression",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which enzyme is deficient in phenylketonuria (PKU)?",
+                "options": {
+                    "A": "Phenylalanine hydroxylase",
+                    "B": "Tyrosinase",
+                    "C": "Tryptophan pyrrolase",
+                    "D": "Histidase",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The Calvin cycle occurs in which part of the chloroplast?",
+                "options": {
+                    "A": "Thylakoid membrane",
+                    "B": "Stroma",
+                    "C": "Grana",
+                    "D": "Inner membrane",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following is not a component of the cytoskeleton?",
+                "options": {
+                    "A": "Microtubules",
+                    "B": "Microfilaments",
+                    "C": "Intermediate filaments",
+                    "D": "Ribosomes",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "In DNA replication, which enzyme removes RNA primers?",
+                "options": {
+                    "A": "DNA polymerase I",
+                    "B": "DNA polymerase III",
+                    "C": "Primase",
+                    "D": "Ligase",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which type of chromosomal aberration involves the loss of a chromosome segment?",
+                "options": {
+                    "A": "Duplication",
+                    "B": "Inversion",
+                    "C": "Deletion",
+                    "D": "Translocation",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The principle of complementarity was proposed by:",
+                "options": {
+                    "A": "Watson and Crick",
+                    "B": "Chargaff",
+                    "C": "Franklin",
+                    "D": "Meselson and Stahl",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following has the highest lattice energy?",
+                "options": {"A": "NaCl", "B": "MgO", "C": "CaO", "D": "KCl"},
+                "correct": "B",
+            },
+            {
+                "question": "The number of unpaired electrons in Mn²⁺ ion is:",
+                "options": {"A": "3", "B": "4", "C": "5", "D": "6"},
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following is an example of a nucleophilic substitution reaction?",
+                "options": {
+                    "A": "CH₃CH₂Br + OH⁻ → CH₃CH₂OH + Br⁻",
+                    "B": "CH₄ + Cl₂ → CH₃Cl + HCl",
+                    "C": "C₂H₄ + HBr → C₂H₅Br",
+                    "D": "C₆H₆ + Br₂ → C₆H₅Br + HBr",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The IUPAC name of CH₃CH(OH)CH₂CHO is:",
+                "options": {
+                    "A": "3-hydroxybutanal",
+                    "B": "2-hydroxybutanal",
+                    "C": "4-hydroxybutanal",
+                    "D": "1-hydroxybutanal",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which catalyst is used in the Haber process?",
+                "options": {"A": "Pt", "B": "Ni", "C": "Fe", "D": "V₂O₅"},
+                "correct": "C",
+            },
+            {
+                "question": "The hybridization of carbon in diamond is:",
+                "options": {"A": "sp", "B": "sp²", "C": "sp³", "D": "sp³d"},
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following is most acidic?",
+                "options": {
+                    "A": "Phenol",
+                    "B": "Ethanol",
+                    "C": "Acetic acid",
+                    "D": "Formic acid",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "The oxidation state of chromium in K₂Cr₂O₇ is:",
+                "options": {"A": "+3", "B": "+6", "C": "+7", "D": "+4"},
+                "correct": "B",
+            },
+            {
+                "question": "Which type of isomerism is shown by [Co(NH₃)₄Cl₂]⁺?",
+                "options": {
+                    "A": "Optical isomerism",
+                    "B": "Geometric isomerism",
+                    "C": "Linkage isomerism",
+                    "D": "Ionization isomerism",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The entropy change is maximum in which process?",
+                "options": {
+                    "A": "Melting of ice",
+                    "B": "Boiling of water",
+                    "C": "Sublimation of dry ice",
+                    "D": "Crystallization",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "A particle moves in a circle of radius R. The ratio of distance to displacement after half revolution is:",
+                "options": {"A": "π:2", "B": "2:π", "C": "π:1", "D": "1:π"},
+                "correct": "A",
+            },
+            {
+                "question": "The escape velocity from Earth's surface is approximately:",
+                "options": {
+                    "A": "7.9 km/s",
+                    "B": "11.2 km/s",
+                    "C": "9.8 km/s",
+                    "D": "15.0 km/s",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "In Young's double slit experiment, if the distance between slits is doubled, the fringe width becomes:",
+                "options": {
+                    "A": "Double",
+                    "B": "Half",
+                    "C": "Four times",
+                    "D": "One-fourth",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which physical quantity has the same dimensions as impulse?",
+                "options": {"A": "Force", "B": "Momentum", "C": "Energy", "D": "Power"},
+                "correct": "B",
+            },
+            {
+                "question": "The working principle of a transformer is based on:",
+                "options": {
+                    "A": "Self-induction",
+                    "B": "Mutual induction",
+                    "C": "Electromagnetic induction",
+                    "D": "Both B and C",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "In a photoelectric effect experiment, stopping potential depends on:",
+                "options": {
+                    "A": "Intensity of light",
+                    "B": "Frequency of light",
+                    "C": "Both intensity and frequency",
+                    "D": "Neither intensity nor frequency",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The de Broglie wavelength of a particle is inversely proportional to:",
+                "options": {
+                    "A": "Mass",
+                    "B": "Velocity",
+                    "C": "Momentum",
+                    "D": "Energy",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which type of semiconductor is formed when silicon is doped with phosphorus?",
+                "options": {
+                    "A": "Intrinsic",
+                    "B": "p-type",
+                    "C": "n-type",
+                    "D": "Compound",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The magnetic field at the center of a circular loop carrying current is:",
+                "options": {
+                    "A": "Directly proportional to radius",
+                    "B": "Inversely proportional to radius",
+                    "C": "Independent of radius",
+                    "D": "Proportional to square of radius",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "In simple harmonic motion, the acceleration is:",
+                "options": {
+                    "A": "Maximum at mean position",
+                    "B": "Zero at extreme position",
+                    "C": "Maximum at extreme position",
+                    "D": "Constant throughout",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the sentence with correct subject-verb agreement:",
+                "options": {
+                    "A": "Each of the students have submitted their assignments.",
+                    "B": "Neither John nor his friends is coming to the party.",
+                    "C": "The team is practicing for the championship.",
+                    "D": "Mathematics are my favorite subject.",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following is a complex sentence?",
+                "options": {
+                    "A": "She went to the store and bought groceries.",
+                    "B": "Although it was raining, we went for a walk.",
+                    "C": "The sun is shining brightly today.",
+                    "D": "He studied hard, yet he failed the exam.",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Identify the figure of speech in: 'The classroom was a zoo.'",
+                "options": {
+                    "A": "Simile",
+                    "B": "Metaphor",
+                    "C": "Personification",
+                    "D": "Alliteration",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which word is spelled correctly?",
+                "options": {
+                    "A": "Occurance",
+                    "B": "Occurence",
+                    "C": "Occurrence",
+                    "D": "Occurrance",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correct passive voice form: 'The chef prepared the meal.'",
+                "options": {
+                    "A": "The meal was prepared by the chef.",
+                    "B": "The meal is prepared by the chef.",
+                    "C": "The meal has been prepared by the chef.",
+                    "D": "The meal had been prepared by the chef.",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following is an example of a dangling modifier?",
+                "options": {
+                    "A": "Walking to school, the rain started pouring.",
+                    "B": "The book on the table is mine.",
+                    "C": "She quickly finished her homework.",
+                    "D": "After eating dinner, we watched a movie.",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Identify the type of clause: 'When the bell rings' in 'When the bell rings, class will begin.'",
+                "options": {
+                    "A": "Independent clause",
+                    "B": "Dependent clause",
+                    "C": "Relative clause",
+                    "D": "Noun clause",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct form: 'If I _____ you, I would accept the offer.'",
+                "options": {"A": "am", "B": "was", "C": "were", "D": "will be"},
+                "correct": "C",
+            },
+            {
+                "question": "Which punctuation mark is used to show possession?",
+                "options": {
+                    "A": "Comma",
+                    "B": "Apostrophe",
+                    "C": "Semicolon",
+                    "D": "Colon",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Select the sentence with correct parallelism:",
+                "options": {
+                    "A": "She likes reading, writing, and to paint.",
+                    "B": "He is smart, dedicated, and works hard.",
+                    "C": "The presentation was clear, informative, and engaging.",
+                    "D": "They enjoy swimming, hiking, and to cycle.",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which type of circulatory system is found in arthropods?",
+                "options": {
+                    "A": "Closed circulatory system",
+                    "B": "Open circulatory system",
+                    "C": "Both open and closed",
+                    "D": "No circulatory system",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The excretory organ in flatworms is:",
+                "options": {
+                    "A": "Nephridia",
+                    "B": "Malpighian tubules",
+                    "C": "Flame cells",
+                    "D": "Kidneys",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which phylum is characterized by the presence of cnidocytes?",
+                "options": {
+                    "A": "Porifera",
+                    "B": "Cnidaria",
+                    "C": "Platyhelminthes",
+                    "D": "Nematoda",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The body cavity in roundworms is called:",
+                "options": {
+                    "A": "Coelom",
+                    "B": "Pseudocoelom",
+                    "C": "Haemocoel",
+                    "D": "Acoelomate",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which class of mollusks includes squid and octopus?",
+                "options": {
+                    "A": "Gastropoda",
+                    "B": "Bivalvia",
+                    "C": "Cephalopoda",
+                    "D": "Polyplacophora",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The water vascular system is characteristic of:",
+                "options": {
+                    "A": "Mollusca",
+                    "B": "Arthropoda",
+                    "C": "Echinodermata",
+                    "D": "Annelida",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which structure is used for respiration in fish?",
+                "options": {"A": "Lungs", "B": "Gills", "C": "Skin", "D": "Spiracles"},
+                "correct": "B",
+            },
+            {
+                "question": "The larval stage of a frog is called:",
+                "options": {
+                    "A": "Caterpillar",
+                    "B": "Tadpole",
+                    "C": "Pupa",
+                    "D": "Nymph",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which animal shows external fertilization?",
+                "options": {
+                    "A": "Mammals",
+                    "B": "Birds",
+                    "C": "Reptiles",
+                    "D": "Amphibians",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "The study of insects is called:",
+                "options": {
+                    "A": "Ornithology",
+                    "B": "Herpetology",
+                    "C": "Entomology",
+                    "D": "Ichthyology",
+                },
+                "correct": "C",
+            },
+        ],
+        "created": datetime.now().isoformat(),
+        "active": True,
     }
-  ],
-        'created': datetime.now().isoformat(),
-        'active': True
-    }
-    
+
     exams["BIO003"] = sample_exam_3
     sample_exam_code_3 = generate_exam_code()
     sample_exam_4 = {
-        'code': "MAT001",
-        'title': 'MAT-Science Entrance Exam 1',
-        'duration': 50,
-        'questions':  [
-    {
-      "question": "If f(x) = ln(x^2 + 1), what is f''(x)?",
-      "options": {
-        "A": "(2 - 2x^2)/(x^2 + 1)^2",
-        "B": "2x/(x^2 + 1)",
-        "C": "2(x^2 - 1)/(x^2 + 1)^2",
-        "D": "(2x^2 - 2)/(x^2 + 1)^2"
-      }
-    },
-    {
-      "question": "Evaluate the limit: limₓ→0 (sin(3x)/x)",
-      "options": {
-        "A": "0",
-        "B": "1",
-        "C": "3",
-        "D": "Undefined"
-      }
-    },
-    {
-      "question": "The matrix A has eigenvalues 3 and 5. What is the determinant of A?",
-      "options": {
-        "A": "8",
-        "B": "15",
-        "C": "0",
-        "D": "2"
-      }
-    },
-    {
-      "question": "If ∫x·e^x dx = x·e^x - ∫e^x dx, then what is ∫x·e^x dx?",
-      "options": {
-        "A": "x·e^x - e^x + C",
-        "B": "x·e^x + e^x + C",
-        "C": "x·e^x - ln|x| + C",
-        "D": "x·e^x + ln|x| + C"
-      }
-    },
-    {
-      "question": "Solve: ∑ (k=1 to n) k^2",
-      "options": {
-        "A": "n(n + 1)/2",
-        "B": "n(n + 1)(2n + 1)/6",
-        "C": "n^2(n + 1)/2",
-        "D": "n(n - 1)/2"
-      }
-    },
-
-    {
-      "question": "A ball is projected at 60° with velocity 30 m/s. What is the max height?",
-      "options": {
-        "A": "34.4 m",
-        "B": "44.6 m",
-        "C": "22.9 m",
-        "D": "14.2 m"
-      }
-    },
-    {
-      "question": "What is the dimensional formula of impulse?",
-      "options": {
-        "A": "MLT^-1",
-        "B": "ML^2T^-2",
-        "C": "MLT^-2",
-        "D": "ML^2T^-1"
-      }
-    },
-    {
-      "question": "Which law explains the relation between pressure and volume at constant temperature?",
-      "options": {
-        "A": "Boyle’s Law",
-        "B": "Charles’ Law",
-        "C": "Avogadro’s Law",
-        "D": "Newton's Law"
-      }
-    },
-    {
-      "question": "Which of these represents simple harmonic motion?",
-      "options": {
-        "A": "x = A sin(ωt)",
-        "B": "x = A tan(ωt)",
-        "C": "x = A t^2",
-        "D": "x = A e^(−ωt)"
-      }
-    },
-    {
-      "question": "In Young’s double slit experiment, the fringe width increases if:",
-      "options": {
-        "A": "Slit separation increases",
-        "B": "Screen distance increases",
-        "C": "Wavelength decreases",
-        "D": "Light intensity increases"
-      }
-    },
-
-    {
-      "question": "Which element has the highest ionization energy?",
-      "options": {
-        "A": "He",
-        "B": "Ne",
-        "C": "F",
-        "D": "Ar"
-      }
-    },
-    {
-      "question": "Which is NOT a postulate of Dalton’s atomic theory?",
-      "options": {
-        "A": "Atoms are indivisible",
-        "B": "Atoms of same element are identical",
-        "C": "Atoms can be created or destroyed",
-        "D": "Atoms combine in simple ratios"
-      }
-    },
-    {
-      "question": "What is the hybridization of the central atom in SF₆?",
-      "options": {
-        "A": "sp³d",
-        "B": "sp³d²",
-        "C": "sp³",
-        "D": "sp²"
-      }
-    },
-    {
-      "question": "Which compound shows resonance?",
-      "options": {
-        "A": "CH₄",
-        "B": "CO₂",
-        "C": "O₃",
-        "D": "H₂O"
-      }
-    },
-    {
-      "question": "pH of 0.01 M HCl is approximately:",
-      "options": {
-        "A": "2",
-        "B": "1",
-        "C": "3",
-        "D": "0.01"
-      }
-    },
-
-    {
-      "question": "What is the output of: `print('A' + str(1 + 2))`",
-      "options": {
-        "A": "A3",
-        "B": "A1+2",
-        "C": "A12",
-        "D": "Error"
-      }
-    },
-    {
-      "question": "What does Big-O notation describe?",
-      "options": {
-        "A": "Runtime efficiency",
-        "B": "Memory usage",
-        "C": "Compilation time",
-        "D": "Syntax errors"
-      }
-    },
-    {
-      "question": "Which is **not** a characteristic of OOP?",
-      "options": {
-        "A": "Encapsulation",
-        "B": "Inheritance",
-        "C": "Polymorphism",
-        "D": "Recursion"
-      }
-    },
-    {
-      "question": "Which data structure uses FIFO?",
-      "options": {
-        "A": "Stack",
-        "B": "Queue",
-        "C": "Tree",
-        "D": "Graph"
-      }
-    },
-    {
-      "question": "Time complexity of binary search is:",
-      "options": {
-        "A": "O(n)",
-        "B": "O(log n)",
-        "C": "O(n log n)",
-        "D": "O(1)"
-      }
-    },
-
-    {
-      "question": "Identify the figure of speech: \"The wind whispered through the trees.\"",
-      "options": {
-        "A": "Simile",
-        "B": "Personification",
-        "C": "Metaphor",
-        "D": "Alliteration"
-      }
-    },
-    {
-      "question": "Which sentence is grammatically correct?",
-      "options": {
-        "A": "He don’t know nothing.",
-        "B": "He doesn’t know anything.",
-        "C": "He don’t knows nothing.",
-        "D": "He doesn’t knows anything."
-      }
-    },
-    {
-      "question": "Choose the best synonym for 'obfuscate':",
-      "options": {
-        "A": "Clarify",
-        "B": "Complicate",
-        "C": "Hide",
-        "D": "Confuse"
-      }
-    },
-    {
-      "question": "Choose the word that best completes the sentence: She was _____ by the unexpected question.",
-      "options": {
-        "A": "elated",
-        "B": "confounded",
-        "C": "articulated",
-        "D": "sustained"
-      }
-    },
-    {
-      "question": "What is the antonym of 'ephemeral'?",
-      "options": {
-        "A": "Brief",
-        "B": "Eternal",
-        "C": "Fleeting",
-        "D": "Transitory"
-      }
+        "code": "BIO004",
+        "title": "Bio-Science Entrance Exam 4",
+        "duration": 50,
+        "questions": [
+            {
+                "question": "Which of the following is the powerhouse of the cell?",
+                "options": {
+                    "A": "Nucleus",
+                    "B": "Mitochondria",
+                    "C": "Ribosome",
+                    "D": "Golgi apparatus",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The process of formation of gametes is called:",
+                "options": {
+                    "A": "Mitosis",
+                    "B": "Meiosis",
+                    "C": "Binary fission",
+                    "D": "Budding",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which enzyme breaks down starch into maltose?",
+                "options": {
+                    "A": "Pepsin",
+                    "B": "Trypsin",
+                    "C": "Amylase",
+                    "D": "Lipase",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The site of protein synthesis in a cell is:",
+                "options": {
+                    "A": "Nucleus",
+                    "B": "Mitochondria",
+                    "C": "Ribosome",
+                    "D": "Lysosome",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which tissue is responsible for transport of water in plants?",
+                "options": {
+                    "A": "Phloem",
+                    "B": "Xylem",
+                    "C": "Collenchyma",
+                    "D": "Sclerenchyma",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The genetic material DNA is located in:",
+                "options": {
+                    "A": "Cytoplasm",
+                    "B": "Nucleus",
+                    "C": "Mitochondria",
+                    "D": "Both B and C",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "Which hormone regulates blood sugar levels?",
+                "options": {
+                    "A": "Thyroxine",
+                    "B": "Insulin",
+                    "C": "Adrenaline",
+                    "D": "Growth hormone",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Photosynthesis occurs in which part of the plant cell?",
+                "options": {
+                    "A": "Nucleus",
+                    "B": "Mitochondria",
+                    "C": "Chloroplast",
+                    "D": "Vacuole",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The functional unit of kidney is:",
+                "options": {
+                    "A": "Neuron",
+                    "B": "Nephron",
+                    "C": "Alveoli",
+                    "D": "Hepatocyte",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which type of cell division reduces chromosome number by half?",
+                "options": {
+                    "A": "Mitosis",
+                    "B": "Meiosis",
+                    "C": "Amitosis",
+                    "D": "Binary fission",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The atomic number of carbon is:",
+                "options": {"A": "4", "B": "6", "C": "8", "D": "12"},
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following is an example of a homogeneous mixture?",
+                "options": {
+                    "A": "Sand and water",
+                    "B": "Oil and water",
+                    "C": "Salt solution",
+                    "D": "Iron filings and sulfur",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The electronic configuration of sodium (Na) is:",
+                "options": {
+                    "A": "2, 8, 1",
+                    "B": "2, 8, 2",
+                    "C": "2, 7, 2",
+                    "D": "2, 8, 8",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which gas is produced when metals react with acids?",
+                "options": {
+                    "A": "Oxygen",
+                    "B": "Carbon dioxide",
+                    "C": "Hydrogen",
+                    "D": "Nitrogen",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The chemical formula of methane is:",
+                "options": {"A": "CH3", "B": "CH4", "C": "C2H4", "D": "C2H6"},
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following is a reducing agent?",
+                "options": {
+                    "A": "Oxygen",
+                    "B": "Chlorine",
+                    "C": "Hydrogen",
+                    "D": "Fluorine",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The pH of lemon juice is approximately:",
+                "options": {"A": "2", "B": "7", "C": "9", "D": "12"},
+                "correct": "A",
+            },
+            {
+                "question": "Which element is used in making pencil leads?",
+                "options": {"A": "Lead", "B": "Carbon", "C": "Silicon", "D": "Sulfur"},
+                "correct": "B",
+            },
+            {
+                "question": "The process of rusting requires the presence of:",
+                "options": {
+                    "A": "Only oxygen",
+                    "B": "Only water",
+                    "C": "Both oxygen and water",
+                    "D": "Neither oxygen nor water",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following is an alkali?",
+                "options": {"A": "HCl", "B": "H2SO4", "C": "NaOH", "D": "CH3COOH"},
+                "correct": "C",
+            },
+            {
+                "question": "The SI unit of work is:",
+                "options": {"A": "Newton", "B": "Joule", "C": "Watt", "D": "Pascal"},
+                "correct": "B",
+            },
+            {
+                "question": "Which law states that energy can neither be created nor destroyed?",
+                "options": {
+                    "A": "Newton's first law",
+                    "B": "Law of conservation of energy",
+                    "C": "Ohm's law",
+                    "D": "Archimedes' principle",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The formula for kinetic energy is:",
+                "options": {"A": "mgh", "B": "1/2 mv²", "C": "Fd", "D": "P/t"},
+                "correct": "B",
+            },
+            {
+                "question": "Which mirror is used as a rear-view mirror in vehicles?",
+                "options": {
+                    "A": "Plane mirror",
+                    "B": "Concave mirror",
+                    "C": "Convex mirror",
+                    "D": "Spherical mirror",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The resistance of a conductor depends on:",
+                "options": {
+                    "A": "Length only",
+                    "B": "Area only",
+                    "C": "Material only",
+                    "D": "All of the above",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "Sound travels fastest in:",
+                "options": {"A": "Vacuum", "B": "Air", "C": "Water", "D": "Steel"},
+                "correct": "D",
+            },
+            {
+                "question": "The power of a lens is measured in:",
+                "options": {
+                    "A": "Meters",
+                    "B": "Diopters",
+                    "C": "Watts",
+                    "D": "Joules",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which electromagnetic radiation has the longest wavelength?",
+                "options": {
+                    "A": "X-rays",
+                    "B": "Visible light",
+                    "C": "Radio waves",
+                    "D": "Gamma rays",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The acceleration due to gravity on Earth is approximately:",
+                "options": {
+                    "A": "9.8 m/s²",
+                    "B": "10.8 m/s²",
+                    "C": "8.8 m/s²",
+                    "D": "11.8 m/s²",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which device is used to measure electric current?",
+                "options": {
+                    "A": "Voltmeter",
+                    "B": "Ammeter",
+                    "C": "Galvanometer",
+                    "D": "Multimeter",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct passive voice: 'She writes a letter.'",
+                "options": {
+                    "A": "A letter is written by her.",
+                    "B": "A letter was written by her.",
+                    "C": "A letter is being written by her.",
+                    "D": "A letter has been written by her.",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Identify the figure of speech: 'The stars danced in the sky.'",
+                "options": {
+                    "A": "Simile",
+                    "B": "Metaphor",
+                    "C": "Personification",
+                    "D": "Alliteration",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correct article: '___ university is a place of learning.'",
+                "options": {"A": "A", "B": "An", "C": "The", "D": "No article"},
+                "correct": "A",
+            },
+            {
+                "question": "Select the correct indirect speech: He said, 'I am going home.'",
+                "options": {
+                    "A": "He said that he is going home.",
+                    "B": "He said that he was going home.",
+                    "C": "He said that he will go home.",
+                    "D": "He said that he has gone home.",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the synonym of 'Meticulous':",
+                "options": {"A": "Careless", "B": "Careful", "C": "Lazy", "D": "Hasty"},
+                "correct": "B",
+            },
+            {
+                "question": "Fill in the blank with the correct conjunction: 'He is poor ___ honest.'",
+                "options": {"A": "and", "B": "but", "C": "or", "D": "so"},
+                "correct": "B",
+            },
+            {
+                "question": "Identify the type of sentence: 'What a beautiful day!'",
+                "options": {
+                    "A": "Declarative",
+                    "B": "Interrogative",
+                    "C": "Exclamatory",
+                    "D": "Imperative",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the antonym of 'Transparent':",
+                "options": {"A": "Clear", "B": "Opaque", "C": "Visible", "D": "Bright"},
+                "correct": "B",
+            },
+            {
+                "question": "Select the correctly punctuated sentence:",
+                "options": {
+                    "A": "Yes I am coming.",
+                    "B": "Yes, I am coming.",
+                    "C": "Yes; I am coming.",
+                    "D": "Yes: I am coming.",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct comparative form: 'This book is ___ than that one.'",
+                "options": {"A": "good", "B": "better", "C": "best", "D": "more good"},
+                "correct": "B",
+            },
+            {
+                "question": "Which system is responsible for filtering blood in vertebrates?",
+                "options": {
+                    "A": "Digestive system",
+                    "B": "Respiratory system",
+                    "C": "Excretory system",
+                    "D": "Circulatory system",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The largest phylum in the animal kingdom is:",
+                "options": {
+                    "A": "Chordata",
+                    "B": "Arthropoda",
+                    "C": "Mollusca",
+                    "D": "Cnidaria",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which animal has an open circulatory system?",
+                "options": {"A": "Human", "B": "Fish", "C": "Cockroach", "D": "Frog"},
+                "correct": "C",
+            },
+            {
+                "question": "The process of shedding old skin in snakes is called:",
+                "options": {
+                    "A": "Moulting",
+                    "B": "Metamorphosis",
+                    "C": "Regeneration",
+                    "D": "Hibernation",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which organ is vestigial in humans?",
+                "options": {"A": "Heart", "B": "Liver", "C": "Appendix", "D": "Kidney"},
+                "correct": "C",
+            },
+            {
+                "question": "The study of insects is called:",
+                "options": {
+                    "A": "Ornithology",
+                    "B": "Entomology",
+                    "C": "Herpetology",
+                    "D": "Ichthyology",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which animal is known for echolocation?",
+                "options": {"A": "Eagle", "B": "Bat", "C": "Owl", "D": "Snake"},
+                "correct": "B",
+            },
+            {
+                "question": "The breathing organs of fish are:",
+                "options": {"A": "Lungs", "B": "Gills", "C": "Skin", "D": "Spiracles"},
+                "correct": "B",
+            },
+            {
+                "question": "Which animal shows complete metamorphosis?",
+                "options": {
+                    "A": "Grasshopper",
+                    "B": "Cockroach",
+                    "C": "Butterfly",
+                    "D": "Dragonfly",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The hormone responsible for milk production in mammals is:",
+                "options": {
+                    "A": "Oxytocin",
+                    "B": "Prolactin",
+                    "C": "Estrogen",
+                    "D": "Progesterone",
+                },
+                "correct": "B",
+            },
+        ],
+        "created": datetime.now().isoformat(),
+        "active": True,
     }
-        ,
-    {
-      "question": "Solve for x: log₂(x^2 - 5x + 6) = 1",
-      "options": {
-        "A": "x = 2 or 3",
-        "B": "x = 1 or 6",
-        "C": "x = 3 or 4",
-        "D": "x = 1 or 5"
-      }
-    },
-    {
-      "question": "If sin(x) + cos(x) = √2, what is sin(2x)?",
-      "options": {
-        "A": "1",
-        "B": "√2",
-        "C": "0",
-        "D": "-1"
-      }
-    },
-    {
-      "question": "The area under y = x² from x = 1 to 3 is:",
-      "options": {
-        "A": "26/3",
-        "B": "9",
-        "C": "8",
-        "D": "10"
-      }
-    },
-    {
-      "question": "Which conic section is defined by the equation x² - y² = 1?",
-      "options": {
-        "A": "Circle",
-        "B": "Ellipse",
-        "C": "Parabola",
-        "D": "Hyperbola"
-      }
-    },
-    {
-      "question": "The general solution of dy/dx = ky is:",
-      "options": {
-        "A": "y = Ce^(kx)",
-        "B": "y = kx + C",
-        "C": "y = ln(kx)",
-        "D": "y = C/k"
-      }
-    },
+    exams["BIO004"] = sample_exam_4
 
-    {
-      "question": "Which law governs the reflection of light?",
-      "options": {
-        "A": "Snell's Law",
-        "B": "Newton's Second Law",
-        "C": "Law of Reflection",
-        "D": "Kirchhoff’s Law"
-      }
-    },
-    {
-      "question": "Which physical quantity has the unit of Tesla?",
-      "options": {
-        "A": "Magnetic field",
-        "B": "Electric current",
-        "C": "Voltage",
-        "D": "Resistance"
-      }
-    },
-    {
-      "question": "A transformer works on which principle?",
-      "options": {
-        "A": "Conservation of charge",
-        "B": "Electromagnetic induction",
-        "C": "Heat conduction",
-        "D": "Photoelectric effect"
-      }
-    },
-    {
-      "question": "Which of the following particles is not affected by electric field?",
-      "options": {
-        "A": "Electron",
-        "B": "Proton",
-        "C": "Neutron",
-        "D": "Alpha particle"
-      }
-    },
-    {
-      "question": "Which one has the highest refractive index?",
-      "options": {
-        "A": "Air",
-        "B": "Water",
-        "C": "Glass",
-        "D": "Diamond"
-      }
-    },
-
-    {
-      "question": "Which compound does not exhibit hydrogen bonding?",
-      "options": {
-        "A": "NH₃",
-        "B": "HF",
-        "C": "CH₄",
-        "D": "H₂O"
-      }
-    },
-    {
-      "question": "What is the IUPAC name of CH₃CH₂OH?",
-      "options": {
-        "A": "Methanol",
-        "B": "Ethanol",
-        "C": "Propanol",
-        "D": "Butanol"
-      }
-    },
-    {
-      "question": "Which is the strongest acid?",
-      "options": {
-        "A": "HCl",
-        "B": "H₂SO₄",
-        "C": "HNO₃",
-        "D": "HI"
-      }
-    },
-    {
-      "question": "What is the oxidation number of Mn in KMnO₄?",
-      "options": {
-        "A": "+2",
-        "B": "+4",
-        "C": "+7",
-        "D": "+6"
-      }
-    },
-    {
-      "question": "Which of these has aromatic character?",
-      "options": {
-        "A": "Cyclohexane",
-        "B": "Benzene",
-        "C": "Ethene",
-        "D": "Butyne"
-      }
-    },
-
-    {
-      "question": "Which keyword is used to define a function in Python?",
-      "options": {
-        "A": "func",
-        "B": "define",
-        "C": "def",
-        "D": "function"
-      }
-    },
-    {
-      "question": "Which of these is not a valid Python data type?",
-      "options": {
-        "A": "set",
-        "B": "tuple",
-        "C": "array",
-        "D": "dictionary"
-      }
-    },
-    {
-      "question": "Which of the following is used for comments in Python?",
-      "options": {
-        "A": "/* comment */",
-        "B": "// comment",
-        "C": "# comment",
-        "D": "-- comment"
-      }
-    },
-    {
-      "question": "What is the result of 5 // 2 in Python?",
-      "options": {
-        "A": "2.5",
-        "B": "3",
-        "C": "2",
-        "D": "Error"
-      }
-    },
-    {
-      "question": "Which algorithm is best for finding shortest path in graphs?",
-      "options": {
-        "A": "Bubble Sort",
-        "B": "DFS",
-        "C": "Dijkstra’s Algorithm",
-        "D": "Binary Search"
-      }
-    },
-
-    {
-      "question": "Identify the grammatical error: \"Neither of the books are available.\"",
-      "options": {
-        "A": "books",
-        "B": "are",
-        "C": "Neither",
-        "D": "available"
-      }
-    },
-    {
-      "question": "Choose the correct indirect speech: He said, \"I will go to school.\"",
-      "options": {
-        "A": "He said that he would go to school.",
-        "B": "He said he will go to school.",
-        "C": "He said that he will go school.",
-        "D": "He said he would gone to school."
-      }
-    },
-    {
-      "question": "Which of these is a complex sentence?",
-      "options": {
-        "A": "I came, I saw, I conquered.",
-        "B": "He slept early.",
-        "C": "I went home because I was tired.",
-        "D": "He is tall and smart."
-      }
-    },
-    {
-      "question": "Choose the best antonym for 'lucid':",
-      "options": {
-        "A": "Clear",
-        "B": "Ambiguous",
-        "C": "Bright",
-        "D": "Logical"
-      }
-    },
-    {
-      "question": "Fill in the blank: The committee _____ divided in their opinions.",
-      "options": {
-        "A": "was",
-        "B": "are",
-        "C": "were",
-        "D": "be"
-      }
+    sample_exam_5 = {
+        "code": "BIO005",
+        "title": "Bio-Science Entrance Exam 5",
+        "duration": 50,
+        "questions": [
+            {
+                "question": "Which of the following is the most abundant enzyme in the world?",
+                "options": {
+                    "A": "Pepsin",
+                    "B": "RuBisCO",
+                    "C": "Trypsin",
+                    "D": "Amylase",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The phenomenon of apical dominance is due to which hormone?",
+                "options": {
+                    "A": "Cytokinin",
+                    "B": "Gibberellin",
+                    "C": "Auxin",
+                    "D": "Abscisic acid",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following represents the correct pathway of water movement in plants?",
+                "options": {
+                    "A": "Root hair → Cortex → Endodermis → Pericycle → Xylem",
+                    "B": "Root hair → Endodermis → Cortex → Pericycle → Xylem",
+                    "C": "Root hair → Pericycle → Cortex → Endodermis → Xylem",
+                    "D": "Root hair → Xylem → Cortex → Endodermis → Pericycle",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "In which phase of meiosis does crossing over occur?",
+                "options": {
+                    "A": "Prophase I",
+                    "B": "Metaphase I",
+                    "C": "Anaphase I",
+                    "D": "Telophase I",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which biomolecule is the primary component of cell walls in fungi?",
+                "options": {
+                    "A": "Cellulose",
+                    "B": "Chitin",
+                    "C": "Pectin",
+                    "D": "Lignin",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The 'lock and key' model explains the mechanism of:",
+                "options": {
+                    "A": "DNA replication",
+                    "B": "Enzyme action",
+                    "C": "Protein synthesis",
+                    "D": "Photosynthesis",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following is not a post-transcriptional modification in eukaryotes?",
+                "options": {
+                    "A": "5' capping",
+                    "B": "3' polyadenylation",
+                    "C": "Splicing",
+                    "D": "Methylation of promoter",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "The primary acceptor of CO2 in C4 plants is:",
+                "options": {"A": "RuBP", "B": "PEP", "C": "OAA", "D": "Malate"},
+                "correct": "B",
+            },
+            {
+                "question": "Which tissue is responsible for secondary growth in dicot stems?",
+                "options": {
+                    "A": "Cambium",
+                    "B": "Pericycle",
+                    "C": "Cortex",
+                    "D": "Epidermis",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The codon UGA codes for:",
+                "options": {
+                    "A": "Tryptophan",
+                    "B": "Cysteine",
+                    "C": "Stop codon",
+                    "D": "Serine",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which class of vertebrates exhibits double circulation for the first time?",
+                "options": {
+                    "A": "Pisces",
+                    "B": "Amphibia",
+                    "C": "Reptilia",
+                    "D": "Aves",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The hormone that stimulates milk ejection is:",
+                "options": {
+                    "A": "Prolactin",
+                    "B": "Oxytocin",
+                    "C": "Estrogen",
+                    "D": "Progesterone",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which part of the nephron is impermeable to water?",
+                "options": {
+                    "A": "Glomerulus",
+                    "B": "Proximal convoluted tubule",
+                    "C": "Ascending limb of loop of Henle",
+                    "D": "Collecting duct",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The cavity present in the blastula stage is called:",
+                "options": {
+                    "A": "Blastocoel",
+                    "B": "Archenteron",
+                    "C": "Coelom",
+                    "D": "Neural canal",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which antibody is present in colostrum?",
+                "options": {"A": "IgG", "B": "IgM", "C": "IgA", "D": "IgE"},
+                "correct": "C",
+            },
+            {
+                "question": "The site of fertilization in human females is:",
+                "options": {
+                    "A": "Ovary",
+                    "B": "Uterus",
+                    "C": "Fallopian tube",
+                    "D": "Cervix",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which cell organelle is known as the 'powerhouse of the cell'?",
+                "options": {
+                    "A": "Nucleus",
+                    "B": "Ribosome",
+                    "C": "Mitochondria",
+                    "D": "Golgi apparatus",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The most primitive mammals are:",
+                "options": {
+                    "A": "Marsupials",
+                    "B": "Placentals",
+                    "C": "Monotremes",
+                    "D": "Primates",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which nerve controls the movement of the diaphragm?",
+                "options": {
+                    "A": "Vagus nerve",
+                    "B": "Phrenic nerve",
+                    "C": "Intercostal nerve",
+                    "D": "Hypoglossal nerve",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The yellow color of urine is due to:",
+                "options": {
+                    "A": "Bilirubin",
+                    "B": "Urochrome",
+                    "C": "Hemoglobin",
+                    "D": "Creatinine",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The work function of a metal is 3.2 eV. The maximum kinetic energy of photoelectrons when light of wavelength 300 nm is incident on it is:",
+                "options": {
+                    "A": "0.94 eV",
+                    "B": "1.12 eV",
+                    "C": "1.94 eV",
+                    "D": "4.14 eV",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The de Broglie wavelength of an electron accelerated through a potential of 100 V is:",
+                "options": {"A": "1.23 Å", "B": "12.3 Å", "C": "0.123 Å", "D": "123 Å"},
+                "correct": "A",
+            },
+            {
+                "question": "In Young's double slit experiment, the fringe width is:",
+                "options": {
+                    "A": "Directly proportional to the wavelength",
+                    "B": "Inversely proportional to the distance between slits",
+                    "C": "Directly proportional to the distance from screen",
+                    "D": "All of the above",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "The electric field inside a conductor in electrostatic equilibrium is:",
+                "options": {
+                    "A": "Maximum",
+                    "B": "Minimum",
+                    "C": "Zero",
+                    "D": "Varies with position",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The time period of a simple pendulum on the moon (g_moon = g_earth/6) will be:",
+                "options": {
+                    "A": "6 times that on earth",
+                    "B": "√6 times that on earth",
+                    "C": "1/6 times that on earth",
+                    "D": "1/√6 times that on earth",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The dimensional formula of coefficient of viscosity is:",
+                "options": {
+                    "A": "[ML⁻¹T⁻¹]",
+                    "B": "[M⁰L⁰T⁻¹]",
+                    "C": "[ML⁻²T⁻²]",
+                    "D": "[MLT⁻¹]",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "A charged particle enters a uniform magnetic field perpendicularly. The path followed is:",
+                "options": {
+                    "A": "Straight line",
+                    "B": "Parabolic",
+                    "C": "Circular",
+                    "D": "Helical",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The ratio of kinetic energies of a proton and an α-particle accelerated through the same potential is:",
+                "options": {"A": "1:2", "B": "1:4", "C": "2:1", "D": "4:1"},
+                "correct": "A",
+            },
+            {
+                "question": "The efficiency of a Carnot engine operating between 27°C and 227°C is:",
+                "options": {"A": "40%", "B": "50%", "C": "60%", "D": "80%"},
+                "correct": "A",
+            },
+            {
+                "question": "The self-inductance of a solenoid is independent of:",
+                "options": {
+                    "A": "Number of turns",
+                    "B": "Cross-sectional area",
+                    "C": "Current flowing through it",
+                    "D": "Permeability of core material",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The oxidation state of chromium in K₂Cr₂O₇ is:",
+                "options": {"A": "+3", "B": "+6", "C": "+7", "D": "+2"},
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following has the highest boiling point?",
+                "options": {"A": "HF", "B": "HCl", "C": "HBr", "D": "HI"},
+                "correct": "A",
+            },
+            {
+                "question": "The hybridization of carbon in diamond is:",
+                "options": {"A": "sp", "B": "sp²", "C": "sp³", "D": "sp³d"},
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following is an intensive property?",
+                "options": {
+                    "A": "Mass",
+                    "B": "Volume",
+                    "C": "Density",
+                    "D": "Number of moles",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The number of π bonds in benzene is:",
+                "options": {"A": "3", "B": "6", "C": "9", "D": "12"},
+                "correct": "A",
+            },
+            {
+                "question": "Which gas is evolved when zinc reacts with dilute HCl?",
+                "options": {
+                    "A": "Oxygen",
+                    "B": "Chlorine",
+                    "C": "Hydrogen",
+                    "D": "Carbon dioxide",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The IUPAC name of CH₃CH(OH)CH₃ is:",
+                "options": {
+                    "A": "1-propanol",
+                    "B": "2-propanol",
+                    "C": "Propan-1-ol",
+                    "D": "Propan-2-ol",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "Which of the following exhibits tautomerism?",
+                "options": {
+                    "A": "Acetone",
+                    "B": "Acetaldehyde",
+                    "C": "Both A and B",
+                    "D": "Neither A nor B",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The shape of PCl₅ molecule is:",
+                "options": {
+                    "A": "Trigonal planar",
+                    "B": "Tetrahedral",
+                    "C": "Trigonal bipyramidal",
+                    "D": "Octahedral",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following is used as a catalyst in Haber's process?",
+                "options": {
+                    "A": "Platinum",
+                    "B": "Iron",
+                    "C": "Nickel",
+                    "D": "Vanadium pentoxide",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct passive voice: 'The teacher teaches the students.'",
+                "options": {
+                    "A": "The students are taught by the teacher.",
+                    "B": "The students were taught by the teacher.",
+                    "C": "The students have been taught by the teacher.",
+                    "D": "The students will be taught by the teacher.",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Select the word that is closest in meaning to 'Ephemeral':",
+                "options": {
+                    "A": "Permanent",
+                    "B": "Temporary",
+                    "C": "Eternal",
+                    "D": "Continuous",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Identify the figure of speech in: 'The wind whispered through the trees.'",
+                "options": {
+                    "A": "Metaphor",
+                    "B": "Simile",
+                    "C": "Personification",
+                    "D": "Hyperbole",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correct article: '__ honest man is respected by all.'",
+                "options": {"A": "A", "B": "An", "C": "The", "D": "No article"},
+                "correct": "B",
+            },
+            {
+                "question": "Select the correctly punctuated sentence:",
+                "options": {
+                    "A": "The book, which I read yesterday was interesting.",
+                    "B": "The book which I read yesterday, was interesting.",
+                    "C": "The book, which I read yesterday, was interesting.",
+                    "D": "The book which I read yesterday was interesting.",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correct form: 'If I ___ you, I would accept the offer.'",
+                "options": {"A": "am", "B": "were", "C": "was", "D": "will be"},
+                "correct": "B",
+            },
+            {
+                "question": "Identify the type of clause in: 'I know the man who lives next door.'",
+                "options": {
+                    "A": "Noun clause",
+                    "B": "Adjective clause",
+                    "C": "Adverb clause",
+                    "D": "Independent clause",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the antonym of 'Verbose':",
+                "options": {
+                    "A": "Talkative",
+                    "B": "Concise",
+                    "C": "Wordy",
+                    "D": "Lengthy",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Select the correct spelling:",
+                "options": {
+                    "A": "Occurrence",
+                    "B": "Occurence",
+                    "C": "Occurance",
+                    "D": "Occurrance",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Fill in the blank with the appropriate conjunction: 'He studied hard ___ he could pass the exam.'",
+                "options": {
+                    "A": "so that",
+                    "B": "because",
+                    "C": "although",
+                    "D": "unless",
+                },
+                "correct": "A",
+            },
+        ],
+        "created": datetime.now().isoformat(),
+        "active": True,
     }
- 
+    exams["BIO005"] = sample_exam_5
 
-  ],
-        'created': datetime.now().isoformat(),
-        'active': True
+    com_exam_1 = {
+        "code": "COM005",
+        "title": "Computer Science Entrance Exam 1",
+        "duration": 50,
+        "questions": [
+            {
+                "question": "If log₂x + log₄x = 6, then x equals:",
+                "options": {"A": "16", "B": "32", "C": "64", "D": "128"},
+                "correct": "A",
+            },
+            {
+                "question": "The derivative of sin⁻¹(2x/(1+x²)) with respect to x is:",
+                "options": {
+                    "A": "2/(1+x²)",
+                    "B": "1/(1+x²)",
+                    "C": "2x/(1+x²)",
+                    "D": "x/(1+x²)",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "If the roots of x² - 3x + k = 0 are in the ratio 2:1, then k equals:",
+                "options": {"A": "1", "B": "2", "C": "3", "D": "4"},
+                "correct": "B",
+            },
+            {
+                "question": "The value of ∫₀^π x sin x dx is:",
+                "options": {"A": "π", "B": "2π", "C": "π/2", "D": "0"},
+                "correct": "A",
+            },
+            {
+                "question": "If |z₁| = |z₂| = 1 and arg(z₁/z₂) = π/3, then |z₁ + z₂| equals:",
+                "options": {"A": "√3", "B": "1", "C": "2", "D": "√2"},
+                "correct": "A",
+            },
+            {
+                "question": "The number of ways to arrange the letters of MATHEMATICS is:",
+                "options": {
+                    "A": "4989600",
+                    "B": "2494800",
+                    "C": "1247400",
+                    "D": "4989600",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "If ᶜPᵣ = 210 and ᶜCᵣ = 35, then r equals:",
+                "options": {"A": "3", "B": "4", "C": "5", "D": "6"},
+                "correct": "A",
+            },
+            {
+                "question": "The equation of the tangent to the circle x² + y² = 25 at point (3,4) is:",
+                "options": {
+                    "A": "3x + 4y = 25",
+                    "B": "4x + 3y = 25",
+                    "C": "3x - 4y = 25",
+                    "D": "4x - 3y = 25",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "If matrices A and B are such that AB = BA = I, then B is called:",
+                "options": {
+                    "A": "Transpose of A",
+                    "B": "Adjoint of A",
+                    "C": "Inverse of A",
+                    "D": "Determinant of A",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The sum of the series 1 + 2x + 3x² + 4x³ + ... to ∞ (|x| < 1) is:",
+                "options": {
+                    "A": "1/(1-x)²",
+                    "B": "1/(1+x)²",
+                    "C": "x/(1-x)²",
+                    "D": "1/(1-x)",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following compounds exhibits geometrical isomerism?",
+                "options": {
+                    "A": "CH₃-CH₂-CH₃",
+                    "B": "CH₃-CH=CH-CH₃",
+                    "C": "CH₃-CH₂-OH",
+                    "D": "CH₃-CO-CH₃",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The hybridization of carbon in diamond is:",
+                "options": {"A": "sp", "B": "sp²", "C": "sp³", "D": "sp³d"},
+                "correct": "C",
+            },
+            {
+                "question": "According to VSEPR theory, the shape of NH₃ molecule is:",
+                "options": {
+                    "A": "Trigonal planar",
+                    "B": "Pyramidal",
+                    "C": "Tetrahedral",
+                    "D": "Linear",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The oxidation number of chromium in K₂Cr₂O₇ is:",
+                "options": {"A": "+3", "B": "+6", "C": "+7", "D": "+2"},
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following is the strongest reducing agent?",
+                "options": {"A": "Li", "B": "Na", "C": "K", "D": "Rb"},
+                "correct": "A",
+            },
+            {
+                "question": "The IUPAC name of CH₃-CH(CH₃)-CH₂-OH is:",
+                "options": {
+                    "A": "2-methylpropan-1-ol",
+                    "B": "2-methylpropan-2-ol",
+                    "C": "1-methylpropan-2-ol",
+                    "D": "Isobutanol",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following reactions is an example of nucleophilic substitution?",
+                "options": {
+                    "A": "CH₃Br + OH⁻ → CH₃OH + Br⁻",
+                    "B": "CH₄ + Cl₂ → CH₃Cl + HCl",
+                    "C": "C₂H₄ + Br₂ → C₂H₄Br₂",
+                    "D": "C₆H₆ + HNO₃ → C₆H₅NO₂ + H₂O",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The pH of 0.01 M NaOH solution is:",
+                "options": {"A": "12", "B": "2", "C": "10", "D": "14"},
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following is an aldehyde?",
+                "options": {
+                    "A": "CH₃COCH₃",
+                    "B": "CH₃CHO",
+                    "C": "CH₃COOH",
+                    "D": "CH₃OH",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The number of unpaired electrons in Fe³⁺ ion is:",
+                "options": {"A": "3", "B": "4", "C": "5", "D": "6"},
+                "correct": "C",
+            },
+            {
+                "question": "A particle moves in a circle of radius R with constant speed v. Its acceleration is:",
+                "options": {
+                    "A": "v²/R directed radially inward",
+                    "B": "v²/R directed radially outward",
+                    "C": "v/R directed tangentially",
+                    "D": "Zero",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The dimensional formula of angular momentum is:",
+                "options": {
+                    "A": "[ML²T⁻¹]",
+                    "B": "[MLT⁻¹]",
+                    "C": "[ML²T⁻²]",
+                    "D": "[MLT⁻²]",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "A spring of force constant k is cut into two equal parts. The force constant of each part is:",
+                "options": {"A": "k/2", "B": "k", "C": "2k", "D": "k/4"},
+                "correct": "C",
+            },
+            {
+                "question": "The work done in moving a charge q through a potential difference V is:",
+                "options": {"A": "qV", "B": "q/V", "C": "V/q", "D": "q²V"},
+                "correct": "A",
+            },
+            {
+                "question": "For a photon, the relationship between energy E and momentum p is:",
+                "options": {
+                    "A": "E = pc",
+                    "B": "E = p²c",
+                    "C": "E = pc²",
+                    "D": "E = p/c",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The magnetic field at the center of a current-carrying circular coil is proportional to:",
+                "options": {"A": "I/R", "B": "IR", "C": "I/R²", "D": "IR²"},
+                "correct": "A",
+            },
+            {
+                "question": "In Young's double slit experiment, the fringe width is:",
+                "options": {"A": "λD/d", "B": "λd/D", "C": "Dd/λ", "D": "λDd"},
+                "correct": "A",
+            },
+            {
+                "question": "The de Broglie wavelength of a particle is given by:",
+                "options": {"A": "h/p", "B": "hp", "C": "h/mv", "D": "Both A and C"},
+                "correct": "D",
+            },
+            {
+                "question": "The maximum kinetic energy of photoelectrons depends on:",
+                "options": {
+                    "A": "Intensity of light",
+                    "B": "Frequency of light",
+                    "C": "Time of exposure",
+                    "D": "Material of the surface",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The efficiency of a Carnot engine operating between temperatures T₁ and T₂ (T₁ > T₂) is:",
+                "options": {
+                    "A": "1 - T₂/T₁",
+                    "B": "1 - T₁/T₂",
+                    "C": "T₁/T₂",
+                    "D": "T₂/T₁",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Choose the correct passive voice: 'She is writing a letter.'",
+                "options": {
+                    "A": "A letter is written by her.",
+                    "B": "A letter is being written by her.",
+                    "C": "A letter was written by her.",
+                    "D": "A letter has been written by her.",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Identify the figure of speech: 'The stars danced in the sky.'",
+                "options": {
+                    "A": "Simile",
+                    "B": "Metaphor",
+                    "C": "Personification",
+                    "D": "Hyperbole",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correct indirect speech: He said, 'I am going home.'",
+                "options": {
+                    "A": "He said that he is going home.",
+                    "B": "He said that he was going home.",
+                    "C": "He said that he will go home.",
+                    "D": "He said that he goes home.",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The word 'Bibliography' means:",
+                "options": {
+                    "A": "Study of life",
+                    "B": "List of books",
+                    "C": "Art of writing",
+                    "D": "Study of words",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the one-word substitution for 'A person who speaks many languages':",
+                "options": {
+                    "A": "Linguist",
+                    "B": "Polyglot",
+                    "C": "Interpreter",
+                    "D": "Translator",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Identify the type of sentence: 'What a beautiful day it is!'",
+                "options": {
+                    "A": "Declarative",
+                    "B": "Interrogative",
+                    "C": "Imperative",
+                    "D": "Exclamatory",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "Choose the correct meaning of the idiom 'Break the ice':",
+                "options": {
+                    "A": "To start something",
+                    "B": "To end a relationship",
+                    "C": "To make someone comfortable",
+                    "D": "To destroy something",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The plural of 'Phenomenon' is:",
+                "options": {
+                    "A": "Phenomenons",
+                    "B": "Phenomena",
+                    "C": "Phenomenas",
+                    "D": "Phenomenes",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct spelling:",
+                "options": {
+                    "A": "Definitely",
+                    "B": "Definately",
+                    "C": "Definitly",
+                    "D": "Definetly",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The antonym of 'Verbose' is:",
+                "options": {
+                    "A": "Talkative",
+                    "B": "Concise",
+                    "C": "Eloquent",
+                    "D": "Wordy",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which data structure uses LIFO (Last In First Out) principle?",
+                "options": {
+                    "A": "Queue",
+                    "B": "Stack",
+                    "C": "Array",
+                    "D": "Linked List",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The time complexity of binary search algorithm is:",
+                "options": {
+                    "A": "O(n)",
+                    "B": "O(n²)",
+                    "C": "O(log n)",
+                    "D": "O(n log n)",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following is NOT a programming paradigm?",
+                "options": {
+                    "A": "Object-oriented",
+                    "B": "Functional",
+                    "C": "Procedural",
+                    "D": "Sequential",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "In object-oriented programming, which concept allows a class to inherit properties from another class?",
+                "options": {
+                    "A": "Encapsulation",
+                    "B": "Inheritance",
+                    "C": "Polymorphism",
+                    "D": "Abstraction",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which sorting algorithm has the best average case time complexity?",
+                "options": {
+                    "A": "Bubble Sort",
+                    "B": "Selection Sort",
+                    "C": "Merge Sort",
+                    "D": "Insertion Sort",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The decimal number 15 in binary is:",
+                "options": {"A": "1111", "B": "1110", "C": "1101", "D": "1011"},
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following is a relational database management system?",
+                "options": {
+                    "A": "MongoDB",
+                    "B": "Redis",
+                    "C": "MySQL",
+                    "D": "Cassandra",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "In networking, what does TCP stand for?",
+                "options": {
+                    "A": "Transfer Control Protocol",
+                    "B": "Transmission Control Protocol",
+                    "C": "Transport Control Protocol",
+                    "D": "Terminal Control Protocol",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following is used for version control?",
+                "options": {"A": "Git", "B": "Docker", "C": "Jenkins", "D": "Apache"},
+                "correct": "A",
+            },
+            {
+                "question": "The primary key in a database table:",
+                "options": {
+                    "A": "Can have duplicate values",
+                    "B": "Can be NULL",
+                    "C": "Must be unique and not NULL",
+                    "D": "Is optional",
+                },
+                "correct": "C",
+            },
+        ],
+        "created": datetime.now().isoformat(),
+        "active": True,
     }
-        
-        # Save sample data
+    exams["COM005"] = com_exam_1
+
+    com_exam_2 = {
+        "code": "COM005",
+        "title": "Computer Science Entrance Exam 2",
+        "duration": 50,
+        "questions": [
+            {
+                "question": "If the roots of the equation x² - 3x + k = 0 are in the ratio 2:3, then the value of k is:",
+                "options": {"A": "2", "B": "18/25", "C": "6/5", "D": "9/4"},
+                "correct": "B",
+            },
+            {
+                "question": "The number of ways to arrange the letters of the word 'MATHEMATICS' is:",
+                "options": {
+                    "A": "11!/2!2!",
+                    "B": "11!/2!2!2!",
+                    "C": "11!/2!",
+                    "D": "11!",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The derivative of sin⁻¹(2x/(1+x²)) with respect to x is:",
+                "options": {
+                    "A": "2/(1+x²)",
+                    "B": "1/(1+x²)",
+                    "C": "2x/(1+x²)",
+                    "D": "4x/(1+x²)²",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "If |z₁| = |z₂| = |z₃| = 1 and z₁ + z₂ + z₃ = 0, then |z₁² + z₂² + z₃²| equals:",
+                "options": {"A": "0", "B": "1", "C": "2", "D": "3"},
+                "correct": "C",
+            },
+            {
+                "question": "The area of the region bounded by y = x², y = 0, x = 1, and x = 2 is:",
+                "options": {"A": "7/3", "B": "8/3", "C": "5/3", "D": "4/3"},
+                "correct": "A",
+            },
+            {
+                "question": "If A = [1 2; 3 4] and B = [2 0; 1 3], then det(AB) is:",
+                "options": {"A": "-10", "B": "-12", "C": "12", "D": "10"},
+                "correct": "B",
+            },
+            {
+                "question": "The coefficient of x⁵ in the expansion of (1 + x)⁸ is:",
+                "options": {"A": "56", "B": "70", "C": "84", "D": "126"},
+                "correct": "A",
+            },
+            {
+                "question": "The equation of the tangent to the circle x² + y² = 25 at the point (3, 4) is:",
+                "options": {
+                    "A": "3x + 4y = 25",
+                    "B": "4x + 3y = 25",
+                    "C": "3x - 4y = 25",
+                    "D": "4x - 3y = 25",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "If the vectors a⃗ = î + 2ĵ + 3k̂ and b⃗ = 3î + 2ĵ + k̂, then a⃗ × b⃗ is:",
+                "options": {
+                    "A": "-4î + 8ĵ - 4k̂",
+                    "B": "4î - 8ĵ + 4k̂",
+                    "C": "-4î - 8ĵ + 4k̂",
+                    "D": "4î + 8ĵ - 4k̂",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The value of ∫₀^(π/2) sin²x dx is:",
+                "options": {"A": "π/2", "B": "π/4", "C": "π/8", "D": "1"},
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following compounds shows geometrical isomerism?",
+                "options": {
+                    "A": "CH₃CH₂CH₂CH₃",
+                    "B": "CH₃CH=CHCH₃",
+                    "C": "CH₃CH₂OH",
+                    "D": "CH₃COCH₃",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The IUPAC name of CH₃CH(OH)CH₂CH₃ is:",
+                "options": {
+                    "A": "2-butanol",
+                    "B": "1-butanol",
+                    "C": "3-butanol",
+                    "D": "sec-butanol",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following has the highest boiling point?",
+                "options": {"A": "HF", "B": "HCl", "C": "HBr", "D": "HI"},
+                "correct": "A",
+            },
+            {
+                "question": "The hybridization of carbon in diamond is:",
+                "options": {"A": "sp", "B": "sp²", "C": "sp³", "D": "sp³d"},
+                "correct": "C",
+            },
+            {
+                "question": "Which quantum number determines the shape of an orbital?",
+                "options": {
+                    "A": "Principal (n)",
+                    "B": "Azimuthal (l)",
+                    "C": "Magnetic (m)",
+                    "D": "Spin (s)",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The rate of a first-order reaction is 0.04 mol L⁻¹ s⁻¹ when the concentration is 0.2 M. The rate constant is:",
+                "options": {
+                    "A": "0.2 s⁻¹",
+                    "B": "0.008 s⁻¹",
+                    "C": "5 s⁻¹",
+                    "D": "0.04 s⁻¹",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following is an example of a coordination compound?",
+                "options": {
+                    "A": "NaCl",
+                    "B": "[Cu(NH₃)₄]SO₄",
+                    "C": "H₂SO₄",
+                    "D": "CH₄",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The oxidation number of Cr in K₂Cr₂O₇ is:",
+                "options": {"A": "+6", "B": "+7", "C": "+3", "D": "+2"},
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following is not an aldol condensation product?",
+                "options": {
+                    "A": "CH₃CH(OH)CH₂CHO",
+                    "B": "CH₃CH=CHCHO",
+                    "C": "CH₃COOH",
+                    "D": "C₆H₅CH=CHCHO",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The pH of 0.01 M NaOH solution is:",
+                "options": {"A": "12", "B": "2", "C": "10", "D": "14"},
+                "correct": "A",
+            },
+            {
+                "question": "A particle moves in a circle of radius R with constant angular velocity ω. Its centripetal acceleration is:",
+                "options": {"A": "ω²R", "B": "ωR", "C": "ω/R", "D": "ω²/R"},
+                "correct": "A",
+            },
+            {
+                "question": "The work function of a metal is 4 eV. The maximum kinetic energy of photoelectrons when light of energy 6 eV is incident on it is:",
+                "options": {"A": "2 eV", "B": "4 eV", "C": "6 eV", "D": "10 eV"},
+                "correct": "A",
+            },
+            {
+                "question": "A wire of resistance R is stretched to double its length. Its new resistance becomes:",
+                "options": {"A": "R/2", "B": "2R", "C": "4R", "D": "R/4"},
+                "correct": "C",
+            },
+            {
+                "question": "The de Broglie wavelength of an electron moving with velocity v is:",
+                "options": {"A": "h/mv", "B": "mv/h", "C": "hv/m", "D": "m/hv"},
+                "correct": "A",
+            },
+            {
+                "question": "In Young's double slit experiment, the fringe width is proportional to:",
+                "options": {"A": "1/λ", "B": "λ", "C": "1/D", "D": "d"},
+                "correct": "B",
+            },
+            {
+                "question": "The magnetic field at the center of a circular coil of radius R carrying current I is:",
+                "options": {
+                    "A": "μ₀I/2R",
+                    "B": "μ₀I/4πR",
+                    "C": "μ₀I/2πR",
+                    "D": "μ₀IR/2",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "A capacitor of capacitance C is charged to potential V. The energy stored is:",
+                "options": {"A": "CV", "B": "CV²", "C": "CV²/2", "D": "2CV²"},
+                "correct": "C",
+            },
+            {
+                "question": "The escape velocity from Earth's surface is approximately:",
+                "options": {
+                    "A": "7.9 km/s",
+                    "B": "11.2 km/s",
+                    "C": "9.8 km/s",
+                    "D": "15.0 km/s",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "In an LCR circuit at resonance, the impedance is:",
+                "options": {
+                    "A": "Maximum",
+                    "B": "Minimum",
+                    "C": "Zero",
+                    "D": "Infinite",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The binding energy per nucleon is maximum for:",
+                "options": {
+                    "A": "Hydrogen",
+                    "B": "Iron",
+                    "C": "Uranium",
+                    "D": "Helium",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct passive voice form: 'The teacher explained the lesson.'",
+                "options": {
+                    "A": "The lesson is explained by the teacher.",
+                    "B": "The lesson was explained by the teacher.",
+                    "C": "The lesson has been explained by the teacher.",
+                    "D": "The lesson will be explained by the teacher.",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Identify the figure of speech in: 'The classroom was a zoo.'",
+                "options": {
+                    "A": "Simile",
+                    "B": "Metaphor",
+                    "C": "Personification",
+                    "D": "Hyperbole",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct meaning of the idiom 'Break the ice':",
+                "options": {
+                    "A": "To start a conversation",
+                    "B": "To break something made of ice",
+                    "C": "To be very cold",
+                    "D": "To stop talking",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Select the sentence with correct subject-verb agreement:",
+                "options": {
+                    "A": "Neither of the boys were present.",
+                    "B": "Each of the students have a book.",
+                    "C": "Either John or his friends are coming.",
+                    "D": "The team is playing well.",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "Choose the correct form: 'I wish I ___ there yesterday.'",
+                "options": {"A": "was", "B": "were", "C": "had been", "D": "have been"},
+                "correct": "C",
+            },
+            {
+                "question": "Identify the type of clause: 'Although it was raining, we went out.'",
+                "options": {
+                    "A": "Noun clause",
+                    "B": "Adjective clause",
+                    "C": "Adverb clause",
+                    "D": "Independent clause",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the antonym of 'Ephemeral':",
+                "options": {
+                    "A": "Temporary",
+                    "B": "Permanent",
+                    "C": "Brief",
+                    "D": "Short-lived",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Select the correctly punctuated sentence:",
+                "options": {
+                    "A": "The book, that I bought yesterday is interesting.",
+                    "B": "The book that I bought yesterday, is interesting.",
+                    "C": "The book that I bought yesterday is interesting.",
+                    "D": "The book, that I bought, yesterday is interesting.",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correct preposition: 'He is good ___ mathematics.'",
+                "options": {"A": "in", "B": "at", "C": "on", "D": "with"},
+                "correct": "B",
+            },
+            {
+                "question": "Identify the correct reported speech: He said, 'I am going home.'",
+                "options": {
+                    "A": "He said that he is going home.",
+                    "B": "He said that he was going home.",
+                    "C": "He said that he will go home.",
+                    "D": "He said that he goes home.",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following is not a valid variable name in most programming languages?",
+                "options": {
+                    "A": "myVariable",
+                    "B": "_variable",
+                    "C": "2variable",
+                    "D": "variable2",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "In object-oriented programming, which concept allows a class to inherit properties from another class?",
+                "options": {
+                    "A": "Encapsulation",
+                    "B": "Polymorphism",
+                    "C": "Inheritance",
+                    "D": "Abstraction",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "What is the time complexity of binary search?",
+                "options": {"A": "O(n)", "B": "O(n²)", "C": "O(log n)", "D": "O(1)"},
+                "correct": "C",
+            },
+            {
+                "question": "Which data structure follows the LIFO (Last In First Out) principle?",
+                "options": {
+                    "A": "Queue",
+                    "B": "Stack",
+                    "C": "Array",
+                    "D": "Linked List",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "In a relational database, a primary key:",
+                "options": {
+                    "A": "Can have duplicate values",
+                    "B": "Can be NULL",
+                    "C": "Uniquely identifies each record",
+                    "D": "Is always numeric",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following is a scripting language?",
+                "options": {"A": "C++", "B": "Java", "C": "Python", "D": "Assembly"},
+                "correct": "C",
+            },
+            {
+                "question": "What does HTML stand for?",
+                "options": {
+                    "A": "High Tech Markup Language",
+                    "B": "HyperText Markup Language",
+                    "C": "Home Tool Markup Language",
+                    "D": "Hyperlink and Text Markup Language",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "In binary number system, what is the decimal equivalent of 1101?",
+                "options": {"A": "11", "B": "12", "C": "13", "D": "14"},
+                "correct": "C",
+            },
+            {
+                "question": "Which sorting algorithm has the best average-case time complexity?",
+                "options": {
+                    "A": "Bubble Sort",
+                    "B": "Selection Sort",
+                    "C": "Quick Sort",
+                    "D": "Insertion Sort",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "What is the purpose of a compiler?",
+                "options": {
+                    "A": "To execute programs",
+                    "B": "To debug programs",
+                    "C": "To translate source code into machine code",
+                    "D": "To manage memory",
+                },
+                "correct": "C",
+            },
+        ],
+        "created": datetime.now().isoformat(),
+        "active": True,
+    }
+    exams["COM002"] = com_exam_2
+
+    com_exam_3 = {
+        "code": "COM005",
+        "title": "Computer Science Entrance Exam 3",
+        "duration": 50,
+        "questions": [
+            {
+                "question": "If the function f(x) = x³ - 6x² + 11x - 6 has roots α, β, γ, then the value of α² + β² + γ² is:",
+                "options": {"A": "14", "B": "16", "C": "18", "D": "20"},
+                "correct": "A",
+            },
+            {
+                "question": "The number of solutions of the equation sin⁻¹x = 2cos⁻¹x in [-1, 1] is:",
+                "options": {"A": "0", "B": "1", "C": "2", "D": "3"},
+                "correct": "B",
+            },
+            {
+                "question": "If the vectors a⃗ = î + 2ĵ + 3k̂ and b⃗ = 3î + 2ĵ + k̂, then the unit vector perpendicular to both a⃗ and b⃗ is:",
+                "options": {
+                    "A": "(4î + 8ĵ - 4k̂)/√96",
+                    "B": "(-4î + 8ĵ - 4k̂)/√96",
+                    "C": "(4î - 8ĵ + 4k̂)/√96",
+                    "D": "(-4î - 8ĵ + 4k̂)/√96",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The derivative of f(x) = sin⁻¹(2x/(1+x²)) with respect to x is:",
+                "options": {
+                    "A": "2/(1+x²)",
+                    "B": "1/(1+x²)",
+                    "C": "2x/(1+x²)",
+                    "D": "x/(1+x²)",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "If ∫₀^π x sin x dx = k, then the value of k is:",
+                "options": {"A": "π", "B": "2π", "C": "π/2", "D": "0"},
+                "correct": "A",
+            },
+            {
+                "question": "The probability that in a family of 4 children, there are exactly 2 boys and 2 girls is:",
+                "options": {"A": "3/8", "B": "1/4", "C": "1/2", "D": "5/8"},
+                "correct": "A",
+            },
+            {
+                "question": "If z = 1 + i, then z^8 equals:",
+                "options": {"A": "16", "B": "-16", "C": "16i", "D": "-16i"},
+                "correct": "A",
+            },
+            {
+                "question": "The equation of the tangent to the circle x² + y² = 25 at the point (3, 4) is:",
+                "options": {
+                    "A": "3x + 4y = 25",
+                    "B": "4x + 3y = 25",
+                    "C": "3x - 4y = 25",
+                    "D": "4x - 3y = 25",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "If the coefficient of x^r in the expansion of (1 + x)^n is equal to the coefficient of x^(r+1), then r equals:",
+                "options": {"A": "(n-1)/2", "B": "n/2", "C": "(n+1)/2", "D": "n-1"},
+                "correct": "A",
+            },
+            {
+                "question": "The area bounded by the curves y = x² and y = 2x - x² is:",
+                "options": {"A": "4/3", "B": "2/3", "C": "1/3", "D": "8/3"},
+                "correct": "A",
+            },
+            {
+                "question": "The hybridization of carbon atoms in ethyne (C₂H₂) is:",
+                "options": {"A": "sp³", "B": "sp²", "C": "sp", "D": "sp³d"},
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following has the highest boiling point?",
+                "options": {"A": "HF", "B": "HCl", "C": "HBr", "D": "HI"},
+                "correct": "A",
+            },
+            {
+                "question": "The oxidation state of chromium in K₂Cr₂O₇ is:",
+                "options": {"A": "+6", "B": "+7", "C": "+5", "D": "+4"},
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following is an example of a nucleophilic substitution reaction?",
+                "options": {
+                    "A": "CH₃Cl + OH⁻ → CH₃OH + Cl⁻",
+                    "B": "C₂H₄ + Br₂ → C₂H₄Br₂",
+                    "C": "C₆H₆ + Cl₂ → C₆H₅Cl + HCl",
+                    "D": "CH₄ + Cl₂ → CH₃Cl + HCl",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The IUPAC name of CH₃-CH(CH₃)-CH₂-COOH is:",
+                "options": {
+                    "A": "3-methylbutanoic acid",
+                    "B": "2-methylbutanoic acid",
+                    "C": "3-methylpropanoic acid",
+                    "D": "2-methylpropanoic acid",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following exhibits tautomerism?",
+                "options": {
+                    "A": "Acetone",
+                    "B": "Acetaldehyde",
+                    "C": "Benzene",
+                    "D": "Methanol",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The number of stereoisomers of 2,3-dibromobutane is:",
+                "options": {"A": "2", "B": "3", "C": "4", "D": "6"},
+                "correct": "B",
+            },
+            {
+                "question": "Which catalyst is used in the Haber process for ammonia synthesis?",
+                "options": {
+                    "A": "Platinum",
+                    "B": "Iron",
+                    "C": "Nickel",
+                    "D": "Vanadium pentoxide",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The pH of 0.1 M solution of weak acid (Ka = 10⁻⁵) is approximately:",
+                "options": {"A": "2", "B": "3", "C": "4", "D": "5"},
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following compounds will exhibit geometrical isomerism?",
+                "options": {
+                    "A": "CH₃CH=CHCH₃",
+                    "B": "CH₃CH=CH₂",
+                    "C": "CH₂=CH₂",
+                    "D": "CH₃CH₂CH=CH₂",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "A particle moves in a circle of radius r with constant angular velocity ω. Its centripetal acceleration is:",
+                "options": {"A": "ω²r", "B": "ωr", "C": "ω/r", "D": "ω²/r"},
+                "correct": "A",
+            },
+            {
+                "question": "The de Broglie wavelength of an electron moving with velocity v is:",
+                "options": {"A": "h/mv", "B": "mv/h", "C": "h/m", "D": "mv/c"},
+                "correct": "A",
+            },
+            {
+                "question": "Two resistors of 4Ω and 6Ω are connected in parallel. The equivalent resistance is:",
+                "options": {"A": "2.4Ω", "B": "10Ω", "C": "5Ω", "D": "1.2Ω"},
+                "correct": "A",
+            },
+            {
+                "question": "The work function of a metal is 2.5 eV. The maximum kinetic energy of photoelectrons when light of frequency 10¹⁵ Hz is incident on it is: (h = 6.63 × 10⁻³⁴ J·s, 1 eV = 1.6 × 10⁻¹⁹ J)",
+                "options": {
+                    "A": "1.64 eV",
+                    "B": "2.64 eV",
+                    "C": "3.64 eV",
+                    "D": "4.64 eV",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "A convex lens of focal length 20 cm forms a real image at a distance of 60 cm from the lens. The object distance is:",
+                "options": {"A": "30 cm", "B": "15 cm", "C": "12 cm", "D": "10 cm"},
+                "correct": "A",
+            },
+            {
+                "question": "The magnetic field at the center of a circular coil carrying current I and having n turns of radius r is:",
+                "options": {
+                    "A": "μ₀nI/2r",
+                    "B": "μ₀nI/r",
+                    "C": "μ₀I/2r",
+                    "D": "2μ₀nI/r",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "In Young's double slit experiment, if the distance between slits is doubled, the fringe width:",
+                "options": {
+                    "A": "becomes half",
+                    "B": "becomes double",
+                    "C": "remains same",
+                    "D": "becomes four times",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The energy stored in a capacitor of capacitance C charged to potential V is:",
+                "options": {"A": "½CV²", "B": "CV²", "C": "½CV", "D": "2CV²"},
+                "correct": "A",
+            },
+            {
+                "question": "For a satellite in circular orbit around Earth, the ratio of kinetic energy to potential energy is:",
+                "options": {"A": "-1/2", "B": "1/2", "C": "-1", "D": "1"},
+                "correct": "A",
+            },
+            {
+                "question": "The dimensional formula of coefficient of viscosity is:",
+                "options": {
+                    "A": "[ML⁻¹T⁻¹]",
+                    "B": "[MLT⁻¹]",
+                    "C": "[ML⁻²T⁻¹]",
+                    "D": "[ML²T⁻¹]",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following sentences uses the subjunctive mood correctly?",
+                "options": {
+                    "A": "If I was rich, I would travel the world",
+                    "B": "If I were rich, I would travel the world",
+                    "C": "If I am rich, I would travel the world",
+                    "D": "If I will be rich, I would travel the world",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct meaning of the idiom 'break the ice':",
+                "options": {
+                    "A": "To start a conversation",
+                    "B": "To break something",
+                    "C": "To be very cold",
+                    "D": "To finish a task",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Identify the figure of speech in: 'The wind whispered through the trees':",
+                "options": {
+                    "A": "Metaphor",
+                    "B": "Simile",
+                    "C": "Personification",
+                    "D": "Hyperbole",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correct passive voice form: 'They are building a new hospital':",
+                "options": {
+                    "A": "A new hospital is being built by them",
+                    "B": "A new hospital was being built by them",
+                    "C": "A new hospital is built by them",
+                    "D": "A new hospital has been built by them",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Select the word that best completes the analogy: Book : Author :: Painting : ?",
+                "options": {"A": "Canvas", "B": "Artist", "C": "Color", "D": "Gallery"},
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct form: 'Neither of the students ___ present today':",
+                "options": {"A": "are", "B": "is", "C": "were", "D": "have been"},
+                "correct": "B",
+            },
+            {
+                "question": "Identify the type of clause in: 'When she arrived, everyone was waiting':",
+                "options": {
+                    "A": "Noun clause",
+                    "B": "Adjective clause",
+                    "C": "Adverb clause",
+                    "D": "Independent clause",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the antonym of 'Ephemeral':",
+                "options": {
+                    "A": "Temporary",
+                    "B": "Permanent",
+                    "C": "Brief",
+                    "D": "Fleeting",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Select the correctly punctuated sentence:",
+                "options": {
+                    "A": "The teacher said, 'Complete your homework.'",
+                    "B": 'The teacher said, "Complete your homework".',
+                    "C": "The teacher said 'Complete your homework'.",
+                    "D": "The teacher said; 'Complete your homework.'",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Identify the error in: 'Each of the boys have completed their assignment':",
+                "options": {
+                    "A": "Subject-verb disagreement",
+                    "B": "Wrong pronoun",
+                    "C": "Wrong tense",
+                    "D": "No error",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which data structure uses LIFO (Last In First Out) principle?",
+                "options": {
+                    "A": "Queue",
+                    "B": "Stack",
+                    "C": "Array",
+                    "D": "Linked List",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "In Object-Oriented Programming, which concept allows a class to inherit properties from another class?",
+                "options": {
+                    "A": "Encapsulation",
+                    "B": "Polymorphism",
+                    "C": "Inheritance",
+                    "D": "Abstraction",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "What is the time complexity of binary search algorithm?",
+                "options": {
+                    "A": "O(n)",
+                    "B": "O(log n)",
+                    "C": "O(n²)",
+                    "D": "O(n log n)",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following is not a programming paradigm?",
+                "options": {
+                    "A": "Procedural",
+                    "B": "Object-Oriented",
+                    "C": "Functional",
+                    "D": "Sequential",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "In a relational database, what does SQL stand for?",
+                "options": {
+                    "A": "Simple Query Language",
+                    "B": "Structured Query Language",
+                    "C": "Standard Query Language",
+                    "D": "System Query Language",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following is a correct way to declare an array in C++?",
+                "options": {
+                    "A": "int arr[10];",
+                    "B": "array int arr[10];",
+                    "C": "int array arr[10];",
+                    "D": "declare int arr[10];",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "What does HTML stand for?",
+                "options": {
+                    "A": "Hyper Text Markup Language",
+                    "B": "High Tech Modern Language",
+                    "C": "Home Tool Markup Language",
+                    "D": "Hyperlink and Text Markup Language",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which sorting algorithm has the best average-case time complexity?",
+                "options": {
+                    "A": "Bubble Sort",
+                    "B": "Selection Sort",
+                    "C": "Quick Sort",
+                    "D": "Insertion Sort",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "In computer networks, what does IP stand for?",
+                "options": {
+                    "A": "Internet Protocol",
+                    "B": "Internal Protocol",
+                    "C": "International Protocol",
+                    "D": "Information Protocol",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following is used to connect multiple networks?",
+                "options": {"A": "Hub", "B": "Switch", "C": "Router", "D": "Repeater"},
+                "correct": "C",
+            },
+        ],
+        "created": datetime.now().isoformat(),
+        "active": True,
+    }
+    exams["COM003"] = com_exam_3
+    com_exam_4 = {
+        "code": "COM005",
+        "title": "Computer Science Entrance Exam 4",
+        "duration": 50,
+        "questions": [
+            {
+                "question": "If the sum of first n terms of an AP is 3n² + 2n, then the common difference is:",
+                "options": {"A": "6", "B": "5", "C": "4", "D": "3"},
+                "correct": "A",
+            },
+            {
+                "question": "The number of ways to arrange the letters of the word 'MATHEMATICS' is:",
+                "options": {
+                    "A": "11!/2!2!",
+                    "B": "11!/2!2!2!",
+                    "C": "11!/4!2!",
+                    "D": "11!/2!4!",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "If sin θ + cos θ = √2, then the value of tan θ + cot θ is:",
+                "options": {"A": "1", "B": "2", "C": "√2", "D": "2√2"},
+                "correct": "B",
+            },
+            {
+                "question": "The area of the region bounded by y = |x| and y = 1 is:",
+                "options": {"A": "1", "B": "2", "C": "3", "D": "4"},
+                "correct": "B",
+            },
+            {
+                "question": "If A = [1 2; 3 4], then A⁻¹ equals:",
+                "options": {
+                    "A": "[-2 1; 3/2 -1/2]",
+                    "B": "[4 -2; -3 1]/(-2)",
+                    "C": "[-4 2; 3 -1]/2",
+                    "D": "[4 -2; -3 1]/2",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The coefficient of x⁵ in the expansion of (1+x)¹⁰ is:",
+                "options": {"A": "126", "B": "210", "C": "252", "D": "300"},
+                "correct": "C",
+            },
+            {
+                "question": "The equation of the parabola with vertex at origin and focus at (2,0) is:",
+                "options": {
+                    "A": "y² = 8x",
+                    "B": "y² = 4x",
+                    "C": "x² = 8y",
+                    "D": "y² = 2x",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "If lim(x→0) (sin ax)/(sin bx) = 2, then a/b equals:",
+                "options": {"A": "1/2", "B": "2", "C": "1", "D": "4"},
+                "correct": "B",
+            },
+            {
+                "question": "The distance between the parallel lines 3x + 4y + 5 = 0 and 3x + 4y - 10 = 0 is:",
+                "options": {"A": "2", "B": "3", "C": "5", "D": "15"},
+                "correct": "B",
+            },
+            {
+                "question": "If f(x) = e^(x²), then f'(x) equals:",
+                "options": {
+                    "A": "2x·e^(x²)",
+                    "B": "x²·e^(x²)",
+                    "C": "e^(2x)",
+                    "D": "2e^(x²)",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The geometry around the central atom in SF₆ is:",
+                "options": {
+                    "A": "Tetrahedral",
+                    "B": "Octahedral",
+                    "C": "Square planar",
+                    "D": "Trigonal bipyramidal",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following has maximum bond angle?",
+                "options": {"A": "NH₃", "B": "H₂O", "C": "CH₄", "D": "H₂S"},
+                "correct": "C",
+            },
+            {
+                "question": "The number of unpaired electrons in Fe³⁺ (Z=26) is:",
+                "options": {"A": "3", "B": "4", "C": "5", "D": "6"},
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following is the strongest acid?",
+                "options": {"A": "HF", "B": "HCl", "C": "HBr", "D": "HI"},
+                "correct": "D",
+            },
+            {
+                "question": "The major product of the reaction CH₃CH₂Br + KOH (alcoholic) → is:",
+                "options": {
+                    "A": "CH₃CH₂OH",
+                    "B": "CH₂=CH₂",
+                    "C": "CH₃CHO",
+                    "D": "CH₃COOH",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following shows +2 oxidation state most readily?",
+                "options": {"A": "Ge", "B": "Sn", "C": "Pb", "D": "C"},
+                "correct": "C",
+            },
+            {
+                "question": "The entropy change for the process H₂O(s) → H₂O(l) at 0°C is:",
+                "options": {
+                    "A": "Positive",
+                    "B": "Negative",
+                    "C": "Zero",
+                    "D": "Cannot be determined",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following is a biodegradable polymer?",
+                "options": {
+                    "A": "Polyethylene",
+                    "B": "Polystyrene",
+                    "C": "Polyhydroxybutyrate",
+                    "D": "PVC",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The coordination number of Ni in [Ni(CO)₄] is:",
+                "options": {"A": "2", "B": "4", "C": "6", "D": "8"},
+                "correct": "B",
+            },
+            {
+                "question": "Which vitamin is synthesized in human body?",
+                "options": {
+                    "A": "Vitamin A",
+                    "B": "Vitamin B₁₂",
+                    "C": "Vitamin D",
+                    "D": "Vitamin E",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "A block of mass 2 kg is placed on a rough inclined plane of angle 30°. If μ = 0.5, the acceleration down the plane is: (g = 10 m/s²)",
+                "options": {
+                    "A": "0.67 m/s²",
+                    "B": "1.34 m/s²",
+                    "C": "2.5 m/s²",
+                    "D": "5 m/s²",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The escape velocity from Earth's surface is approximately:",
+                "options": {
+                    "A": "7.9 km/s",
+                    "B": "11.2 km/s",
+                    "C": "15.0 km/s",
+                    "D": "21.1 km/s",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "In SHM, when the displacement is half of the amplitude, the ratio of kinetic energy to potential energy is:",
+                "options": {"A": "1:3", "B": "3:1", "C": "1:1", "D": "2:1"},
+                "correct": "B",
+            },
+            {
+                "question": "The binding energy per nucleon is maximum for:",
+                "options": {
+                    "A": "Hydrogen",
+                    "B": "Helium",
+                    "C": "Iron",
+                    "D": "Uranium",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "For a gas following van der Waals equation, the compressibility factor Z at high pressure is:",
+                "options": {
+                    "A": "Less than 1",
+                    "B": "Greater than 1",
+                    "C": "Equal to 1",
+                    "D": "Zero",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The phase difference between electric and magnetic field vectors in an electromagnetic wave is:",
+                "options": {"A": "0", "B": "π/4", "C": "π/2", "D": "π"},
+                "correct": "A",
+            },
+            {
+                "question": "In a step-up transformer with turn ratio 1:10, if the primary current is 10 A, the secondary current is:",
+                "options": {"A": "100 A", "B": "10 A", "C": "1 A", "D": "0.1 A"},
+                "correct": "C",
+            },
+            {
+                "question": "The intensity of sound waves is proportional to:",
+                "options": {
+                    "A": "Amplitude",
+                    "B": "Square of amplitude",
+                    "C": "Frequency",
+                    "D": "Square of frequency",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The drift velocity of electrons in a conductor is of the order of:",
+                "options": {
+                    "A": "10⁸ m/s",
+                    "B": "10⁶ m/s",
+                    "C": "10⁻⁴ m/s",
+                    "D": "10⁻⁶ m/s",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The total energy of an electron in the nth orbit of hydrogen atom is proportional to:",
+                "options": {"A": "n", "B": "1/n", "C": "n²", "D": "1/n²"},
+                "correct": "D",
+            },
+            {
+                "question": "Choose the correct sentence:",
+                "options": {
+                    "A": "One of my friends are coming",
+                    "B": "One of my friends is coming",
+                    "C": "One of my friend is coming",
+                    "D": "One of my friend are coming",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The synonym of 'Ubiquitous' is:",
+                "options": {
+                    "A": "Rare",
+                    "B": "Omnipresent",
+                    "C": "Ancient",
+                    "D": "Modern",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Identify the type of sentence: 'Although it was raining, we went out':",
+                "options": {
+                    "A": "Simple",
+                    "B": "Compound",
+                    "C": "Complex",
+                    "D": "Compound-Complex",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correct preposition: 'He is good ___ mathematics':",
+                "options": {"A": "in", "B": "at", "C": "on", "D": "with"},
+                "correct": "B",
+            },
+            {
+                "question": "The past participle of 'arise' is:",
+                "options": {"A": "arised", "B": "arose", "C": "arisen", "D": "arising"},
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correctly spelled word:",
+                "options": {
+                    "A": "Accommodate",
+                    "B": "Accomodate",
+                    "C": "Acomodate",
+                    "D": "Acommodate",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The literary device used in 'Peter Piper picked a peck of pickled peppers' is:",
+                "options": {
+                    "A": "Alliteration",
+                    "B": "Assonance",
+                    "C": "Consonance",
+                    "D": "Onomatopoeia",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Choose the correct indirect speech: He said, 'I am going home':",
+                "options": {
+                    "A": "He said that he is going home",
+                    "B": "He said that he was going home",
+                    "C": "He said that he will go home",
+                    "D": "He said that he goes home",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The meaning of the phrase 'break a leg' is:",
+                "options": {
+                    "A": "To injure oneself",
+                    "B": "Good luck",
+                    "C": "To fail",
+                    "D": "To work hard",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Identify the error: 'Neither John nor his friends was present':",
+                "options": {
+                    "A": "Subject-verb disagreement",
+                    "B": "Wrong pronoun",
+                    "C": "Wrong preposition",
+                    "D": "No error",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following is a non-linear data structure?",
+                "options": {"A": "Array", "B": "Stack", "C": "Queue", "D": "Tree"},
+                "correct": "D",
+            },
+            {
+                "question": "In which programming language was the first compiler written?",
+                "options": {
+                    "A": "Assembly language",
+                    "B": "Machine language",
+                    "C": "FORTRAN",
+                    "D": "COBOL",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "What is the maximum number of nodes at level 'l' of a binary tree?",
+                "options": {"A": "2^l", "B": "2^(l-1)", "C": "2*l", "D": "l^2"},
+                "correct": "A",
+            },
+            {
+                "question": "Which protocol is used for secure communication over the internet?",
+                "options": {"A": "HTTP", "B": "FTP", "C": "HTTPS", "D": "SMTP"},
+                "correct": "C",
+            },
+            {
+                "question": "In database normalization, which normal form eliminates transitive dependency?",
+                "options": {"A": "1NF", "B": "2NF", "C": "3NF", "D": "BCNF"},
+                "correct": "C",
+            },
+            {
+                "question": "What does CPU stand for?",
+                "options": {
+                    "A": "Central Processing Unit",
+                    "B": "Computer Processing Unit",
+                    "C": "Central Program Unit",
+                    "D": "Computer Program Unit",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following is not a valid identifier in most programming languages?",
+                "options": {
+                    "A": "_variable",
+                    "B": "variable123",
+                    "C": "123variable",
+                    "D": "Variable_",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The space complexity of recursive fibonacci algorithm is:",
+                "options": {"A": "O(1)", "B": "O(n)", "C": "O(log n)", "D": "O(n²)"},
+                "correct": "B",
+            },
+            {
+                "question": "Which layer of OSI model is responsible for routing?",
+                "options": {
+                    "A": "Physical Layer",
+                    "B": "Data Link Layer",
+                    "C": "Network Layer",
+                    "D": "Transport Layer",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "In operating systems, what is deadlock?",
+                "options": {
+                    "A": "Process termination",
+                    "B": "Memory overflow",
+                    "C": "Circular wait condition",
+                    "D": "File corruption",
+                },
+                "correct": "C",
+            },
+        ],
+        "created": datetime.now().isoformat(),
+        "active": True,
+    }
+    exams["COM005"] = com_exam_4
+
+    com_exam_5 = {
+        "code": "COM005",
+        "title": "Computer Science Entrance Exam 5",
+        "duration": 50,
+        "questions": [
+            {
+                "question": "If the roots of the equation x² - px + q = 0 are α and β, then the equation whose roots are α² and β² is:",
+                "options": {
+                    "A": "x² - (p² - 2q)x + q² = 0",
+                    "B": "x² - (p² + 2q)x + q² = 0",
+                    "C": "x² + (p² - 2q)x - q² = 0",
+                    "D": "x² - (p² - 2q)x - q² = 0",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The value of ∫₀^π sin⁴x dx is:",
+                "options": {"A": "π/2", "B": "3π/8", "C": "π/4", "D": "π/8"},
+                "correct": "B",
+            },
+            {
+                "question": "If |z₁| = |z₂| = |z₃| = 1 and z₁ + z₂ + z₃ = 0, then |z₁² + z₂² + z₃²| equals:",
+                "options": {"A": "0", "B": "1", "C": "2", "D": "3"},
+                "correct": "C",
+            },
+            {
+                "question": "The number of ways to arrange the letters of the word 'BANANA' is:",
+                "options": {"A": "60", "B": "120", "C": "720", "D": "360"},
+                "correct": "A",
+            },
+            {
+                "question": "If the position vector of a point P is r⃗ = 2î + 3ĵ - k̂, then the distance of P from the origin is:",
+                "options": {"A": "√6", "B": "√14", "C": "√10", "D": "√12"},
+                "correct": "B",
+            },
+            {
+                "question": "The eccentricity of the hyperbola 9x² - 16y² = 144 is:",
+                "options": {"A": "5/4", "B": "5/3", "C": "4/3", "D": "3/4"},
+                "correct": "A",
+            },
+            {
+                "question": "If f(x) = x³ - 3x + 2, then the number of real roots of f(x) = 0 is:",
+                "options": {"A": "1", "B": "2", "C": "3", "D": "0"},
+                "correct": "C",
+            },
+            {
+                "question": "The sum of the series 1 + 3x + 5x² + 7x³ + ... to infinity, where |x| < 1, is:",
+                "options": {
+                    "A": "(1+x)/(1-x)²",
+                    "B": "(1-x)/(1+x)²",
+                    "C": "1/(1-x)²",
+                    "D": "(1+x)²/(1-x)",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The derivative of tan⁻¹(x) with respect to x is:",
+                "options": {
+                    "A": "1/(1-x²)",
+                    "B": "1/(1+x²)",
+                    "C": "-1/(1+x²)",
+                    "D": "x/(1+x²)",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "If A = [1 2; 3 4], then det(A²) equals:",
+                "options": {"A": "4", "B": "16", "C": "-4", "D": "-2"},
+                "correct": "A",
+            },
+            {
+                "question": "Which of the following compounds exhibits geometrical isomerism?",
+                "options": {
+                    "A": "CH₃CH₂CH₃",
+                    "B": "CH₃CH=CHCH₃",
+                    "C": "CH₃CH₂OH",
+                    "D": "CH₃COCH₃",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The hybridization of carbon in diamond is:",
+                "options": {"A": "sp", "B": "sp²", "C": "sp³", "D": "sp³d"},
+                "correct": "C",
+            },
+            {
+                "question": "Which quantum number determines the shape of an orbital?",
+                "options": {
+                    "A": "Principal quantum number (n)",
+                    "B": "Azimuthal quantum number (l)",
+                    "C": "Magnetic quantum number (m)",
+                    "D": "Spin quantum number (s)",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The IUPAC name of CH₃CH(OH)CH₂CH₃ is:",
+                "options": {
+                    "A": "1-Butanol",
+                    "B": "2-Butanol",
+                    "C": "Butan-1-ol",
+                    "D": "Butan-2-ol",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "Which of the following is an example of a nucleophilic substitution reaction?",
+                "options": {
+                    "A": "CH₃Br + OH⁻ → CH₃OH + Br⁻",
+                    "B": "C₂H₄ + H₂ → C₂H₆",
+                    "C": "CH₄ + Cl₂ → CH₃Cl + HCl",
+                    "D": "C₆H₆ + Br₂ → C₆H₅Br + HBr",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The oxidation state of chromium in K₂Cr₂O₇ is:",
+                "options": {"A": "+3", "B": "+6", "C": "+2", "D": "+7"},
+                "correct": "B",
+            },
+            {
+                "question": "Which catalyst is used in the Haber process for ammonia synthesis?",
+                "options": {
+                    "A": "Platinum",
+                    "B": "Nickel",
+                    "C": "Iron",
+                    "D": "Vanadium pentoxide",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The pH of 0.01 M HCl solution is:",
+                "options": {"A": "1", "B": "2", "C": "0.01", "D": "12"},
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following is a Lewis acid?",
+                "options": {"A": "NH₃", "B": "BF₃", "C": "H₂O", "D": "OH⁻"},
+                "correct": "B",
+            },
+            {
+                "question": "The unit of rate constant for a first-order reaction is:",
+                "options": {
+                    "A": "mol L⁻¹ s⁻¹",
+                    "B": "s⁻¹",
+                    "C": "mol⁻¹ L s⁻¹",
+                    "D": "mol L⁻¹",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "A particle moves in a circle of radius R with constant angular velocity ω. Its centripetal acceleration is:",
+                "options": {"A": "ωR", "B": "ω²R", "C": "ωR²", "D": "ω/R"},
+                "correct": "B",
+            },
+            {
+                "question": "The work done by a conservative force in a closed path is:",
+                "options": {
+                    "A": "Maximum",
+                    "B": "Minimum",
+                    "C": "Zero",
+                    "D": "Infinity",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Young's modulus is defined as the ratio of:",
+                "options": {
+                    "A": "Stress to strain",
+                    "B": "Strain to stress",
+                    "C": "Force to area",
+                    "D": "Area to force",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The frequency of oscillation of a simple pendulum is independent of:",
+                "options": {
+                    "A": "Length of the pendulum",
+                    "B": "Mass of the bob",
+                    "C": "Acceleration due to gravity",
+                    "D": "Amplitude of oscillation",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following waves cannot be polarized?",
+                "options": {
+                    "A": "Light waves",
+                    "B": "Radio waves",
+                    "C": "Sound waves",
+                    "D": "X-rays",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The electric field inside a conductor in electrostatic equilibrium is:",
+                "options": {
+                    "A": "Maximum",
+                    "B": "Minimum",
+                    "C": "Zero",
+                    "D": "Variable",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Lenz's law is a consequence of conservation of:",
+                "options": {"A": "Energy", "B": "Momentum", "C": "Charge", "D": "Mass"},
+                "correct": "A",
+            },
+            {
+                "question": "The photoelectric effect was explained by:",
+                "options": {
+                    "A": "Wave theory of light",
+                    "B": "Quantum theory of light",
+                    "C": "Electromagnetic theory",
+                    "D": "Classical mechanics",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The binding energy per nucleon is maximum for:",
+                "options": {
+                    "A": "Light nuclei",
+                    "B": "Heavy nuclei",
+                    "C": "Medium nuclei",
+                    "D": "All nuclei equally",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The de Broglie wavelength of a particle is inversely proportional to its:",
+                "options": {
+                    "A": "Mass",
+                    "B": "Velocity",
+                    "C": "Momentum",
+                    "D": "Energy",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correct passive voice: 'The teacher teaches the students.'",
+                "options": {
+                    "A": "The students are taught by the teacher.",
+                    "B": "The students were taught by the teacher.",
+                    "C": "The students have been taught by the teacher.",
+                    "D": "The students will be taught by the teacher.",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Identify the type of clause: 'Because it was raining, we stayed inside.'",
+                "options": {
+                    "A": "Independent clause",
+                    "B": "Dependent clause",
+                    "C": "Complex sentence with dependent clause",
+                    "D": "Simple sentence",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the correct form: 'If I ___ rich, I would buy a mansion.'",
+                "options": {"A": "am", "B": "was", "C": "were", "D": "will be"},
+                "correct": "C",
+            },
+            {
+                "question": "Select the correctly punctuated sentence:",
+                "options": {
+                    "A": "The book, which I bought yesterday is interesting.",
+                    "B": "The book which I bought yesterday, is interesting.",
+                    "C": "The book, which I bought yesterday, is interesting.",
+                    "D": "The book which I bought, yesterday is interesting.",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the synonym of 'Ephemeral':",
+                "options": {
+                    "A": "Permanent",
+                    "B": "Temporary",
+                    "C": "Eternal",
+                    "D": "Lasting",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Identify the figure of speech: 'The wind whispered through the trees.'",
+                "options": {
+                    "A": "Metaphor",
+                    "B": "Simile",
+                    "C": "Personification",
+                    "D": "Hyperbole",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Choose the antonym of 'Meticulous':",
+                "options": {
+                    "A": "Careful",
+                    "B": "Precise",
+                    "C": "Careless",
+                    "D": "Thorough",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Select the correct article: '___ honest man is respected by all.'",
+                "options": {"A": "A", "B": "An", "C": "The", "D": "No article"},
+                "correct": "B",
+            },
+            {
+                "question": "Identify the error: 'Each of the students have submitted their assignments.'",
+                "options": {
+                    "A": "Each of",
+                    "B": "have submitted",
+                    "C": "their assignments",
+                    "D": "No error",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct reported speech: He said, 'I am going to Delhi.'",
+                "options": {
+                    "A": "He said that he was going to Delhi.",
+                    "B": "He said that he is going to Delhi.",
+                    "C": "He said that he will go to Delhi.",
+                    "D": "He said that he had gone to Delhi.",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which data structure uses LIFO (Last In First Out) principle?",
+                "options": {
+                    "A": "Queue",
+                    "B": "Stack",
+                    "C": "Array",
+                    "D": "Linked List",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "What is the time complexity of binary search algorithm?",
+                "options": {
+                    "A": "O(n)",
+                    "B": "O(n²)",
+                    "C": "O(log n)",
+                    "D": "O(n log n)",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following is not a programming paradigm?",
+                "options": {
+                    "A": "Object-oriented programming",
+                    "B": "Functional programming",
+                    "C": "Procedural programming",
+                    "D": "Binary programming",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "In object-oriented programming, what is inheritance?",
+                "options": {
+                    "A": "Hiding internal details",
+                    "B": "Creating objects from classes",
+                    "C": "Acquiring properties from parent class",
+                    "D": "Grouping related data and methods",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "What does SQL stand for?",
+                "options": {
+                    "A": "Structured Query Language",
+                    "B": "Standard Query Language",
+                    "C": "Simple Query Language",
+                    "D": "Sequential Query Language",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which sorting algorithm has the best average-case time complexity?",
+                "options": {
+                    "A": "Bubble Sort",
+                    "B": "Selection Sort",
+                    "C": "Quick Sort",
+                    "D": "Insertion Sort",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "What is the primary purpose of an operating system?",
+                "options": {
+                    "A": "To run applications",
+                    "B": "To manage computer resources",
+                    "C": "To provide internet access",
+                    "D": "To create documents",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which protocol is used for secure web communication?",
+                "options": {"A": "HTTP", "B": "FTP", "C": "HTTPS", "D": "SMTP"},
+                "correct": "C",
+            },
+            {
+                "question": "What is the base of the binary number system?",
+                "options": {"A": "8", "B": "10", "C": "2", "D": "16"},
+                "correct": "C",
+            },
+            {
+                "question": "Which of the following is a non-volatile memory?",
+                "options": {"A": "RAM", "B": "Cache", "C": "ROM", "D": "Register"},
+                "correct": "C",
+            },
+        ],
+        "created": datetime.now().isoformat(),
+        "active": True,
+    }
+    exams["COM005"] = com_exam_5
+
+    # Save sample data
     if save_exams(exams):
-            print("Sample exams created successfully!")
+        print("Sample exams created successfully!")
     else:
-            print("Failed to create sample exams.")
+        print("Failed to create sample exams.")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     # Initialize sample data on first run
     initialize_sample_data()
-    
+
     print(f"Data will be stored in: {os.path.abspath(DATA_DIR)}")
     print("Starting Flask application with disk storage...")
-    
-    app.run(debug=True, host='0.0.0.0', port=5000)
+
+    app.run(debug=True, host="0.0.0.0", port=5000)
