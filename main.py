@@ -271,9 +271,22 @@ def student_join():
                 400,
             )
         exam_code = random.choice(active_codes)
-        
+
     if exam_code == "COMJOY":
         possible_codes = ["COM005", "COM004", "COM003", "COM002", "COM001"]
+        active_codes = [
+            code for code in possible_codes if code in exams and exams[code]["active"]
+        ]
+        if not active_codes:
+            return (
+                jsonify(
+                    {"success": False, "message": "No active computer exams available"}
+                ),
+                400,
+            )
+        exam_code = random.choice(active_codes)
+    if exam_code == "APTJOY":
+        possible_codes = ["APT003", "APT002", "APT001"]
         active_codes = [
             code for code in possible_codes if code in exams and exams[code]["active"]
         ]
@@ -4964,6 +4977,1244 @@ def initialize_sample_data():
         "active": True,
     }
     exams["COM005"] = com_exam_5
+
+    apt_exam_1 = {
+        "code": "APT001",
+        "title": "General Entrance Exam 1",
+        "duration": 50,
+        "questions": [
+            {
+                "section": "Mathematics",
+                "question": "If the function f(x) = x³ - 6x² + 11x - 6 has roots α, β, γ, then the value of α² + β² + γ² is:",
+                "options": {"A": "14", "B": "16", "C": "18", "D": "20"},
+                "correct": "A",
+            },
+            {
+                "section": "Mathematics",
+                "question": "The number of ways to select 4 cards from a standard deck of 52 cards such that all four suits are represented is:",
+                "options": {"A": "685464", "B": "635376", "C": "715716", "D": "625536"},
+                "correct": "A",
+            },
+            {
+                "section": "Mathematics",
+                "question": "If the equation of the tangent to the curve y = x³ - 3x + 2 at point (1, 0) is ax + by + c = 0, then a + b + c equals:",
+                "options": {"A": "0", "B": "1", "C": "-1", "D": "2"},
+                "correct": "A",
+            },
+            {
+                "section": "Mathematics",
+                "question": "The value of ∫₀^(π/2) sin²x cos²x dx is:",
+                "options": {"A": "π/32", "B": "π/16", "C": "π/8", "D": "π/4"},
+                "correct": "B",
+            },
+            {
+                "section": "Mathematics",
+                "question": "If |z|² = z·z̄ = 25 and arg(z) = π/3, then z equals:",
+                "options": {
+                    "A": "5(cos(π/3) + i sin(π/3))",
+                    "B": "5(cos(π/6) + i sin(π/6))",
+                    "C": "25(cos(π/3) + i sin(π/3))",
+                    "D": "√25(cos(π/3) + i sin(π/3))",
+                },
+                "correct": "A",
+            },
+            {
+                "section": "Mathematics",
+                "question": "The coefficient of x⁷ in the expansion of (1 + x)¹⁰(1 + x²)⁵ is:",
+                "options": {"A": "330", "B": "210", "C": "252", "D": "290"},
+                "correct": "C",
+            },
+            {
+                "section": "Mathematics",
+                "question": "If the vertices of a triangle are A(1, 2), B(3, -1), and C(-1, 4), then the equation of the circumcircle is:",
+                "options": {
+                    "A": "x² + y² - 2x - 2y - 8 = 0",
+                    "B": "x² + y² - 4x - 2y - 5 = 0",
+                    "C": "x² + y² - 2x - 4y - 5 = 0",
+                    "D": "x² + y² - 2x - 2y - 5 = 0",
+                },
+                "correct": "B",
+            },
+            {
+                "section": "Mathematics",
+                "question": "The number of solutions of the equation 2^x + 3^x = 5^x in the interval [0, 2] is:",
+                "options": {"A": "0", "B": "1", "C": "2", "D": "3"},
+                "correct": "C",
+            },
+            {
+                "section": "Mathematics",
+                "question": "If the matrix A = [2 1; 3 2] and A^n = [a b; c d], then a + d equals:",
+                "options": {
+                    "A": "2^n + 1",
+                    "B": "2^(n+1)",
+                    "C": "2^n + 2^(n-1)",
+                    "D": "3^n - 1",
+                },
+                "correct": "B",
+            },
+            {
+                "section": "Mathematics",
+                "question": "The minimum value of the function f(x) = x²e^x on the interval [-2, 1] is:",
+                "options": {"A": "0", "B": "4/e²", "C": "-4/e²", "D": "e"},
+                "correct": "B",
+            },
+            {
+                "section": "Aptitude/Reasoning",
+                "question": "If CODING is written as DPEJOH, then FLOWER will be written as:",
+                "options": {"A": "GMPXFS", "B": "GMPXFR", "C": "GMPWFS", "D": "GMPWFR"},
+                "correct": "A",
+            },
+            {
+                "section": "Aptitude/Reasoning",
+                "question": "In a certain code, if MONKEY is 123456 and DONKEY is 723456, then what is the code for YOKE?",
+                "options": {"A": "6245", "B": "6254", "C": "6425", "D": "4256"},
+                "correct": "B",
+            },
+            {
+                "section": "Aptitude/Reasoning",
+                "question": "Find the missing number in the series: 2, 6, 12, 20, 30, ?",
+                "options": {"A": "42", "B": "40", "C": "44", "D": "46"},
+                "correct": "A",
+            },
+            {
+                "section": "Aptitude/Reasoning",
+                "question": "If the day before yesterday was Friday, what day will it be after tomorrow?",
+                "options": {
+                    "A": "Tuesday",
+                    "B": "Wednesday",
+                    "C": "Thursday",
+                    "D": "Monday",
+                },
+                "correct": "A",
+            },
+            {
+                "section": "Aptitude/Reasoning",
+                "question": "In a row of 40 students, A is 16th from the left and B is 23rd from the right. How many students are there between A and B?",
+                "options": {"A": "1", "B": "2", "C": "0", "D": "3"},
+                "correct": "C",
+            },
+            {
+                "section": "Aptitude/Reasoning",
+                "question": "A clock shows 3:15. What is the angle between the hour and minute hands?",
+                "options": {"A": "7.5°", "B": "15°", "C": "22.5°", "D": "30°"},
+                "correct": "A",
+            },
+            {
+                "section": "Aptitude/Reasoning",
+                "question": "If '+' means '×', '×' means '-', '-' means '÷', and '÷' means '+', then 15 + 3 × 12 ÷ 4 - 2 = ?",
+                "options": {"A": "41", "B": "43", "C": "45", "D": "47"},
+                "correct": "B",
+            },
+            {
+                "section": "Aptitude/Reasoning",
+                "question": "Complete the analogy: Book : Author :: Painting : ?",
+                "options": {"A": "Canvas", "B": "Brush", "C": "Artist", "D": "Color"},
+                "correct": "C",
+            },
+            {
+                "section": "Aptitude/Reasoning",
+                "question": "If EARTH is coded as 12345 and HEART is coded as 51234, then HATER is coded as:",
+                "options": {"A": "52314", "B": "52341", "C": "53241", "D": "54321"},
+                "correct": "A",
+            },
+            {
+                "section": "Aptitude/Reasoning",
+                "question": "In a certain language, 'mi na to' means 'bring some water', 'to ru su' means 'water is pure', and 'mi pa su' means 'bring pure milk'. What does 'na' mean?",
+                "options": {"A": "bring", "B": "some", "C": "water", "D": "pure"},
+                "correct": "B",
+            },
+            {
+                "section": "English",
+                "question": "Choose the word that best completes the sentence: The politician's _____ speech failed to convince the skeptical audience.",
+                "options": {
+                    "A": "eloquent",
+                    "B": "verbose",
+                    "C": "terse",
+                    "D": "laconic",
+                },
+                "correct": "B",
+            },
+            {
+                "section": "English",
+                "question": "Identify the correctly punctuated sentence:",
+                "options": {
+                    "A": "The CEO said, 'Our profits have increased by 20% this quarter'.",
+                    "B": 'The CEO said, "Our profits have increased by 20% this quarter."',
+                    "C": "The CEO said, 'Our profits have increased by 20% this quarter.'",
+                    "D": 'The CEO said, "Our profits have increased by 20% this quarter".',
+                },
+                "correct": "B",
+            },
+            {
+                "section": "English",
+                "question": "Choose the sentence with correct subject-verb agreement:",
+                "options": {
+                    "A": "Neither the students nor the teacher were present.",
+                    "B": "Neither the students nor the teacher was present.",
+                    "C": "Neither the teacher nor the students was present.",
+                    "D": "Neither the teacher nor the students were present.",
+                },
+                "correct": "D",
+            },
+            {
+                "section": "English",
+                "question": "Select the word that is closest in meaning to 'UBIQUITOUS':",
+                "options": {
+                    "A": "Rare",
+                    "B": "Omnipresent",
+                    "C": "Ancient",
+                    "D": "Valuable",
+                },
+                "correct": "B",
+            },
+            {
+                "section": "English",
+                "question": "Choose the correct form of the verb: By next year, she _____ her degree.",
+                "options": {
+                    "A": "will complete",
+                    "B": "will have completed",
+                    "C": "completes",
+                    "D": "has completed",
+                },
+                "correct": "B",
+            },
+            {
+                "section": "English",
+                "question": "Identify the type of sentence: 'Although it was raining heavily, they decided to go for a walk.'",
+                "options": {
+                    "A": "Simple sentence",
+                    "B": "Compound sentence",
+                    "C": "Complex sentence",
+                    "D": "Compound-complex sentence",
+                },
+                "correct": "C",
+            },
+            {
+                "section": "English",
+                "question": "Choose the antonym of 'PRODIGAL':",
+                "options": {
+                    "A": "Wasteful",
+                    "B": "Generous",
+                    "C": "Frugal",
+                    "D": "Lavish",
+                },
+                "correct": "C",
+            },
+            {
+                "section": "English",
+                "question": "Select the sentence that uses the passive voice correctly:",
+                "options": {
+                    "A": "The cake was being baked by the chef.",
+                    "B": "The cake is being baked by the chef.",
+                    "C": "The cake has been baked by the chef.",
+                    "D": "All of the above",
+                },
+                "correct": "D",
+            },
+            {
+                "section": "English",
+                "question": "Choose the correct preposition: She is proficient _____ mathematics.",
+                "options": {"A": "in", "B": "at", "C": "with", "D": "on"},
+                "correct": "A",
+            },
+            {
+                "section": "English",
+                "question": "Identify the figure of speech: 'The classroom was a zoo during the break.'",
+                "options": {
+                    "A": "Simile",
+                    "B": "Metaphor",
+                    "C": "Personification",
+                    "D": "Hyperbole",
+                },
+                "correct": "B",
+            },
+            {
+                "section": "General Knowledge",
+                "question": "Who is the current Secretary-General of the United Nations (as of 2025)?",
+                "options": {
+                    "A": "Ban Ki-moon",
+                    "B": "António Guterres",
+                    "C": "Kofi Annan",
+                    "D": "Boutros Boutros-Ghali",
+                },
+                "correct": "B",
+            },
+            {
+                "section": "General Knowledge",
+                "question": "Which Indian city is known as the 'Silicon Valley of India'?",
+                "options": {
+                    "A": "Mumbai",
+                    "B": "Pune",
+                    "C": "Hyderabad",
+                    "D": "Bengaluru",
+                },
+                "correct": "D",
+            },
+            {
+                "section": "General Knowledge",
+                "question": "The 2024 Summer Olympics were held in:",
+                "options": {
+                    "A": "Tokyo",
+                    "B": "Paris",
+                    "C": "Los Angeles",
+                    "D": "London",
+                },
+                "correct": "B",
+            },
+            {
+                "section": "General Knowledge",
+                "question": "Who won the Nobel Prize in Literature in 2023?",
+                "options": {
+                    "A": "Jon Fosse",
+                    "B": "Annie Ernaux",
+                    "C": "Abdulrazak Gurnah",
+                    "D": "Louise Glück",
+                },
+                "correct": "A",
+            },
+            {
+                "section": "General Knowledge",
+                "question": "The headquarters of the International Court of Justice is located in:",
+                "options": {
+                    "A": "Geneva",
+                    "B": "New York",
+                    "C": "The Hague",
+                    "D": "Vienna",
+                },
+                "correct": "C",
+            },
+            {
+                "section": "General Knowledge",
+                "question": "Which country launched the James Webb Space Telescope?",
+                "options": {
+                    "A": "Russia",
+                    "B": "China",
+                    "C": "USA",
+                    "D": "European Union",
+                },
+                "correct": "C",
+            },
+            {
+                "section": "General Knowledge",
+                "question": "The longest river in the world is:",
+                "options": {
+                    "A": "Amazon",
+                    "B": "Nile",
+                    "C": "Yangtze",
+                    "D": "Mississippi",
+                },
+                "correct": "B",
+            },
+            {
+                "section": "General Knowledge",
+                "question": "Which Indian state has the highest literacy rate according to the 2011 census?",
+                "options": {
+                    "A": "Tamil Nadu",
+                    "B": "Maharashtra",
+                    "C": "Kerala",
+                    "D": "Gujarat",
+                },
+                "correct": "C",
+            },
+            {
+                "section": "General Knowledge",
+                "question": "The G20 Summit 2023 was held in:",
+                "options": {
+                    "A": "Indonesia",
+                    "B": "India",
+                    "C": "Saudi Arabia",
+                    "D": "Italy",
+                },
+                "correct": "B",
+            },
+            {
+                "section": "General Knowledge",
+                "question": "Who is known as the 'Father of the Indian Constitution'?",
+                "options": {
+                    "A": "Mahatma Gandhi",
+                    "B": "Jawaharlal Nehru",
+                    "C": "Dr. B.R. Ambedkar",
+                    "D": "Sardar Vallabhbhai Patel",
+                },
+                "correct": "C",
+            },
+            {
+                "section": "Physics",
+                "question": "The dimensional formula for angular momentum is:",
+                "options": {
+                    "A": "[ML²T⁻¹]",
+                    "B": "[MLT⁻¹]",
+                    "C": "[ML²T⁻²]",
+                    "D": "[MLT⁻²]",
+                },
+                "correct": "A",
+            },
+            {
+                "section": "Physics",
+                "question": "In Young's double-slit experiment, if the distance between slits is halved and the distance to the screen is doubled, the fringe width becomes:",
+                "options": {"A": "Same", "B": "Double", "C": "Half", "D": "Four times"},
+                "correct": "D",
+            },
+            {
+                "section": "Physics",
+                "question": "The ratio of the speeds of sound in hydrogen and oxygen at the same temperature is approximately:",
+                "options": {"A": "1:4", "B": "4:1", "C": "1:2", "D": "2:1"},
+                "correct": "B",
+            },
+            {
+                "section": "Physics",
+                "question": "A charged particle moves in a uniform magnetic field. The kinetic energy of the particle:",
+                "options": {
+                    "A": "Increases",
+                    "B": "Decreases",
+                    "C": "Remains constant",
+                    "D": "First increases then decreases",
+                },
+                "correct": "C",
+            },
+            {
+                "section": "Physics",
+                "question": "The work function of a metal is 3.3 eV. The maximum kinetic energy of photoelectrons when light of wavelength 300 nm is incident on it is:",
+                "options": {
+                    "A": "0.84 eV",
+                    "B": "1.14 eV",
+                    "C": "4.14 eV",
+                    "D": "7.44 eV",
+                },
+                "correct": "B",
+            },
+            {
+                "section": "Physics",
+                "question": "In a series LCR circuit at resonance, the impedance is:",
+                "options": {
+                    "A": "Maximum",
+                    "B": "Minimum",
+                    "C": "Zero",
+                    "D": "Infinite",
+                },
+                "correct": "B",
+            },
+            {
+                "section": "Physics",
+                "question": "The half-life of a radioactive element is 10 days. What fraction of the original sample will remain after 30 days?",
+                "options": {"A": "1/2", "B": "1/4", "C": "1/8", "D": "1/16"},
+                "correct": "C",
+            },
+            {
+                "section": "Physics",
+                "question": "A ball is thrown horizontally from a height of 20 m with an initial velocity of 10 m/s. The time taken to reach the ground is:",
+                "options": {"A": "2 s", "B": "2.02 s", "C": "4 s", "D": "4.04 s"},
+                "correct": "B",
+            },
+            {
+                "section": "Physics",
+                "question": "The temperature coefficient of resistance of a semiconductor is:",
+                "options": {
+                    "A": "Positive",
+                    "B": "Negative",
+                    "C": "Zero",
+                    "D": "Infinite",
+                },
+                "correct": "B",
+            },
+            {
+                "section": "Physics",
+                "question": "In an adiabatic process for an ideal gas, the relationship between pressure and volume is:",
+                "options": {
+                    "A": "PV = constant",
+                    "B": "PVᵞ = constant",
+                    "C": "P/V = constant",
+                    "D": "P + V = constant",
+                },
+                "correct": "B",
+            },
+        ],
+        "created": datetime.now().isoformat(),
+        "active": True,
+    }
+    exams["APT001"] = apt_exam_1
+
+    apt_exam_2 = {
+        "code": "APT002",
+        "title": "General Entrance Exam 2",
+        "duration": 50,
+        "questions": [
+            {
+                "question": "If log₂(x-1) + log₂(x+1) = 3, then x equals:",
+                "options": {"A": "3", "B": "±3", "C": "9", "D": "±9"},
+                "correct": "A",
+            },
+            {
+                "question": "The number of solutions of the equation sin²x + cos²x = 2 in [0, 2π] is:",
+                "options": {"A": "0", "B": "1", "C": "2", "D": "Infinite"},
+                "correct": "A",
+            },
+            {
+                "question": "If the coefficient of x³ in the expansion of (1+x)ⁿ is 84, then n equals:",
+                "options": {"A": "9", "B": "8", "C": "10", "D": "12"},
+                "correct": "A",
+            },
+            {
+                "question": "The area bounded by y = x², y = 0, and x = 2 is:",
+                "options": {"A": "8/3", "B": "4/3", "C": "2", "D": "4"},
+                "correct": "A",
+            },
+            {
+                "question": "If A is a 3×3 matrix with det(A) = 5, then det(2A) equals:",
+                "options": {"A": "10", "B": "40", "C": "25", "D": "125"},
+                "correct": "B",
+            },
+            {
+                "question": "The sum to infinity of the series 1 - 1/3 + 1/9 - 1/27 + ... is:",
+                "options": {"A": "3/4", "B": "2/3", "C": "1/2", "D": "4/3"},
+                "correct": "A",
+            },
+            {
+                "question": "If z = 1 + i, then z²⁰ equals:",
+                "options": {"A": "2¹⁰", "B": "-2¹⁰", "C": "2¹⁰i", "D": "-2¹⁰i"},
+                "correct": "B",
+            },
+            {
+                "question": "The equation of the tangent to the circle x² + y² = 25 at point (3, 4) is:",
+                "options": {
+                    "A": "3x + 4y = 25",
+                    "B": "4x + 3y = 25",
+                    "C": "3x - 4y = 25",
+                    "D": "4x - 3y = 25",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "If f(x) = x³ - 6x² + 9x + 2, then f'(x) = 0 has roots:",
+                "options": {
+                    "A": "x = 1, 3",
+                    "B": "x = 2, 4",
+                    "C": "x = 0, 3",
+                    "D": "x = 1, 2",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The probability of getting at least one head in 3 tosses of a fair coin is:",
+                "options": {"A": "1/8", "B": "3/8", "C": "7/8", "D": "1/2"},
+                "correct": "C",
+            },
+            {
+                "question": "In a sequence, if the 5th term is 15 and the 8th term is 24, what is the 12th term if it's an arithmetic progression?",
+                "options": {"A": "36", "B": "39", "C": "42", "D": "45"},
+                "correct": "B",
+            },
+            {
+                "question": "If MONDAY is coded as 123456, then DYNAMO would be coded as:",
+                "options": {"A": "453612", "B": "465312", "C": "456321", "D": "463521"},
+                "correct": "A",
+            },
+            {
+                "question": "Find the missing number in the series: 2, 6, 12, 20, 30, ?",
+                "options": {"A": "40", "B": "42", "C": "44", "D": "48"},
+                "correct": "B",
+            },
+            {
+                "question": "If all roses are flowers and some flowers are red, which conclusion is definitely true?",
+                "options": {
+                    "A": "All roses are red",
+                    "B": "Some roses are red",
+                    "C": "No roses are red",
+                    "D": "None of the above",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "A cube is painted on all faces and cut into 64 smaller cubes. How many cubes have exactly 2 faces painted?",
+                "options": {"A": "12", "B": "16", "C": "20", "D": "24"},
+                "correct": "D",
+            },
+            {
+                "question": "If BAT = 23, CAT = 24, then DOG = ?",
+                "options": {"A": "26", "B": "29", "C": "32", "D": "35"},
+                "correct": "B",
+            },
+            {
+                "question": "Water is to Fish as Air is to:",
+                "options": {"A": "Bird", "B": "Lungs", "C": "Oxygen", "D": "Breathing"},
+                "correct": "A",
+            },
+            {
+                "question": "In a certain code, COMPUTER is written as RFUVQNPC. How is MEDICINE written in that code?",
+                "options": {
+                    "A": "MFEDJOJF",
+                    "B": "EOJDJEFN",
+                    "C": "NFEJDJOF",
+                    "D": "FOJDJEFM",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "A clock shows 3:15. What is the angle between the hour and minute hands?",
+                "options": {"A": "0°", "B": "7.5°", "C": "15°", "D": "22.5°"},
+                "correct": "B",
+            },
+            {
+                "question": "If today is Wednesday, what day will it be 100 days from now?",
+                "options": {
+                    "A": "Monday",
+                    "B": "Tuesday",
+                    "C": "Wednesday",
+                    "D": "Thursday",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "Choose the word that is most nearly opposite to 'CANDID':",
+                "options": {"A": "Frank", "B": "Blunt", "C": "Evasive", "D": "Honest"},
+                "correct": "C",
+            },
+            {
+                "question": "Select the correctly spelled word:",
+                "options": {
+                    "A": "Occassion",
+                    "B": "Occasion",
+                    "C": "Ocasion",
+                    "D": "Occassion",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the best meaning of the idiom 'Break the ice':",
+                "options": {
+                    "A": "To start a conversation",
+                    "B": "To break something",
+                    "C": "To make cold",
+                    "D": "To stop working",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Fill in the blank: 'The committee was _____ about the new proposal.'",
+                "options": {
+                    "A": "Enthusiastic",
+                    "B": "Enthusiasm",
+                    "C": "Enthusiastically",
+                    "D": "Enthusiast",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Choose the correct sentence:",
+                "options": {
+                    "A": "Neither John nor his friends was present.",
+                    "B": "Neither John nor his friends were present.",
+                    "C": "Neither John nor his friends is present.",
+                    "D": "Neither John nor his friends are present.",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "What is the meaning of 'Ubiquitous'?",
+                "options": {
+                    "A": "Rare",
+                    "B": "Present everywhere",
+                    "C": "Ancient",
+                    "D": "Mysterious",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Identify the part of speech of the underlined word: 'She runs *fast*.'",
+                "options": {"A": "Adjective", "B": "Adverb", "C": "Noun", "D": "Verb"},
+                "correct": "B",
+            },
+            {
+                "question": "Choose the synonym of 'PRISTINE':",
+                "options": {"A": "Dirty", "B": "Pure", "C": "Old", "D": "Damaged"},
+                "correct": "B",
+            },
+            {
+                "question": "Convert to indirect speech: She said, 'I will come tomorrow.'",
+                "options": {
+                    "A": "She said that she will come tomorrow.",
+                    "B": "She said that she would come the next day.",
+                    "C": "She said that she will come the next day.",
+                    "D": "She said that she would come tomorrow.",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct preposition: 'She is afraid _____ spiders.'",
+                "options": {"A": "from", "B": "of", "C": "with", "D": "by"},
+                "correct": "B",
+            },
+            {
+                "question": "Who is the current President of India (as of 2024)?",
+                "options": {
+                    "A": "Ram Nath Kovind",
+                    "B": "Draupadi Murmu",
+                    "C": "Pranab Mukherjee",
+                    "D": "A.P.J. Abdul Kalam",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Which planet is known as the 'Red Planet'?",
+                "options": {"A": "Venus", "B": "Jupiter", "C": "Mars", "D": "Saturn"},
+                "correct": "C",
+            },
+            {
+                "question": "The headquarters of UNESCO is located in:",
+                "options": {
+                    "A": "New York",
+                    "B": "Geneva",
+                    "C": "Paris",
+                    "D": "Vienna",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Which Indian state has the longest coastline?",
+                "options": {
+                    "A": "Tamil Nadu",
+                    "B": "Gujarat",
+                    "C": "Maharashtra",
+                    "D": "Andhra Pradesh",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The Nobel Prize in Literature 2023 was awarded to:",
+                "options": {
+                    "A": "Jon Fosse",
+                    "B": "Annie Ernaux",
+                    "C": "Abdulrazak Gurnah",
+                    "D": "Louise Glück",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which gas is most abundant in Earth's atmosphere?",
+                "options": {
+                    "A": "Oxygen",
+                    "B": "Carbon dioxide",
+                    "C": "Nitrogen",
+                    "D": "Argon",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The Chipko movement was related to:",
+                "options": {
+                    "A": "Forest conservation",
+                    "B": "Water conservation",
+                    "C": "Women's rights",
+                    "D": "Anti-corruption",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which country hosted the 2024 Olympics?",
+                "options": {"A": "Japan", "B": "France", "C": "Brazil", "D": "China"},
+                "correct": "B",
+            },
+            {
+                "question": "The currency of South Korea is:",
+                "options": {"A": "Yen", "B": "Won", "C": "Yuan", "D": "Rupiah"},
+                "correct": "B",
+            },
+            {
+                "question": "Which river is known as the 'Sorrow of Bengal'?",
+                "options": {
+                    "A": "Ganges",
+                    "B": "Brahmaputra",
+                    "C": "Damodar",
+                    "D": "Hooghly",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The atomic number of carbon is:",
+                "options": {"A": "4", "B": "6", "C": "8", "D": "12"},
+                "correct": "B",
+            },
+            {
+                "question": "Which programming language is primarily used for Android app development?",
+                "options": {
+                    "A": "Python",
+                    "B": "Java/Kotlin",
+                    "C": "C++",
+                    "D": "JavaScript",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The process by which plants make their own food is called:",
+                "options": {
+                    "A": "Respiration",
+                    "B": "Photosynthesis",
+                    "C": "Transpiration",
+                    "D": "Digestion",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "If momentum is conserved in a collision, the collision is called:",
+                "options": {
+                    "A": "Elastic",
+                    "B": "Inelastic",
+                    "C": "Both elastic and inelastic",
+                    "D": "Neither elastic nor inelastic",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The molecular formula of glucose is:",
+                "options": {
+                    "A": "C₆H₁₂O₆",
+                    "B": "C₆H₁₀O₅",
+                    "C": "C₁₂H₂₂O₁₁",
+                    "D": "C₆H₆",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "In economics, what does GDP stand for?",
+                "options": {
+                    "A": "Gross Domestic Product",
+                    "B": "General Development Program",
+                    "C": "Government Development Policy",
+                    "D": "Global Development Plan",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "The study of earthquakes is called:",
+                "options": {
+                    "A": "Seismology",
+                    "B": "Geology",
+                    "C": "Meteorology",
+                    "D": "Astronomy",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Which article of the Indian Constitution deals with the Right to Equality?",
+                "options": {
+                    "A": "Article 12",
+                    "B": "Article 14",
+                    "C": "Article 19",
+                    "D": "Article 21",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The largest ocean on Earth is:",
+                "options": {
+                    "A": "Atlantic Ocean",
+                    "B": "Indian Ocean",
+                    "C": "Arctic Ocean",
+                    "D": "Pacific Ocean",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "Who wrote the famous novel '1984'?",
+                "options": {
+                    "A": "George Orwell",
+                    "B": "Aldous Huxley",
+                    "C": "Ray Bradbury",
+                    "D": "H.G. Wells",
+                },
+                "correct": "A",
+            },
+        ],
+        "created": datetime.now().isoformat(),
+        "active": True,
+    }
+    exams["APT002"] = apt_exam_2
+
+    apt_exam_3 = {
+        "code": "APT003",
+        "title": "General Entrance Exam 3",
+        "duration": 50,
+        "questions": [
+            {
+                "question": "If the matrix A = [2 1; 3 4] and B = [1 2; 0 1], then (AB)^T equals:",
+                "options": {
+                    "A": "[2 6; 3 7]",
+                    "B": "[2 3; 6 7]",
+                    "C": "[6 2; 7 3]",
+                    "D": "[3 2; 7 6]",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "In a sequence, if the first term is 5 and each subsequent term is obtained by adding 3 to the previous term, what is the 15th term?",
+                "options": {"A": "47", "B": "50", "C": "44", "D": "41"},
+                "correct": "A",
+            },
+            {
+                "question": "Choose the word that best completes the analogy: Book : Author :: Painting : ?",
+                "options": {"A": "Canvas", "B": "Artist", "C": "Museum", "D": "Frame"},
+                "correct": "B",
+            },
+            {
+                "question": "The limit of (sin x)/x as x approaches 0 is:",
+                "options": {"A": "0", "B": "1", "C": "∞", "D": "Does not exist"},
+                "correct": "B",
+            },
+            {
+                "question": "Which of the following is the correct passive voice of 'She will complete the project tomorrow'?",
+                "options": {
+                    "A": "The project will be completed by her tomorrow.",
+                    "B": "The project would be completed by her tomorrow.",
+                    "C": "The project is completed by her tomorrow.",
+                    "D": "The project has been completed by her tomorrow.",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "If log₂ 8 = x, then the value of x is:",
+                "options": {"A": "2", "B": "3", "C": "4", "D": "8"},
+                "correct": "B",
+            },
+            {
+                "question": "In a coding system, if COMPUTER is coded as RFUVQNPC, how is SCIENCE coded?",
+                "options": {
+                    "A": "FPJFODF",
+                    "B": "EQKSQPR",
+                    "C": "UDJFODI",
+                    "D": "FRJSORD",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "Who was the first President of India?",
+                "options": {
+                    "A": "Jawaharlal Nehru",
+                    "B": "Dr. Rajendra Prasad",
+                    "C": "Sardar Vallabhbhai Patel",
+                    "D": "Dr. A.P.J. Abdul Kalam",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The derivative of e^(2x) with respect to x is:",
+                "options": {
+                    "A": "e^(2x)",
+                    "B": "2e^(2x)",
+                    "C": "e^(2x)/2",
+                    "D": "2x⋅e^(2x)",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correctly spelled word:",
+                "options": {
+                    "A": "Accomodate",
+                    "B": "Accommodate",
+                    "C": "Acommodate",
+                    "D": "Acomodate",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "If A can complete a work in 12 days and B can complete the same work in 18 days, how many days will they take to complete the work together?",
+                "options": {
+                    "A": "7.2 days",
+                    "B": "6 days",
+                    "C": "8 days",
+                    "D": "15 days",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Find the next number in the series: 2, 6, 12, 20, 30, ?",
+                "options": {"A": "40", "B": "42", "C": "44", "D": "46"},
+                "correct": "B",
+            },
+            {
+                "question": "The largest planet in our solar system is:",
+                "options": {
+                    "A": "Saturn",
+                    "B": "Earth",
+                    "C": "Jupiter",
+                    "D": "Neptune",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The area of a circle with radius 7 cm is:",
+                "options": {
+                    "A": "154 cm²",
+                    "B": "147 cm²",
+                    "C": "49π cm²",
+                    "D": "Both A and C",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "Choose the antonym of 'Verbose':",
+                "options": {
+                    "A": "Talkative",
+                    "B": "Concise",
+                    "C": "Elaborate",
+                    "D": "Detailed",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "If 5x + 3y = 19 and 2x - y = 3, then the value of x is:",
+                "options": {"A": "2", "B": "3", "C": "4", "D": "5"},
+                "correct": "A",
+            },
+            {
+                "question": "In a class of 40 students, if 60% are boys, how many girls are there?",
+                "options": {"A": "16", "B": "20", "C": "24", "D": "14"},
+                "correct": "A",
+            },
+            {
+                "question": "The currency of Japan is:",
+                "options": {"A": "Yuan", "B": "Won", "C": "Yen", "D": "Ringgit"},
+                "correct": "C",
+            },
+            {
+                "question": "The sum of the first n natural numbers is given by the formula:",
+                "options": {"A": "n(n+1)", "B": "n(n+1)/2", "C": "n²", "D": "2n+1"},
+                "correct": "B",
+            },
+            {
+                "question": "Identify the figure of speech in: 'The classroom was a zoo during lunch break.'",
+                "options": {
+                    "A": "Simile",
+                    "B": "Personification",
+                    "C": "Metaphor",
+                    "D": "Hyperbole",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "If sin θ = 3/5, then cos θ equals:",
+                "options": {"A": "4/5", "B": "5/4", "C": "3/4", "D": "5/3"},
+                "correct": "A",
+            },
+            {
+                "question": "A train travels 360 km in 4 hours. What is its average speed?",
+                "options": {
+                    "A": "80 km/h",
+                    "B": "90 km/h",
+                    "C": "100 km/h",
+                    "D": "85 km/h",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The headquarters of UNESCO is located in:",
+                "options": {
+                    "A": "New York",
+                    "B": "Geneva",
+                    "C": "Paris",
+                    "D": "Vienna",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The coefficient of x² in the expansion of (2x + 3)³ is:",
+                "options": {"A": "18", "B": "36", "C": "54", "D": "27"},
+                "correct": "B",
+            },
+            {
+                "question": "Choose the correct sentence:",
+                "options": {
+                    "A": "Neither of the boys were present.",
+                    "B": "Neither of the boys was present.",
+                    "C": "Neither of the boy were present.",
+                    "D": "Neither of the boy was present.",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The probability of getting a head when a fair coin is tossed is:",
+                "options": {"A": "1/4", "B": "1/3", "C": "1/2", "D": "2/3"},
+                "correct": "C",
+            },
+            {
+                "question": "If the pattern is: Circle, Square, Triangle, Circle, Square, ?, what comes next?",
+                "options": {
+                    "A": "Circle",
+                    "B": "Square",
+                    "C": "Triangle",
+                    "D": "Rectangle",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The longest river in the world is:",
+                "options": {
+                    "A": "Amazon",
+                    "B": "Nile",
+                    "C": "Ganges",
+                    "D": "Mississippi",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "If f(x) = x² + 2x + 1, then f(3) equals:",
+                "options": {"A": "16", "B": "14", "C": "12", "D": "18"},
+                "correct": "A",
+            },
+            {
+                "question": "Select the word closest in meaning to 'Pristine':",
+                "options": {"A": "Dirty", "B": "Old", "C": "Pure", "D": "Broken"},
+                "correct": "C",
+            },
+            {
+                "question": "The distance between two points (3, 4) and (7, 1) is:",
+                "options": {"A": "3", "B": "4", "C": "5", "D": "6"},
+                "correct": "C",
+            },
+            {
+                "question": "If all roses are flowers and some flowers are red, which conclusion is valid?",
+                "options": {
+                    "A": "All roses are red",
+                    "B": "Some roses are red",
+                    "C": "No roses are red",
+                    "D": "Cannot be determined",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "The Indian Constitution was adopted on:",
+                "options": {
+                    "A": "15th August 1947",
+                    "B": "26th January 1950",
+                    "C": "26th November 1949",
+                    "D": "2nd October 1948",
+                },
+                "correct": "C",
+            },
+            {
+                "question": "The integral of 1/x dx is:",
+                "options": {
+                    "A": "ln|x| + C",
+                    "B": "x + C",
+                    "C": "1/x² + C",
+                    "D": "x² + C",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Choose the correct preposition: 'She is allergic ___ cats.'",
+                "options": {"A": "of", "B": "to", "C": "with", "D": "from"},
+                "correct": "B",
+            },
+            {
+                "question": "The square root of 169 is:",
+                "options": {"A": "12", "B": "13", "C": "14", "D": "15"},
+                "correct": "B",
+            },
+            {
+                "question": "In a group of 20 people, if everyone shakes hands with everyone else exactly once, how many handshakes occur?",
+                "options": {"A": "190", "B": "200", "C": "180", "D": "210"},
+                "correct": "A",
+            },
+            {
+                "question": "Mount Everest is located in:",
+                "options": {
+                    "A": "India",
+                    "B": "Nepal",
+                    "C": "Tibet",
+                    "D": "Nepal-Tibet border",
+                },
+                "correct": "D",
+            },
+            {
+                "question": "If 2^x = 32, then x equals:",
+                "options": {"A": "4", "B": "5", "C": "6", "D": "16"},
+                "correct": "B",
+            },
+            {
+                "question": "Identify the error in: 'The team are playing very well today.'",
+                "options": {
+                    "A": "The team",
+                    "B": "are playing",
+                    "C": "very well",
+                    "D": "No error",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The mode of the data set {2, 3, 4, 4, 5, 5, 5, 6} is:",
+                "options": {"A": "4", "B": "5", "C": "4.5", "D": "6"},
+                "correct": "B",
+            },
+            {
+                "question": "If Monday is the 1st day of a month, what day will be the 15th?",
+                "options": {
+                    "A": "Sunday",
+                    "B": "Monday",
+                    "C": "Tuesday",
+                    "D": "Wednesday",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The chemical symbol for gold is:",
+                "options": {"A": "Go", "B": "Gd", "C": "Au", "D": "Ag"},
+                "correct": "C",
+            },
+            {
+                "question": "The value of sin 30° is:",
+                "options": {"A": "1/2", "B": "√3/2", "C": "1", "D": "√2/2"},
+                "correct": "A",
+            },
+            {
+                "question": "Choose the correct form: 'I wish I ___ taller.'",
+                "options": {"A": "am", "B": "was", "C": "were", "D": "will be"},
+                "correct": "C",
+            },
+            {
+                "question": "If the perimeter of a square is 40 cm, its area is:",
+                "options": {
+                    "A": "100 cm²",
+                    "B": "80 cm²",
+                    "C": "120 cm²",
+                    "D": "160 cm²",
+                },
+                "correct": "A",
+            },
+            {
+                "question": "Water : Thirst :: Food : ?",
+                "options": {"A": "Eat", "B": "Hunger", "C": "Taste", "D": "Nutrition"},
+                "correct": "B",
+            },
+            {
+                "question": "The smallest country in the world is:",
+                "options": {
+                    "A": "Monaco",
+                    "B": "Vatican City",
+                    "C": "San Marino",
+                    "D": "Liechtenstein",
+                },
+                "correct": "B",
+            },
+            {
+                "question": "The number of sides in a hexagon is:",
+                "options": {"A": "5", "B": "6", "C": "7", "D": "8"},
+                "correct": "B",
+            },
+            {
+                "question": "Select the correctly punctuated sentence:",
+                "options": {
+                    "A": "It's a beautiful day, isn't it?",
+                    "B": "Its a beautiful day, isn't it?",
+                    "C": "It's a beautiful day isn't it?",
+                    "D": "Its a beautiful day isn't it?",
+                },
+                "correct": "A",
+            },
+        ],
+        "created": datetime.now().isoformat(),
+        "active": True,
+    }
+    exams["APT003"] = apt_exam_3
 
     # Save sample data
     if save_exams(exams):
