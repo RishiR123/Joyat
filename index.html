@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Joy University Examination Hub</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-        
+
         * {
             margin: 0;
             padding: 0;
@@ -14,8 +15,8 @@
         }
 
         :root {
-            --primary-red: #dc2626;
-            --dark-red: #991b1b;
+            --primary-red: #072556;
+            --dark-red: #072556;
             --light-red: #fee2e2;
             --accent-red: #ef4444;
             --pure-white: #ffffff;
@@ -57,7 +58,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 20% 80%, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(220, 38, 38, 0.05) 0%, transparent 50%),
                 radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
@@ -78,7 +79,7 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         .header {
             background: linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);
             color: var(--pure-white);
@@ -94,9 +95,9 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
-                linear-gradient(45deg, rgba(255,255,255,0.05) 0%, transparent 30%),
-                radial-gradient(circle at 70% 30%, rgba(255,255,255,0.1) 0%, transparent 40%);
+            background:
+                linear-gradient(45deg, rgba(255, 255, 255, 0.05) 0%, transparent 30%),
+                radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 40%);
             pointer-events: none;
         }
 
@@ -122,36 +123,37 @@
         }
 
         .logo-section {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
-    }
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
 
         .logo-img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    background: #fff;
-    padding: 5px;
-    }
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            background: #fff;
+            padding: 5px;
+        }
 
         .logo-text h1 {
-    font-size: 2.5rem;
-    font-weight: 900;
-    color: #fff;
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
-    margin: 0;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+            margin: 0;
         }
 
         .logo-text h3 {
-    font-size: 1.3rem;
-    font-weight: 400;
-    color: #eee;
-    margin: 0;
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: #eee;
+            margin: 0;
         }
+
         .header-text {
             flex: 1;
         }
@@ -161,8 +163,8 @@
             font-weight: 900;
             margin-bottom: 0.5rem;
             letter-spacing: -0.02em;
-            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            background: linear-gradient(135deg, var(--pure-white) 0%, rgba(255,255,255,0.8) 100%);
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, var(--pure-white) 0%, rgba(255, 255, 255, 0.8) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -180,7 +182,7 @@
             font-size: 1rem;
             opacity: 0.9;
             font-weight: 400;
-            border-top: 1px solid rgba(255,255,255,0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
             padding-top: 1.5rem;
             margin-top: 1.5rem;
             line-height: 1.6;
@@ -189,7 +191,7 @@
         .powered-by .company {
             font-weight: 700;
             color: var(--pure-white);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .main-content {
@@ -289,7 +291,10 @@
             letter-spacing: 0.01em;
         }
 
-        input[type="text"], input[type="password"], input[type="number"], select {
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select {
             width: 100%;
             padding: 1.25rem;
             border: 2px solid var(--gray-200);
@@ -300,7 +305,10 @@
             font-weight: 500;
         }
 
-        input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, select:focus {
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="number"]:focus,
+        select:focus {
             outline: none;
             border-color: var(--primary-red);
             box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
@@ -346,7 +354,7 @@
             left: 50%;
             width: 0;
             height: 0;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             transform: translate(-50%, -50%);
             transition: width 0.4s ease, height 0.4s ease;
@@ -497,7 +505,9 @@
             border-color: var(--primary-red);
         }
 
-        .question-item input, .question-item textarea, .question-item select {
+        .question-item input,
+        .question-item textarea,
+        .question-item select {
             width: 100%;
             margin: 0.75rem 0;
             padding: 1rem;
@@ -508,19 +518,23 @@
             background: var(--pure-white);
         }
 
-        .question-item input:focus, .question-item textarea:focus, .question-item select:focus {
+        .question-item input:focus,
+        .question-item textarea:focus,
+        .question-item select:focus {
             outline: none;
             border-color: var(--primary-red);
             box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
         }
 
-        .exam-list, .results-list {
+        .exam-list,
+        .results-list {
             display: grid;
             gap: 2rem;
             grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
         }
 
-        .exam-card, .result-card {
+        .exam-card,
+        .result-card {
             background: var(--pure-white);
             padding: 2.5rem;
             border-radius: 20px;
@@ -531,7 +545,8 @@
             box-shadow: var(--shadow-md);
         }
 
-        .exam-card::before, .result-card::before {
+        .exam-card::before,
+        .result-card::before {
             content: '';
             position: absolute;
             top: 0;
@@ -541,7 +556,8 @@
             background: linear-gradient(90deg, var(--primary-red), var(--accent-red));
         }
 
-        .exam-card:hover, .result-card:hover {
+        .exam-card:hover,
+        .result-card:hover {
             transform: translateY(-6px);
             box-shadow: var(--shadow-xl);
             border-color: var(--primary-red);
@@ -560,37 +576,95 @@
             box-shadow: var(--shadow-md);
         }
 
-        
+
         .delete-btn {
-    background: linear-gradient(135deg, #dc2626, #991b1b);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-left: 0.75rem;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            background: linear-gradient(135deg, #dc2626, #991b1b);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-left: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
 
         .delete-btn:hover {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        /* Toggle Switch Styles */
+        .login-toggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+            padding: 1rem;
+            background: var(--pure-white);
+            border-radius: 20px;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-md);
+        }
+
+        .toggle-container {
+            position: relative;
+            display: flex;
+            background: var(--gray-100);
+            border-radius: 16px;
+            padding: 0.5rem;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-option {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--gray-600);
+            position: relative;
+            z-index: 2;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .toggle-option.active {
+            background: linear-gradient(135deg, var(--primary-red), var(--accent-red));
+            color: var(--pure-white);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .toggle-option:not(.active):hover {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .login-section-single {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .login-card-single {
+            width: 100%;
+            max-width: 500px;
         }
 
         .delete-btn:active {
-    transform: translateY(0);
+            transform: translateY(0);
         }
 
         .exam-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin-top: 1.5rem;
-    gap: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            gap: 0.75rem;
         }
 
 
@@ -647,7 +721,7 @@
             transform: translateX(4px);
         }
 
-        .option input[type="radio"]:checked + span {
+        .option input[type="radio"]:checked+span {
             font-weight: 700;
             color: var(--primary-red);
         }
@@ -721,16 +795,90 @@
             box-shadow: var(--shadow-md);
         }
 
+        .footer {
+            background: linear-gradient(135deg, var(--gray-800) 0%, var(--dark-black) 100%);
+            color: var(--pure-white);
+            padding: 2rem 3rem;
+            text-align: center;
+            position: relative;
+            margin-top: 4rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-red), transparent);
+            opacity: 0.6;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .powered-by-text {
+            font-size: 1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0.5rem;
+        }
+
+        .company-name {
+            font-size: 1.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-red), #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .company-name:hover {
+            transform: scale(1.05);
+            filter: brightness(1.2);
+        }
+
+        .company-description {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+            margin-top: 0.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .footer {
+                padding: 1.5rem 2rem;
+            }
+
+            .company-name {
+                font-size: 1.1rem;
+            }
+
+            .powered-by-text {
+                font-size: 0.9rem;
+            }
+        }
+
         @media (max-width: 1024px) {
             .header h1 {
                 font-size: 3rem;
             }
-            
+
             .header-content {
                 flex-direction: column;
                 text-align: center;
             }
-            
+
             .logo-section {
                 flex-direction: column;
                 gap: 1rem;
@@ -741,95 +889,94 @@
             .header {
                 padding: 3rem 2rem;
             }
-            
+
             .header h1 {
                 font-size: 2.5rem;
             }
-            
+
             .login-section {
                 grid-template-columns: 1fr;
                 gap: 2rem;
             }
-            
+
             .dashboard-header {
                 flex-direction: column;
                 gap: 1.5rem;
                 align-items: stretch;
             }
-            
+
             .tab-buttons {
                 flex-direction: column;
                 gap: 0.5rem;
             }
-            
-            .exam-list, .results-list {
+
+            .exam-list,
+            .results-list {
                 grid-template-columns: 1fr;
             }
-            
-            .main-content, .dashboard {
+
+            .main-content,
+            .dashboard {
                 padding: 2rem;
             }
         }
 
         @media (max-width: 480px) {
-            .main-content, .dashboard {
+
+            .main-content,
+            .dashboard {
                 padding: 1.5rem;
             }
-            
+
             .header {
                 padding: 2rem 1.5rem;
             }
-            
-            .login-card, .exam-form {
+
+            .login-card,
+            .exam-form {
                 padding: 2rem;
             }
-            
+
             .header h1 {
                 font-size: 2rem;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
-    <div class="header-content">
-        <div class="logo-section">
-            <img src="static/logo.png" alt="Joy University Logo" class="logo" />
-        </div>
-        <div class="header-text">
-            <h1>Joy University</h1>
-            <div class="subtitle">Examination Hub</div>
-            <div class="powered-by">
-                Powered by <span class="company">OrionAC</span><br>
-                <small>A student-led company from Joy University</small>
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="static/logo.png" alt="Joy University Logo" class="logo" />
+                    <div class="subtitle">Examination Hub</div>
+
+
+
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
 
         <!-- Login Section -->
         <div id="loginSection" class="main-content">
-            <div class="login-section">
-                <!-- Admin Login -->
-                <div class="login-card admin-card">
-                    <h3>Administrator Portal</h3>
-                    <form id="adminLoginForm">
-                        <div class="form-group">
-                            <label for="adminUsername">Username</label>
-                            <input type="text" id="adminUsername" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="adminPassword">Password</label>
-                            <input type="password" id="adminPassword" required>
-                        </div>
-                        <button type="submit" class="btn btn-admin">Access Admin Panel</button>
-                    </form>
+            <!-- Toggle Switch -->
+            <div class="login-toggle">
+                <div class="toggle-container">
+                    <div class="toggle-option active" id="studentToggle" onclick="toggleLogin('student')">
+                        👨‍🎓 Student Login
+                    </div>
+                    <div class="toggle-option" id="adminToggle" onclick="toggleLogin('admin')">
+                        👨‍💼 Admin Login
+                    </div>
                 </div>
+            </div>
 
-                <!-- Student Login -->
-                <div class="login-card student-card">
+            <!-- Single Login Container -->
+            <div class="login-section-single">
+                <!-- Student Login (Default) -->
+                <div id="studentLoginCard" class="login-card login-card-single student-card">
                     <h3>Student Portal</h3>
                     <form id="studentLoginForm">
                         <div class="form-group">
@@ -846,23 +993,45 @@
                             <label for="school">School</label>
                             <select id="school" required>
                                 <option value="">Select School</option>
-                                <option value="School of Engineering and Technology">School of Engineering and Technology</option>
+                                <option value="School of Entrepreneurship and Management">School of Entrepreneurship and
+                                    Management
+                                </option>
+                                <option value="School of Engineering and Technology">School of Engineering and
+                                    Technology</option>
                                 <option value="School of Design">School of Design</option>
-                                <option value="School of Computational Intelligence">School of Computational Intelligence</option>
-                                <option value="School of Arts & Natural Sciences">School of Arts & Natural Sciences</option>
+                                <option value="School of Computational Intelligence">School of Computational
+                                    Intelligence</option>
+                                <option value="School of Arts & Natural Sciences">School of Arts & Natural Sciences
+                                </option>
                                 <option value="School of Agricultural Sciences">School of Agricultural Sciences</option>
                                 <option value="School of Law">School of Law</option>
-                                <option value="School of Life & Health Sciences">School of Life & Health Sciences</option>
+                                <option value="School of Life & Health Sciences">School of Life & Health Sciences
+                                </option>
                                 <option value="School of Nursing">School of Nursing</option>
                                 <option value="School of Pharmacy">School of Pharmacy</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="examCode">Examination Code</label>
-                        
                             <input type="text" id="examCode" required placeholder="Enter exam code">
                         </div>
                         <button type="submit" class="btn btn-student">Enter Examination</button>
+                    </form>
+                </div>
+
+                <!-- Admin Login (Hidden by default) -->
+                <div id="adminLoginCard" class="login-card login-card-single admin-card hidden">
+                    <h3>Administrator Portal</h3>
+                    <form id="adminLoginForm">
+                        <div class="form-group">
+                            <label for="adminUsername">Username</label>
+                            <input type="text" id="adminUsername" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPassword">Password</label>
+                            <input type="password" id="adminPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-admin">Access Admin Panel</button>
                     </form>
                 </div>
             </div>
@@ -894,7 +1063,7 @@
                             <label for="examDuration">Duration (minutes)</label>
                             <input type="number" id="examDuration" required min="1">
                         </div>
-                        
+
                         <div id="questionsContainer">
                             <h4 style="margin-bottom: 1rem; color: #1f2937; font-weight: 600;">Questions</h4>
                             <div class="question-item">
@@ -912,8 +1081,9 @@
                                 </select>
                             </div>
                         </div>
-                        
-                        <button type="button" onclick="addQuestion()" class="add-question-btn">Add Another Question</button>
+
+                        <button type="button" onclick="addQuestion()" class="add-question-btn">Add Another
+                            Question</button>
                         <button type="submit" class="btn btn-admin">Create Examination</button>
                     </form>
                 </div>
@@ -948,11 +1118,36 @@
                 </form>
             </div>
         </div>
+        <div class="footer">
+            <div class="footer-content">
+                <div class="powered-by-text">Powered by</div>
+                <a href="https://orionac.in/" class="company-name">OrionAC.in</a>
+                <div class="company-description">A proud student-led company from Joy University</div>
+            </div>
+        </div>
     </div>
-     
+
     <script>
         let currentExam = null;
         let timer = null;
+
+        function toggleLogin(type) {
+            // Update toggle buttons
+            document.getElementById('studentToggle').classList.remove('active');
+            document.getElementById('adminToggle').classList.remove('active');
+
+            // Hide both login cards
+            document.getElementById('studentLoginCard').classList.add('hidden');
+            document.getElementById('adminLoginCard').classList.add('hidden');
+
+            if (type === 'student') {
+                document.getElementById('studentToggle').classList.add('active');
+                document.getElementById('studentLoginCard').classList.remove('hidden');
+            } else {
+                document.getElementById('adminToggle').classList.add('active');
+                document.getElementById('adminLoginCard').classList.remove('hidden');
+            }
+        }
 
         // Add loading state management
         function setLoading(element, isLoading) {
@@ -969,17 +1164,17 @@
             const form = e.target;
             const submitBtn = form.querySelector('.btn');
             setLoading(form, true);
-            
+
             const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;
-            
+
             try {
                 const response = await fetch('/admin/login', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({username, password})
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
                 });
-                
+
                 if (response.ok) {
                     showAdminDashboard();
                     loadExams();
@@ -996,97 +1191,97 @@
 
         // Replace the existing student login form handler with this fixed version
 
-// Replace the existing student login form handler with this corrected version
+        // Replace the existing student login form handler with this corrected version
         document.getElementById('studentLoginForm').addEventListener('submit', async (e) => {
-           e.preventDefault();
-           const form = e.target;
-           setLoading(form, true);
-    
-    // Collect all form data with proper validation
-           const name = document.getElementById('studentName').value.trim();
-           const studentId = document.getElementById('studentId').value.trim();
-           const school = document.getElementById('school').value;
-           const examCode = document.getElementById('examCode').value.trim().toUpperCase();
-    
-    // Clear any previous error messages
-           document.getElementById('studentIdError').classList.add('hidden');
-           document.getElementById('studentId').classList.remove('input-error');
-    
-    // Validate student ID format (should contain only letters and numbers)
-          const studentIdPattern = /^[A-Za-z0-9]+$/;
-          if (!studentIdPattern.test(studentId)) {
-           document.getElementById('studentIdError').textContent = 'Student ID should contain only letters and numbers';
-           document.getElementById('studentIdError').classList.remove('hidden');
-           document.getElementById('studentId').classList.add('input-error');
-           setLoading(form, false);
-           return;
-          }
-    
-    // Validate all required fields
-          if (!name || !studentId || !school || !examCode) {
-           alert('❌ Please fill in all required fields.');
-           setLoading(form, false);
-           return;
-          }
-    
-    // Validate name (should contain only letters and spaces)
-          const namePattern = /^[A-Za-z\s]+$/;
-          if (!namePattern.test(name)) {
-           alert('❌ Please enter a valid full name (letters and spaces only).');
-           setLoading(form, false);
-           return;
-          }
-    
-          try {
-           const response = await fetch('/student/join', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                name: name,
-                studentId: studentId,
-                school: school,
-                examCode: examCode
-            })
-          });
-        
-          const responseData = await response.json();
-        
-          if (response.ok) {
-            currentExam = responseData;
-            showStudentExam(name, responseData);
-        } else {
-            // Handle different error types
-            let errorMessage = '❌ ';
-            switch (response.status) {
-                case 400:
-                    errorMessage += responseData.message || 'Invalid request data. Please check all fields and try again.';
-                    break;
-                case 404:
-                    errorMessage += 'Exam code not found. Please verify the code and try again.';
-                    break;
-                case 409:
-                    errorMessage += 'You have already taken this exam.';
-                    break;
-                default:
-                    errorMessage += responseData.message || 'An error occurred. Please try again.';
+            e.preventDefault();
+            const form = e.target;
+            setLoading(form, true);
+
+            // Collect all form data with proper validation
+            const name = document.getElementById('studentName').value.trim();
+            const studentId = document.getElementById('studentId').value.trim();
+            const school = document.getElementById('school').value;
+            const examCode = document.getElementById('examCode').value.trim().toUpperCase();
+
+            // Clear any previous error messages
+            document.getElementById('studentIdError').classList.add('hidden');
+            document.getElementById('studentId').classList.remove('input-error');
+
+            // Validate student ID format (should contain only letters and numbers)
+            const studentIdPattern = /^[A-Za-z0-9]+$/;
+            if (!studentIdPattern.test(studentId)) {
+                document.getElementById('studentIdError').textContent = 'Student ID should contain only letters and numbers';
+                document.getElementById('studentIdError').classList.remove('hidden');
+                document.getElementById('studentId').classList.add('input-error');
+                setLoading(form, false);
+                return;
             }
-            alert(errorMessage);
-          }
-      } catch (error) {
-         console.error('Network error:', error);
-         alert('🔌 Connection error. Please check your network and try again.');
-       }finally {
-         setLoading(form, false);
-      }
-    });
+
+            // Validate all required fields
+            if (!name || !studentId || !school || !examCode) {
+                alert('❌ Please fill in all required fields.');
+                setLoading(form, false);
+                return;
+            }
+
+            // Validate name (should contain only letters and spaces)
+            const namePattern = /^[A-Za-z\s]+$/;
+            if (!namePattern.test(name)) {
+                alert('❌ Please enter a valid full name (letters and spaces only).');
+                setLoading(form, false);
+                return;
+            }
+
+            try {
+                const response = await fetch('/student/join', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        studentId: studentId,
+                        school: school,
+                        examCode: examCode
+                    })
+                });
+
+                const responseData = await response.json();
+
+                if (response.ok) {
+                    currentExam = responseData;
+                    showStudentExam(name, responseData);
+                } else {
+                    // Handle different error types
+                    let errorMessage = '❌ ';
+                    switch (response.status) {
+                        case 400:
+                            errorMessage += responseData.message || 'Invalid request data. Please check all fields and try again.';
+                            break;
+                        case 404:
+                            errorMessage += 'Exam code not found. Please verify the code and try again.';
+                            break;
+                        case 409:
+                            errorMessage += 'You have already taken this exam.';
+                            break;
+                        default:
+                            errorMessage += responseData.message || 'An error occurred. Please try again.';
+                    }
+                    alert(errorMessage);
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                alert('🔌 Connection error. Please check your network and try again.');
+            } finally {
+                setLoading(form, false);
+            }
+        });
 
         function addQuestion() {
             const container = document.getElementById('questionsContainer');
             const questionCount = container.querySelectorAll('.question-item').length + 1;
-            
+
             const questionDiv = document.createElement('div');
             questionDiv.className = 'question-item';
             questionDiv.style.animation = 'slideInUp 0.5s ease-out';
@@ -1157,10 +1352,10 @@
             document.getElementById('studentExam').classList.remove('hidden');
             document.getElementById('studentNameDisplay').textContent = name;
             document.getElementById('examTitleDisplay').textContent = `📝 ${exam.title}`;
-            
+
             const questionsDiv = document.getElementById('questionsDisplay');
             questionsDiv.innerHTML = '';
-            
+
             exam.questions.forEach((q, index) => {
                 const questionDiv = document.createElement('div');
                 questionDiv.className = 'question';
@@ -1189,19 +1384,19 @@
                 `;
                 questionsDiv.appendChild(questionDiv);
             });
-            
+
             startTimer(exam.duration);
         }
 
         function startTimer(duration) {
             let timeLeft = duration * 60;
             const timerDisplay = document.getElementById('timer');
-            
+
             timer = setInterval(() => {
                 const minutes = Math.floor(timeLeft / 60);
                 const seconds = timeLeft % 60;
                 timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                
+
                 // Change timer color based on remaining time
                 const timerContainer = timerDisplay.parentElement;
                 if (timeLeft <= 300) { // 5 minutes
@@ -1210,7 +1405,7 @@
                 } else if (timeLeft <= 600) { // 10 minutes
                     timerContainer.style.background = 'linear-gradient(135deg, #ed8936, #dd6b20)';
                 }
-                
+
                 if (timeLeft <= 0) {
                     clearInterval(timer);
                     alert('⏰ Time is up! Your exam is being submitted automatically.');
@@ -1220,80 +1415,80 @@
             }, 1000);
         }
         // Add this exam form submission handler right after the startTimer function
-document.getElementById('examForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    if (timer) {
-        clearInterval(timer);
-    }
-    
-    const form = e.target;
-    const submitBtn = form.querySelector('.submit-exam-btn');
-    
-    // Disable submit button to prevent double submission
-    submitBtn.disabled = true;
-    submitBtn.textContent = '⏳ Submitting...';
-    
-    try {
-        // Collect answers
-        const answers = {};
-        const formData = new FormData(form);
-        
-        for (let [key, value] of formData.entries()) {
-            answers[key] = value;
-        }
-        
-        // Get student data from the form
-        const studentName = document.getElementById('studentNameDisplay').textContent;
-        const studentId = document.getElementById('studentId').value;
-        const school = document.getElementById('school').value;
-        
-        const submissionData = {
-            examCode: currentExam.code,
-            studentName: studentName,
-            studentId: studentId,
-            school: school,
-            answers: answers
-        };
-        
-        const response = await fetch('/student/submit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(submissionData)
+        document.getElementById('examForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (timer) {
+                clearInterval(timer);
+            }
+
+            const form = e.target;
+            const submitBtn = form.querySelector('.submit-exam-btn');
+
+            // Disable submit button to prevent double submission
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Submitting...';
+
+            try {
+                // Collect answers
+                const answers = {};
+                const formData = new FormData(form);
+
+                for (let [key, value] of formData.entries()) {
+                    answers[key] = value;
+                }
+
+                // Get student data from the form
+                const studentName = document.getElementById('studentNameDisplay').textContent;
+                const studentId = document.getElementById('studentId').value;
+                const school = document.getElementById('school').value;
+
+                const submissionData = {
+                    examCode: currentExam.code,
+                    studentName: studentName,
+                    studentId: studentId,
+                    school: school,
+                    answers: answers
+                };
+
+                const response = await fetch('/student/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(submissionData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(`🎉 Exam submitted successfully!\n\nYour Score: ${result.score}/${result.total}\nPercentage: ${Math.round((result.score / result.total) * 100)}%\n\nThank you for taking the exam!`);
+                    logout(); // Return to login screen
+                } else {
+                    alert('❌ Error submitting exam: ' + (result.message || 'Unknown error'));
+                    // Re-enable submit button if there was an error
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '✅ Submit Examination';
+                }
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('🔌 Network error. Please check your connection and try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✅ Submit Examination';
+            }
         });
-        
-        const result = await response.json();
-        
-        if (response.ok) {
-            alert(`🎉 Exam submitted successfully!\n\nYour Score: ${result.score}/${result.total}\nPercentage: ${Math.round((result.score/result.total)*100)}%\n\nThank you for taking the exam!`);
-            logout(); // Return to login screen
-        } else {
-            alert('❌ Error submitting exam: ' + (result.message || 'Unknown error'));
-            // Re-enable submit button if there was an error
-            submitBtn.disabled = false;
-            submitBtn.textContent = '✅ Submit Examination';
-        }
-        
-    } catch (error) {
-        console.error('Submission error:', error);
-        alert('🔌 Network error. Please check your connection and try again.');
-        submitBtn.disabled = false;
-        submitBtn.textContent = '✅ Submit Examination';
-    }
-   });
         function showTab(tabName) {
             // Remove active class from all tab buttons
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
-            
+
             // Add active class to clicked button
             event.target.classList.add('active');
             // Show selected tab content
             document.getElementById(tabName + 'Tab').classList.remove('hidden');
-            
+
             // Load data for specific tabs
             if (tabName === 'manage') {
                 loadExams();
@@ -1306,19 +1501,19 @@ document.getElementById('examForm').addEventListener('submit', async (e) => {
             if (timer) {
                 clearInterval(timer);
             }
-            
+
             // Show login section
             document.getElementById('loginSection').classList.remove('hidden');
             document.getElementById('adminDashboard').classList.add('hidden');
             document.getElementById('studentExam').classList.add('hidden');
-            
+
             // Reset forms
             document.getElementById('adminLoginForm').reset();
             document.getElementById('studentLoginForm').reset();
-            
+
             // Reset current exam
             currentExam = null;
-            
+
             // Reset timer display
             const timerContainer = document.querySelector('.timer-display');
             if (timerContainer) {
@@ -1326,45 +1521,45 @@ document.getElementById('examForm').addEventListener('submit', async (e) => {
                 timerContainer.style.animation = '';
             }
         }
-        
+
         async function loadExams() {
             try {
                 const response = await fetch('/admin/exams');
                 const exams = await response.json();
-                
+
                 const examsList = document.getElementById('examsList');
-                
+
                 if (exams.length === 0) {
                     examsList.innerHTML = `
-                        <div style="text-align: center; padding: 3rem; color: #718096;">
-                            <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
-                            <h3>No Exams Created Yet</h3>
-                            <p>Create your first exam using the "Create Exam" tab.</p>
-                        </div>
-                    `;
+                <div style="text-align: center; padding: 3rem; color: #718096;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📋</div>
+                    <h3>No Exams Created Yet</h3>
+                    <p>Create your first exam using the "Create Exam" tab.</p>
+                </div>
+            `;
                     return;
                 }
-                
-                examsList.innerHTML = exams.map((exam, index) => `
-                    <div class="exam-card">
-                    <h4>${exam.title}</h4>
-                    <p><strong>Duration:</strong> ${exam.duration} minutes</p>
-                    <p><strong>Questions:</strong> ${exam.questions.length}</p>
-                    <p><strong>Created:</strong> ${new Date(exam.created).toLocaleDateString()}</p>
-                    <p><strong>Status:</strong> ${exam.active ? 'Active' : 'Inactive'}</p>
-                    <div class="exam-code">${exam.code}</div>
-    
-                    <!-- Add this actions div -->
-                   <div class="exam-actions">
-                   
-                    <button class="delete-btn" onclick="deleteExam('${exam.code}')">
-                     Delete
-                   </button>
-                  </div>
-                </div>
 
-                `).join('');
-                
+                examsList.innerHTML = exams.map((exam, index) => `
+            <div class="exam-card">
+            <h4>${exam.title}</h4>
+            <p><strong>Duration:</strong> ${exam.duration} minutes</p>
+            <p><strong>Questions:</strong> ${exam.questions.length}</p>
+            <p><strong>Created:</strong> ${new Date(exam.created).toLocaleDateString()}</p>
+            <p><strong>Status:</strong> ${exam.active ? 'Active' : 'Inactive'}</p>
+            <div class="exam-code">${exam.code}</div>
+
+            <!-- Add this actions div -->
+           <div class="exam-actions">
+           
+            <button class="delete-btn" onclick="deleteExam('${exam.code}')">
+             Delete
+           </button>
+          </div>
+        </div>
+
+        `).join('');
+
                 // Trigger animations
                 setTimeout(() => {
                     document.querySelectorAll('.exam-card').forEach(card => {
@@ -1374,136 +1569,413 @@ document.getElementById('examForm').addEventListener('submit', async (e) => {
             } catch (error) {
                 console.error('Error loading exams:', error);
                 document.getElementById('examsList').innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: #f56565;">
-                        <p>❌ Error loading exams. Please refresh and try again.</p>
-                    </div>
-                `;
-            }
-        }
-        function deleteExam(examCode) {
-        const confirmDelete = confirm(`Are you sure you want to delete exam "${examCode}"? This action cannot be undone.`);
-        if (confirmDelete) {
-            fetch(`/admin/delete-exam/${examCode}`, {
-                method: 'DELETE'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
-                    loadExams(); // Refresh list
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to delete exam');
-            });
-        }
-    }
-
-        // Replace your existing loadResults() function with this enhanced version
-async function loadResults() {
-    try {
-        const response = await fetch('/admin/results');
-        const results = await response.json();
-        
-        const resultsList = document.getElementById('resultsList');
-        
-        if (results.length === 0) {
-            resultsList.innerHTML = `
-                <div style="text-align: center; padding: 3rem; color: #718096;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-                    <h3>No Results Available</h3>
-                    <p>Results will appear here once students complete their exams.</p>
-                </div>
-            `;
-            return;
-        }
-        
-        resultsList.innerHTML = results.map((result, index) => {
-            const percentage = Math.round((result.score / result.total) * 100);
-            let gradeColor = '#f56565'; // Red for low scores
-            let gradeEmoji = '📚';
-            
-            if (percentage >= 80) {
-                gradeColor = '#48bb78'; // Green for high scores
-                gradeEmoji = '🎉';
-            } else if (percentage >= 60) {
-                gradeColor = '#ed8936'; // Orange for medium scores
-                gradeEmoji = '👍';
-            }
-            
-            return `
-                <div class="result-card" style="animation: slideInUp 0.5s ease-out ${index * 0.1}s forwards; opacity: 0;">
-                    <h4>📝 ${result.examTitle}</h4>
-                    <div style="margin: 1rem 0; padding: 1rem; background: #f8fafc; border-radius: 12px; border-left: 4px solid var(--primary-red);">
-                        <p><strong>👨‍🎓 Student Name:</strong> ${result.studentName}</p>
-                        <p><strong>🆔 Student ID:</strong> ${result.studentId || 'N/A'}</p>
-                        <p><strong>🏫 School:</strong> ${result.school || 'N/A'}</p>
-                    </div>
-                    <p><strong>📊 Score:</strong> 
-                        <span style="color: ${gradeColor}; font-weight: 700;">
-                            ${gradeEmoji} ${result.score}/${result.total} (${percentage}%)
-                        </span>
-                    </p>
-                    <p><strong>📅 Submitted:</strong> ${new Date(result.submitted).toLocaleDateString('en-IN', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })}</p>
-                    <div style="margin-top: 1rem; padding: 0.75rem; background: ${gradeColor}20; border-radius: 12px; text-align: center; border: 1px solid ${gradeColor}40;">
-                        <strong style="color: ${gradeColor}; font-size: 1.1rem;">
-                            ${percentage >= 80 ? '🌟 Excellent Performance!' : 
-                              percentage >= 60 ? '👏 Good Performance!' : '📖 Needs Improvement'}
-                        </strong>
-                    </div>
-                </div>
-            `;
-        }).join('');
-        
-        // Trigger animations
-        setTimeout(() => {
-            document.querySelectorAll('.result-card').forEach(card => {
-                card.style.opacity = '1';
-            });
-        }, 100);
-    } catch (error) {
-        console.error('Error loading results:', error);
-        document.getElementById('resultsList').innerHTML = `
             <div style="text-align: center; padding: 2rem; color: #f56565;">
-                <p>❌ Error loading results. Please refresh and try again.</p>
+                <p>Error loading exams. Please refresh and try again.</p>
             </div>
         `;
-    }
-}
-        
+            }
+        }
+
+        function deleteExam(examCode) {
+            const confirmDelete = confirm(`Are you sure you want to delete exam "${examCode}"? This action cannot be undone.`);
+            if (confirmDelete) {
+                fetch(`/admin/delete-exam/${examCode}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            loadExams(); // Refresh list
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Failed to delete exam');
+                    });
+            }
+        }
+
+        // Export functions
+        function exportToCSV(data, filename) {
+            const csvContent = convertToCSV(data);
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportToExcel(data, filename) {
+            const worksheet = XLSX.utils.json_to_sheet(data);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Results");
+            XLSX.writeFile(workbook, filename);
+        }
+
+        function convertToCSV(data) {
+            if (data.length === 0) return '';
+
+            const headers = Object.keys(data[0]);
+            const csvRows = [];
+
+            // Add headers
+            csvRows.push(headers.join(','));
+
+            // Add data rows
+            for (const row of data) {
+                const values = headers.map(header => {
+                    const value = row[header];
+                    // Escape commas and quotes
+                    if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+                        return `"${value.replace(/"/g, '""')}"`;
+                    }
+                    return value;
+                });
+                csvRows.push(values.join(','));
+            }
+
+            return csvRows.join('\n');
+        }
+
+        function getCurrentFilteredData() {
+            const tableBody = document.getElementById('resultsTableBody');
+            const rows = tableBody.querySelectorAll('tr');
+            const data = [];
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 1) { // Skip "no results" row
+                    const studentInfo = cells[0].textContent.trim().split('\n');
+                    const studentName = studentInfo[0].replace(/[^\w\s]/gi, '').trim();
+                    const studentId = studentInfo[1] ? studentInfo[1].replace(/[^\w\s]/gi, '').trim() : 'N/A';
+
+                    const school = cells[1].textContent.replace(/[^\w\s]/gi, '').trim();
+
+                    const examInfo = cells[2].textContent.trim().split('\n');
+                    const examTitle = examInfo[0].replace(/[^\w\s]/gi, '').trim();
+                    const examCode = examInfo[1] ? examInfo[1].replace('Code: ', '').trim() : 'N/A';
+
+                    const scoreText = cells[3].textContent.trim();
+                    const scoreMatch = scoreText.match(/(\d+)\/(\d+)/);
+                    const score = scoreMatch ? scoreMatch[1] : '0';
+                    const total = scoreMatch ? scoreMatch[2] : '0';
+                    const percentageMatch = scoreText.match(/\((\d+)%\)/);
+                    const percentage = percentageMatch ? percentageMatch[1] + '%' : '0%';
+
+                    const submitted = cells[4].textContent.replace(/[^\w\s\/,:]/gi, '').trim();
+                    const performance = cells[5].textContent.trim();
+
+                    data.push({
+                        'Student Name': studentName,
+                        'Student ID': studentId,
+                        'School': school,
+                        'Exam Title': examTitle,
+                        'Exam Code': examCode,
+                        'Score': score,
+                        'Total': total,
+                        'Percentage': percentage,
+                        'Submitted': submitted,
+                        'Performance': performance
+                    });
+                }
+            });
+
+            return data;
+        }
+
+        // HTML Structure with export buttons
+        const tableHTML = `
+<div class="filters-container" style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+    <div>
+        <label for="schoolFilter">Filter by School:</label>
+        <select id="schoolFilter" style="padding: 0.5rem; border-radius: 8px; border: 1px solid #ddd;">
+            <option value="">All Schools</option>
+            <option value="School of Entrepreneurship and Management">School of Entrepreneurship and Management</option>
+            <option value="School of Engineering and Technology">School of Engineering and Technology</option>
+            <option value="School of Design">School of Design</option>
+            <option value="School of Computational Intelligence">School of Computational Intelligence</option>
+            <option value="School of Arts & Natural Sciences">School of Arts & Natural Sciences</option>
+            <option value="School of Agricultural Sciences">School of Agricultural Sciences</option>
+            <option value="School of Law">School of Law</option>
+            <option value="School of Life & Health Sciences">School of Life & Health Sciences</option>
+            <option value="School of Nursing">School of Nursing</option>
+            <option value="School of Pharmacy">School of Pharmacy</option>
+        </select>
+    </div>
+    <div>
+        <label for="searchInput">Search:</label>
+        <input type="text" id="searchInput" placeholder="Search by Student ID, Name, or Exam Code..." 
+               style="padding: 0.5rem; border-radius: 8px; border: 1px solid #ddd; min-width: 250px;">
+    </div>
+    <button id="clearFilters" style="padding: 0.5rem 1rem; background: #f56565; color: white; border: none; border-radius: 8px; cursor: pointer;">
+        Clear Filters
+    </button>
+</div>
+
+<div class="export-buttons" style="margin-bottom: 1rem; display: flex; gap: 0.5rem;">
+    <button id="exportCSV" style="padding: 0.5rem 1rem; background: #38a169; color: white; border: none; border-radius: 8px; cursor: pointer;">
+        Export to CSV
+    </button>
+    <button id="exportExcel" style="padding: 0.5rem 1rem; background: #3182ce; color: white; border: none; border-radius: 8px; cursor: pointer;">
+        Export to Excel
+    </button>
+</div>
+
+<div class="table-container" style="overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <table id="resultsTable" style="width: 100%; border-collapse: collapse; background: white;">
+        <thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
+            <tr>
+                <th style="padding: 1rem; text-align: left; font-weight: 600; color: #2d3748;">Student Info</th>
+                <th style="padding: 1rem; text-align: left; font-weight: 600; color: #2d3748;">School</th>
+                <th style="padding: 1rem; text-align: left; font-weight: 600; color: #2d3748;">Exam Details</th>
+                <th style="padding: 1rem; text-align: left; font-weight: 600; color: #2d3748;">Score</th>
+                <th style="padding: 1rem; text-align: left; font-weight: 600; color: #2d3748;">Submitted</th>
+                <th style="padding: 1rem; text-align: left; font-weight: 600; color: #2d3748;">Performance</th>
+            </tr>
+        </thead>
+        <tbody id="resultsTableBody">
+        </tbody>
+    </table>
+</div>`;
+
+        // Main function to load and display results
+        async function loadResults() {
+            try {
+                const response = await fetch('/admin/results');
+                const results = await response.json();
+
+                // Store original data for filtering
+                window.originalResults = results;
+
+                // Set up the table HTML
+                document.getElementById('resultsList').innerHTML = tableHTML;
+
+                // Load SheetJS library for Excel export
+                if (!window.XLSX) {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+                    document.head.appendChild(script);
+                }
+
+                // Set up event listeners
+                setupEventListeners();
+
+                // Display results
+                displayResults(results);
+
+            } catch (error) {
+                console.error('Error loading results:', error);
+                document.getElementById('resultsList').innerHTML = `
+            <div style="text-align: center; padding: 2rem; color: #f56565;">
+                <p>Error loading results. Please refresh and try again.</p>
+            </div>
+        `;
+            }
+        }
+
+        // Function to display results in table
+        function displayResults(results) {
+            const tableBody = document.getElementById('resultsTableBody');
+
+            if (results.length === 0) {
+                tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 3rem; color: #718096;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">No Data</div>
+                    <h3>No Results Found</h3>
+                    <p>No results match your current filters.</p>
+                </td>
+            </tr>
+        `;
+                return;
+            }
+
+            tableBody.innerHTML = results.map((result, index) => {
+                const percentage = Math.round((result.score / result.total) * 100);
+                let gradeColor = '#f56565';
+                let performanceText = 'Needs Improvement';
+
+                if (percentage >= 80) {
+                    gradeColor = '#48bb78';
+                    performanceText = 'Excellent Performance';
+                } else if (percentage >= 60) {
+                    gradeColor = '#ed8936';
+                    performanceText = 'Good Performance';
+                }
+
+                return `
+            <tr style="border-bottom: 1px solid #e2e8f0; transition: background-color 0.2s;">
+                <td style="padding: 1rem; border-right: 1px solid #f1f5f9;">
+                    <div>
+                        <strong>${result.studentName}</strong><br>
+                        <span style="color: #718096; font-size: 0.9rem;">ID: ${result.studentId || 'N/A'}</span>
+                    </div>
+                </td>
+                <td style="padding: 1rem; border-right: 1px solid #f1f5f9;">
+                    <span style="color: #4a5568; font-size: 0.9rem;">${result.school || 'N/A'}</span>
+                </td>
+                <td style="padding: 1rem; border-right: 1px solid #f1f5f9;">
+                    <div>
+                        <strong>${result.examTitle}</strong><br>
+                        <span style="color: #718096; font-size: 0.9rem;">Code: ${result.examCode || 'N/A'}</span>
+                    </div>
+                </td>
+                <td style="padding: 1rem; border-right: 1px solid #f1f5f9;">
+                    <div style="color: ${gradeColor}; font-weight: 700;">
+                        ${result.score}/${result.total}<br>
+                        <span style="font-size: 1.1rem;">(${percentage}%)</span>
+                    </div>
+                </td>
+                <td style="padding: 1rem; border-right: 1px solid #f1f5f9;">
+                    <span style="color: #4a5568; font-size: 0.9rem;">
+                        ${new Date(result.submitted).toLocaleDateString('en-IN', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })}
+                    </span>
+                </td>
+                <td style="padding: 1rem;">
+                    <div style="background: ${gradeColor}20; border: 1px solid ${gradeColor}40; border-radius: 8px; padding: 0.5rem; text-align: center;">
+                        <strong style="color: ${gradeColor}; font-size: 0.9rem;">
+                            ${performanceText}
+                        </strong>
+                    </div>
+                </td>
+            </tr>
+        `;
+            }).join('');
+        }
+
+        // Set up event listeners for filtering, searching, and exporting
+        function setupEventListeners() {
+            const schoolFilter = document.getElementById('schoolFilter');
+            const searchInput = document.getElementById('searchInput');
+            const clearFilters = document.getElementById('clearFilters');
+            const exportCSVBtn = document.getElementById('exportCSV');
+            const exportExcelBtn = document.getElementById('exportExcel');
+
+            // School filter
+            schoolFilter.addEventListener('change', filterResults);
+
+            // Search input with debounce
+            let searchTimeout;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(filterResults, 300);
+            });
+
+            // Clear filters
+            clearFilters.addEventListener('click', () => {
+                schoolFilter.value = '';
+                searchInput.value = '';
+                displayResults(window.originalResults);
+            });
+
+            // Export buttons
+            exportCSVBtn.addEventListener('click', () => {
+                const data = getCurrentFilteredData();
+                if (data.length === 0) {
+                    alert('No data to export');
+                    return;
+                }
+                const filename = `exam_results_${new Date().toISOString().split('T')[0]}.csv`;
+                exportToCSV(data, filename);
+            });
+
+            exportExcelBtn.addEventListener('click', () => {
+                const data = getCurrentFilteredData();
+                if (data.length === 0) {
+                    alert('No data to export');
+                    return;
+                }
+                const filename = `exam_results_${new Date().toISOString().split('T')[0]}.xlsx`;
+                exportToExcel(data, filename);
+            });
+
+            // Add hover effect to table rows
+            document.addEventListener('mouseover', (e) => {
+                if (e.target.closest('tbody tr')) {
+                    e.target.closest('tr').style.backgroundColor = '#f8fafc';
+                }
+            });
+
+            document.addEventListener('mouseout', (e) => {
+                if (e.target.closest('tbody tr')) {
+                    e.target.closest('tr').style.backgroundColor = '';
+                }
+            });
+        }
+
+        // Filter results based on school and search criteria
+        function filterResults() {
+            const schoolFilter = document.getElementById('schoolFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+            let filteredResults = window.originalResults;
+
+            // Filter by school
+            if (schoolFilter) {
+                filteredResults = filteredResults.filter(result =>
+                    result.school === schoolFilter
+                );
+            }
+
+            // Filter by search term (student ID, name, or exam code)
+            if (searchTerm) {
+                filteredResults = filteredResults.filter(result =>
+                    (result.studentId && result.studentId.toLowerCase().includes(searchTerm)) ||
+                    (result.studentName && result.studentName.toLowerCase().includes(searchTerm)) ||
+                    (result.examCode && result.examCode.toLowerCase().includes(searchTerm)) ||
+                    (result.examTitle && result.examTitle.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            displayResults(filteredResults);
+        }
+
+        // Initialize the table
+        loadResults();
+
         // Add CSS animation for slide out
         const style = document.createElement('style');
         style.textContent = `
-            @keyframes slideOut {
-                from {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
-                to {
-                    opacity: 0;
-                    transform: translateX(-100%);
-                }
-            }
-        `;
+    @keyframes slideOut {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+    }
+    
+    .export-buttons button:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        transition: all 0.2s ease;
+    }
+`;
         document.head.appendChild(style);
 
         // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Add some interactive enhancements
             console.log('🎓 Joy University Examination Hub - Powered by OrionAC');
             console.log('🚀 System initialized successfully');
-            
+
             // Add keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
+            document.addEventListener('keydown', function (e) {
                 // Ctrl/Cmd + Enter to submit forms
                 if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                     const activeForm = document.querySelector('form:not(.hidden) .btn:not([disabled])');
@@ -1515,4 +1987,5 @@ async function loadResults() {
         });
     </script>
 </body>
+
 </html>
