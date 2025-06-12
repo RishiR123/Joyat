@@ -1322,24 +1322,157 @@
             });
         }
 
+        // Add this create exam form handler to your JavaScript
+        document.getElementById('createExamForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const form = e.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            // Show loading state
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '⏳ Creating Exam...';
+            submitBtn.disabled = true;
+
+            try {
+                // Collect form data
+                const examTitle = document.getElementById('examTitle').value.trim();
+                const examDuration = parseInt(document.getElementById('examDuration').value);
+
+                if (!examTitle) {
+                    alert('❌ Please enter an examination title.');
+                    return;
+                }
+
+                if (!examDuration || examDuration < 1) {
+                    alert('❌ Please enter a valid duration.');
+                    return;
+                }
+
+                // Collect questions from all question items
+                const questionItems = document.querySelectorAll('#questionsContainer .question-item');
+                const questions = [];
+
+                let hasError = false;
+                questionItems.forEach((item, index) => {
+                    const questionText = item.querySelector('input[name="question"]').value.trim();
+                    const optionA = item.querySelector('input[name="optionA"]').value.trim();
+                    const optionB = item.querySelector('input[name="optionB"]').value.trim();
+                    const optionC = item.querySelector('input[name="optionC"]').value.trim();
+                    const optionD = item.querySelector('input[name="optionD"]').value.trim();
+                    const correct = item.querySelector('select[name="correct"]').value;
+
+                    if (!questionText || !optionA || !optionB || !optionC || !optionD || !correct) {
+                        alert(`❌ Please fill in all fields for question ${index + 1}.`);
+                        hasError = true;
+                        return;
+                    }
+
+                    questions.push({
+                        question: questionText,
+                        options: {
+                            A: optionA,
+                            B: optionB,
+                            C: optionC,
+                            D: optionD
+                        },
+                        correct: correct
+                    });
+                });
+
+                if (hasError) return;
+
+                if (questions.length === 0) {
+                    alert('❌ Please add at least one question.');
+                    return;
+                }
+
+                // Prepare data for submission
+                const examData = {
+                    title: examTitle,
+                    duration: examDuration,
+                    questions: questions
+                };
+
+                console.log('Submitting exam data:', examData); // Debug log
+
+                // Submit to server
+                const response = await fetch('/admin/create-exam', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(examData)
+                });
+
+                const responseData = await response.json();
+
+                if (response.ok && responseData.success) {
+                    alert(`🎉 Examination created successfully!\n\nExam Code: ${responseData.exam_code}\n\nShare this code with students to join the exam.`);
+
+                    // Reset form
+                    form.reset();
+                    resetQuestionsContainer();
+
+                    // Refresh the manage exams tab if it's visible
+                    const manageTab = document.getElementById('manageTab');
+                    if (!manageTab.classList.contains('hidden')) {
+                        loadExams();
+                    }
+
+                } else {
+                    // Handle different error types
+                    let errorMessage = '❌ ';
+                    switch (response.status) {
+                        case 400:
+                            errorMessage += responseData.message || 'Invalid exam data. Please check all fields.';
+                            break;
+                        case 401:
+                            errorMessage += 'Authentication required. Please log in again.';
+                            // Redirect to login
+                            logout();
+                            return;
+                        case 500:
+                            errorMessage += 'Server error. Please try again later.';
+                            break;
+                        default:
+                            errorMessage += responseData.message || 'An error occurred while creating the exam.';
+                    }
+                    alert(errorMessage);
+                }
+
+            } catch (error) {
+                console.error('Error creating exam:', error);
+                alert('🔌 Network error. Please check your connection and try again.');
+            } finally {
+                // Restore button state
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Also update your resetQuestionsContainer function to match your HTML structure
         function resetQuestionsContainer() {
-            document.getElementById('questionsContainer').innerHTML = `
-                <h4>📝 Questions</h4>
-                <div class="question-item">
-                    <input type="text" placeholder="Enter your question here..." name="question" required>
-                    <input type="text" placeholder="Option A" name="optionA" required>
-                    <input type="text" placeholder="Option B" name="optionB" required>
-                    <input type="text" placeholder="Option C" name="optionC" required>
-                    <input type="text" placeholder="Option D" name="optionD" required>
-                    <select name="correct" required>
-                        <option value="">Select Correct Answer</option>
-                        <option value="A">A</option>
-                        <option value="B">B</option>
-                        <option value="C">C</option>
-                        <option value="D">D</option>
-                    </select>
-                </div>
-            `;
+            const container = document.getElementById('questionsContainer');
+            // Keep the h4 title and reset to one question
+            container.innerHTML = `
+        <h4 style="margin-bottom: 1rem; color: #1f2937; font-weight: 600;">Questions</h4>
+        <div class="question-item">
+            <input type="text" placeholder="Enter question text" name="question" required>
+            <input type="text" placeholder="Option A" name="optionA" required>
+            <input type="text" placeholder="Option B" name="optionB" required>
+            <input type="text" placeholder="Option C" name="optionC" required>
+            <input type="text" placeholder="Option D" name="optionD" required>
+            <select name="correct" required>
+                <option value="">Select Correct Answer</option>
+                <option value="A">Option A</option>
+                <option value="B">Option B</option>
+                <option value="C">Option C</option>
+                <option value="D">Option D</option>
+            </select>
+        </div>
+    `;
         }
 
         function showAdminDashboard() {
